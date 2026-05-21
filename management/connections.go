@@ -9,6 +9,151 @@ import (
 	big "math/big"
 )
 
+// Specifies the API behavior for password authentication
+type ConnectionAPIBehaviorEnum string
+
+const (
+	ConnectionAPIBehaviorEnumRequired ConnectionAPIBehaviorEnum = "required"
+	ConnectionAPIBehaviorEnumOptional ConnectionAPIBehaviorEnum = "optional"
+)
+
+func NewConnectionAPIBehaviorEnumFromString(s string) (ConnectionAPIBehaviorEnum, error) {
+	switch s {
+	case "required":
+		return ConnectionAPIBehaviorEnumRequired, nil
+	case "optional":
+		return ConnectionAPIBehaviorEnumOptional, nil
+	}
+	var t ConnectionAPIBehaviorEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ConnectionAPIBehaviorEnum) Ptr() *ConnectionAPIBehaviorEnum {
+	return &c
+}
+
+// The algorithm profile to use for decrypting SAML assertions.
+type ConnectionAssertionDecryptionAlgorithmProfileEnum string
+
+const (
+	ConnectionAssertionDecryptionAlgorithmProfileEnumV20261 ConnectionAssertionDecryptionAlgorithmProfileEnum = "v2026-1"
+)
+
+func NewConnectionAssertionDecryptionAlgorithmProfileEnumFromString(s string) (ConnectionAssertionDecryptionAlgorithmProfileEnum, error) {
+	switch s {
+	case "v2026-1":
+		return ConnectionAssertionDecryptionAlgorithmProfileEnumV20261, nil
+	}
+	var t ConnectionAssertionDecryptionAlgorithmProfileEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ConnectionAssertionDecryptionAlgorithmProfileEnum) Ptr() *ConnectionAssertionDecryptionAlgorithmProfileEnum {
+	return &c
+}
+
+// Settings for SAML assertion decryption.
+var (
+	connectionAssertionDecryptionSettingsFieldAlgorithmProfile    = big.NewInt(1 << 0)
+	connectionAssertionDecryptionSettingsFieldAlgorithmExceptions = big.NewInt(1 << 1)
+)
+
+type ConnectionAssertionDecryptionSettings struct {
+	AlgorithmProfile ConnectionAssertionDecryptionAlgorithmProfileEnum `json:"algorithm_profile" url:"algorithm_profile"`
+	// A list of insecure algorithms to allow for SAML assertion decryption.
+	AlgorithmExceptions []string `json:"algorithm_exceptions,omitempty" url:"algorithm_exceptions,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ConnectionAssertionDecryptionSettings) GetAlgorithmProfile() ConnectionAssertionDecryptionAlgorithmProfileEnum {
+	if c == nil {
+		return ""
+	}
+	return c.AlgorithmProfile
+}
+
+func (c *ConnectionAssertionDecryptionSettings) GetAlgorithmExceptions() []string {
+	if c == nil || c.AlgorithmExceptions == nil {
+		return nil
+	}
+	return c.AlgorithmExceptions
+}
+
+func (c *ConnectionAssertionDecryptionSettings) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ConnectionAssertionDecryptionSettings) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetAlgorithmProfile sets the AlgorithmProfile field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionAssertionDecryptionSettings) SetAlgorithmProfile(algorithmProfile ConnectionAssertionDecryptionAlgorithmProfileEnum) {
+	c.AlgorithmProfile = algorithmProfile
+	c.require(connectionAssertionDecryptionSettingsFieldAlgorithmProfile)
+}
+
+// SetAlgorithmExceptions sets the AlgorithmExceptions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionAssertionDecryptionSettings) SetAlgorithmExceptions(algorithmExceptions []string) {
+	c.AlgorithmExceptions = algorithmExceptions
+	c.require(connectionAssertionDecryptionSettingsFieldAlgorithmExceptions)
+}
+
+func (c *ConnectionAssertionDecryptionSettings) UnmarshalJSON(data []byte) error {
+	type unmarshaler ConnectionAssertionDecryptionSettings
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ConnectionAssertionDecryptionSettings(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ConnectionAssertionDecryptionSettings) MarshalJSON() ([]byte, error) {
+	type embed ConnectionAssertionDecryptionSettings
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ConnectionAssertionDecryptionSettings) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
 var (
 	connectionAttributeIdentifierFieldActive        = big.NewInt(1 << 0)
 	connectionAttributeIdentifierFieldDefaultMethod = big.NewInt(1 << 1)
@@ -41,6 +186,9 @@ func (c *ConnectionAttributeIdentifier) GetDefaultMethod() DefaultMethodEmailIde
 }
 
 func (c *ConnectionAttributeIdentifier) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -93,6 +241,9 @@ func (c *ConnectionAttributeIdentifier) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionAttributeIdentifier) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -145,6 +296,9 @@ func (c *ConnectionAttributes) GetUsername() UsernameAttribute {
 }
 
 func (c *ConnectionAttributes) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -204,6 +358,9 @@ func (c *ConnectionAttributes) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionAttributes) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -265,6 +422,9 @@ func (c *ConnectionAuthenticationMethods) GetPhoneOtp() ConnectionPhoneOtpAuthen
 }
 
 func (c *ConnectionAuthenticationMethods) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -331,6 +491,9 @@ func (c *ConnectionAuthenticationMethods) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionAuthenticationMethods) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -438,6 +601,9 @@ func (c *ConnectionCustomScripts) GetChangePhoneNumber() string {
 }
 
 func (c *ConnectionCustomScripts) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -543,6 +709,9 @@ func (c *ConnectionCustomScripts) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionCustomScripts) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -578,6 +747,9 @@ func (c *ConnectionEmailOtpAuthenticationMethod) GetEnabled() bool {
 }
 
 func (c *ConnectionEmailOtpAuthenticationMethod) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -623,6 +795,9 @@ func (c *ConnectionEmailOtpAuthenticationMethod) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionEmailOtpAuthenticationMethod) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -658,6 +833,9 @@ func (c *ConnectionFederatedConnectionsAccessTokens) GetActive() bool {
 }
 
 func (c *ConnectionFederatedConnectionsAccessTokens) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -703,6 +881,9 @@ func (c *ConnectionFederatedConnectionsAccessTokens) MarshalJSON() ([]byte, erro
 }
 
 func (c *ConnectionFederatedConnectionsAccessTokens) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -779,6 +960,9 @@ func (c *ConnectionGatewayAuthentication) GetSecretBase64Encoded() bool {
 }
 
 func (c *ConnectionGatewayAuthentication) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -856,6 +1040,9 @@ func (c *ConnectionGatewayAuthentication) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionGatewayAuthentication) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -866,6 +1053,47 @@ func (c *ConnectionGatewayAuthentication) String() string {
 	}
 	return fmt.Sprintf("%#v", c)
 }
+
+// Algorithm allowed to verify the ID tokens.
+type ConnectionIDTokenSignedResponseAlgEnum string
+
+const (
+	ConnectionIDTokenSignedResponseAlgEnumEs256 ConnectionIDTokenSignedResponseAlgEnum = "ES256"
+	ConnectionIDTokenSignedResponseAlgEnumEs384 ConnectionIDTokenSignedResponseAlgEnum = "ES384"
+	ConnectionIDTokenSignedResponseAlgEnumPs256 ConnectionIDTokenSignedResponseAlgEnum = "PS256"
+	ConnectionIDTokenSignedResponseAlgEnumPs384 ConnectionIDTokenSignedResponseAlgEnum = "PS384"
+	ConnectionIDTokenSignedResponseAlgEnumRs256 ConnectionIDTokenSignedResponseAlgEnum = "RS256"
+	ConnectionIDTokenSignedResponseAlgEnumRs384 ConnectionIDTokenSignedResponseAlgEnum = "RS384"
+	ConnectionIDTokenSignedResponseAlgEnumRs512 ConnectionIDTokenSignedResponseAlgEnum = "RS512"
+)
+
+func NewConnectionIDTokenSignedResponseAlgEnumFromString(s string) (ConnectionIDTokenSignedResponseAlgEnum, error) {
+	switch s {
+	case "ES256":
+		return ConnectionIDTokenSignedResponseAlgEnumEs256, nil
+	case "ES384":
+		return ConnectionIDTokenSignedResponseAlgEnumEs384, nil
+	case "PS256":
+		return ConnectionIDTokenSignedResponseAlgEnumPs256, nil
+	case "PS384":
+		return ConnectionIDTokenSignedResponseAlgEnumPs384, nil
+	case "RS256":
+		return ConnectionIDTokenSignedResponseAlgEnumRs256, nil
+	case "RS384":
+		return ConnectionIDTokenSignedResponseAlgEnumRs384, nil
+	case "RS512":
+		return ConnectionIDTokenSignedResponseAlgEnumRs512, nil
+	}
+	var t ConnectionIDTokenSignedResponseAlgEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ConnectionIDTokenSignedResponseAlgEnum) Ptr() *ConnectionIDTokenSignedResponseAlgEnum {
+	return &c
+}
+
+// List of algorithms allowed to verify the ID tokens.
+type ConnectionIDTokenSignedResponseAlgs = []ConnectionIDTokenSignedResponseAlgEnum
 
 // Order of precedence for attribute types
 type ConnectionIdentifierPrecedenceEnum string
@@ -903,7 +1131,6 @@ const (
 	ConnectionIdentityProviderEnumApple               ConnectionIdentityProviderEnum = "apple"
 	ConnectionIdentityProviderEnumDropbox             ConnectionIdentityProviderEnum = "dropbox"
 	ConnectionIdentityProviderEnumBitbucket           ConnectionIdentityProviderEnum = "bitbucket"
-	ConnectionIdentityProviderEnumAol                 ConnectionIdentityProviderEnum = "aol"
 	ConnectionIdentityProviderEnumAuth0Oidc           ConnectionIdentityProviderEnum = "auth0-oidc"
 	ConnectionIdentityProviderEnumAuth0               ConnectionIdentityProviderEnum = "auth0"
 	ConnectionIdentityProviderEnumBaidu               ConnectionIdentityProviderEnum = "baidu"
@@ -918,7 +1145,6 @@ const (
 	ConnectionIdentityProviderEnumExact               ConnectionIdentityProviderEnum = "exact"
 	ConnectionIdentityProviderEnumFacebook            ConnectionIdentityProviderEnum = "facebook"
 	ConnectionIdentityProviderEnumFitbit              ConnectionIdentityProviderEnum = "fitbit"
-	ConnectionIdentityProviderEnumFlickr              ConnectionIdentityProviderEnum = "flickr"
 	ConnectionIdentityProviderEnumGithub              ConnectionIdentityProviderEnum = "github"
 	ConnectionIdentityProviderEnumGoogleApps          ConnectionIdentityProviderEnum = "google-apps"
 	ConnectionIdentityProviderEnumGoogleOauth2        ConnectionIdentityProviderEnum = "google-oauth2"
@@ -926,7 +1152,6 @@ const (
 	ConnectionIdentityProviderEnumIP                  ConnectionIdentityProviderEnum = "ip"
 	ConnectionIdentityProviderEnumLine                ConnectionIdentityProviderEnum = "line"
 	ConnectionIdentityProviderEnumLinkedin            ConnectionIdentityProviderEnum = "linkedin"
-	ConnectionIdentityProviderEnumMiicard             ConnectionIdentityProviderEnum = "miicard"
 	ConnectionIdentityProviderEnumOauth1              ConnectionIdentityProviderEnum = "oauth1"
 	ConnectionIdentityProviderEnumOauth2              ConnectionIdentityProviderEnum = "oauth2"
 	ConnectionIdentityProviderEnumOffice365           ConnectionIdentityProviderEnum = "office365"
@@ -936,7 +1161,6 @@ const (
 	ConnectionIdentityProviderEnumPaypalSandbox       ConnectionIdentityProviderEnum = "paypal-sandbox"
 	ConnectionIdentityProviderEnumPingfederate        ConnectionIdentityProviderEnum = "pingfederate"
 	ConnectionIdentityProviderEnumPlanningcenter      ConnectionIdentityProviderEnum = "planningcenter"
-	ConnectionIdentityProviderEnumRenren              ConnectionIdentityProviderEnum = "renren"
 	ConnectionIdentityProviderEnumSalesforceCommunity ConnectionIdentityProviderEnum = "salesforce-community"
 	ConnectionIdentityProviderEnumSalesforceSandbox   ConnectionIdentityProviderEnum = "salesforce-sandbox"
 	ConnectionIdentityProviderEnumSalesforce          ConnectionIdentityProviderEnum = "salesforce"
@@ -946,8 +1170,6 @@ const (
 	ConnectionIdentityProviderEnumShop                ConnectionIdentityProviderEnum = "shop"
 	ConnectionIdentityProviderEnumSms                 ConnectionIdentityProviderEnum = "sms"
 	ConnectionIdentityProviderEnumSoundcloud          ConnectionIdentityProviderEnum = "soundcloud"
-	ConnectionIdentityProviderEnumThecitySandbox      ConnectionIdentityProviderEnum = "thecity-sandbox"
-	ConnectionIdentityProviderEnumThecity             ConnectionIdentityProviderEnum = "thecity"
 	ConnectionIdentityProviderEnumThirtysevensignals  ConnectionIdentityProviderEnum = "thirtysevensignals"
 	ConnectionIdentityProviderEnumTwitter             ConnectionIdentityProviderEnum = "twitter"
 	ConnectionIdentityProviderEnumUntappd             ConnectionIdentityProviderEnum = "untappd"
@@ -957,7 +1179,6 @@ const (
 	ConnectionIdentityProviderEnumWindowslive         ConnectionIdentityProviderEnum = "windowslive"
 	ConnectionIdentityProviderEnumWordpress           ConnectionIdentityProviderEnum = "wordpress"
 	ConnectionIdentityProviderEnumYahoo               ConnectionIdentityProviderEnum = "yahoo"
-	ConnectionIdentityProviderEnumYammer              ConnectionIdentityProviderEnum = "yammer"
 	ConnectionIdentityProviderEnumYandex              ConnectionIdentityProviderEnum = "yandex"
 )
 
@@ -975,8 +1196,6 @@ func NewConnectionIdentityProviderEnumFromString(s string) (ConnectionIdentityPr
 		return ConnectionIdentityProviderEnumDropbox, nil
 	case "bitbucket":
 		return ConnectionIdentityProviderEnumBitbucket, nil
-	case "aol":
-		return ConnectionIdentityProviderEnumAol, nil
 	case "auth0-oidc":
 		return ConnectionIdentityProviderEnumAuth0Oidc, nil
 	case "auth0":
@@ -1005,8 +1224,6 @@ func NewConnectionIdentityProviderEnumFromString(s string) (ConnectionIdentityPr
 		return ConnectionIdentityProviderEnumFacebook, nil
 	case "fitbit":
 		return ConnectionIdentityProviderEnumFitbit, nil
-	case "flickr":
-		return ConnectionIdentityProviderEnumFlickr, nil
 	case "github":
 		return ConnectionIdentityProviderEnumGithub, nil
 	case "google-apps":
@@ -1021,8 +1238,6 @@ func NewConnectionIdentityProviderEnumFromString(s string) (ConnectionIdentityPr
 		return ConnectionIdentityProviderEnumLine, nil
 	case "linkedin":
 		return ConnectionIdentityProviderEnumLinkedin, nil
-	case "miicard":
-		return ConnectionIdentityProviderEnumMiicard, nil
 	case "oauth1":
 		return ConnectionIdentityProviderEnumOauth1, nil
 	case "oauth2":
@@ -1041,8 +1256,6 @@ func NewConnectionIdentityProviderEnumFromString(s string) (ConnectionIdentityPr
 		return ConnectionIdentityProviderEnumPingfederate, nil
 	case "planningcenter":
 		return ConnectionIdentityProviderEnumPlanningcenter, nil
-	case "renren":
-		return ConnectionIdentityProviderEnumRenren, nil
 	case "salesforce-community":
 		return ConnectionIdentityProviderEnumSalesforceCommunity, nil
 	case "salesforce-sandbox":
@@ -1061,10 +1274,6 @@ func NewConnectionIdentityProviderEnumFromString(s string) (ConnectionIdentityPr
 		return ConnectionIdentityProviderEnumSms, nil
 	case "soundcloud":
 		return ConnectionIdentityProviderEnumSoundcloud, nil
-	case "thecity-sandbox":
-		return ConnectionIdentityProviderEnumThecitySandbox, nil
-	case "thecity":
-		return ConnectionIdentityProviderEnumThecity, nil
 	case "thirtysevensignals":
 		return ConnectionIdentityProviderEnumThirtysevensignals, nil
 	case "twitter":
@@ -1083,8 +1292,6 @@ func NewConnectionIdentityProviderEnumFromString(s string) (ConnectionIdentityPr
 		return ConnectionIdentityProviderEnumWordpress, nil
 	case "yahoo":
 		return ConnectionIdentityProviderEnumYahoo, nil
-	case "yammer":
-		return ConnectionIdentityProviderEnumYammer, nil
 	case "yandex":
 		return ConnectionIdentityProviderEnumYandex, nil
 	}
@@ -1120,6 +1327,9 @@ func (c *ConnectionPasskeyAuthenticationMethod) GetEnabled() bool {
 }
 
 func (c *ConnectionPasskeyAuthenticationMethod) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -1165,6 +1375,9 @@ func (c *ConnectionPasskeyAuthenticationMethod) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionPasskeyAuthenticationMethod) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1245,6 +1458,9 @@ func (c *ConnectionPasskeyOptions) GetLocalEnrollmentEnabled() bool {
 }
 
 func (c *ConnectionPasskeyOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -1304,6 +1520,9 @@ func (c *ConnectionPasskeyOptions) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionPasskeyOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1317,12 +1536,16 @@ func (c *ConnectionPasskeyOptions) String() string {
 
 // Password authentication enablement
 var (
-	connectionPasswordAuthenticationMethodFieldEnabled = big.NewInt(1 << 0)
+	connectionPasswordAuthenticationMethodFieldEnabled        = big.NewInt(1 << 0)
+	connectionPasswordAuthenticationMethodFieldAPIBehavior    = big.NewInt(1 << 1)
+	connectionPasswordAuthenticationMethodFieldSignupBehavior = big.NewInt(1 << 2)
 )
 
 type ConnectionPasswordAuthenticationMethod struct {
 	// Determines whether passwords are enabled
-	Enabled *bool `json:"enabled,omitempty" url:"enabled,omitempty"`
+	Enabled        *bool                         `json:"enabled,omitempty" url:"enabled,omitempty"`
+	APIBehavior    *ConnectionAPIBehaviorEnum    `json:"api_behavior,omitempty" url:"api_behavior,omitempty"`
+	SignupBehavior *ConnectionSignupBehaviorEnum `json:"signup_behavior,omitempty" url:"signup_behavior,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1338,7 +1561,24 @@ func (c *ConnectionPasswordAuthenticationMethod) GetEnabled() bool {
 	return *c.Enabled
 }
 
+func (c *ConnectionPasswordAuthenticationMethod) GetAPIBehavior() ConnectionAPIBehaviorEnum {
+	if c == nil || c.APIBehavior == nil {
+		return ""
+	}
+	return *c.APIBehavior
+}
+
+func (c *ConnectionPasswordAuthenticationMethod) GetSignupBehavior() ConnectionSignupBehaviorEnum {
+	if c == nil || c.SignupBehavior == nil {
+		return ""
+	}
+	return *c.SignupBehavior
+}
+
 func (c *ConnectionPasswordAuthenticationMethod) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -1354,6 +1594,20 @@ func (c *ConnectionPasswordAuthenticationMethod) require(field *big.Int) {
 func (c *ConnectionPasswordAuthenticationMethod) SetEnabled(enabled *bool) {
 	c.Enabled = enabled
 	c.require(connectionPasswordAuthenticationMethodFieldEnabled)
+}
+
+// SetAPIBehavior sets the APIBehavior field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordAuthenticationMethod) SetAPIBehavior(apiBehavior *ConnectionAPIBehaviorEnum) {
+	c.APIBehavior = apiBehavior
+	c.require(connectionPasswordAuthenticationMethodFieldAPIBehavior)
+}
+
+// SetSignupBehavior sets the SignupBehavior field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordAuthenticationMethod) SetSignupBehavior(signupBehavior *ConnectionSignupBehaviorEnum) {
+	c.SignupBehavior = signupBehavior
+	c.require(connectionPasswordAuthenticationMethodFieldSignupBehavior)
 }
 
 func (c *ConnectionPasswordAuthenticationMethod) UnmarshalJSON(data []byte) error {
@@ -1384,6 +1638,9 @@ func (c *ConnectionPasswordAuthenticationMethod) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionPasswordAuthenticationMethod) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1419,6 +1676,9 @@ func (c *ConnectionPasswordComplexityOptions) GetMinLength() int {
 }
 
 func (c *ConnectionPasswordComplexityOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -1464,6 +1724,9 @@ func (c *ConnectionPasswordComplexityOptions) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionPasswordComplexityOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1508,6 +1771,9 @@ func (c *ConnectionPasswordDictionaryOptions) GetDictionary() []string {
 }
 
 func (c *ConnectionPasswordDictionaryOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -1560,6 +1826,9 @@ func (c *ConnectionPasswordDictionaryOptions) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionPasswordDictionaryOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1603,6 +1872,9 @@ func (c *ConnectionPasswordHistoryOptions) GetSize() int {
 }
 
 func (c *ConnectionPasswordHistoryOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -1655,6 +1927,9 @@ func (c *ConnectionPasswordHistoryOptions) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionPasswordHistoryOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1689,6 +1964,9 @@ func (c *ConnectionPasswordNoPersonalInfoOptions) GetEnable() bool {
 }
 
 func (c *ConnectionPasswordNoPersonalInfoOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -1734,6 +2012,634 @@ func (c *ConnectionPasswordNoPersonalInfoOptions) MarshalJSON() ([]byte, error) 
 }
 
 func (c *ConnectionPasswordNoPersonalInfoOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Password policy options for flexible password policy configuration
+var (
+	connectionPasswordOptionsFieldComplexity  = big.NewInt(1 << 0)
+	connectionPasswordOptionsFieldDictionary  = big.NewInt(1 << 1)
+	connectionPasswordOptionsFieldHistory     = big.NewInt(1 << 2)
+	connectionPasswordOptionsFieldProfileData = big.NewInt(1 << 3)
+)
+
+type ConnectionPasswordOptions struct {
+	Complexity  *ConnectionPasswordOptionsComplexity  `json:"complexity,omitempty" url:"complexity,omitempty"`
+	Dictionary  *ConnectionPasswordOptionsDictionary  `json:"dictionary,omitempty" url:"dictionary,omitempty"`
+	History     *ConnectionPasswordOptionsHistory     `json:"history,omitempty" url:"history,omitempty"`
+	ProfileData *ConnectionPasswordOptionsProfileData `json:"profile_data,omitempty" url:"profile_data,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ConnectionPasswordOptions) GetComplexity() ConnectionPasswordOptionsComplexity {
+	if c == nil || c.Complexity == nil {
+		return ConnectionPasswordOptionsComplexity{}
+	}
+	return *c.Complexity
+}
+
+func (c *ConnectionPasswordOptions) GetDictionary() ConnectionPasswordOptionsDictionary {
+	if c == nil || c.Dictionary == nil {
+		return ConnectionPasswordOptionsDictionary{}
+	}
+	return *c.Dictionary
+}
+
+func (c *ConnectionPasswordOptions) GetHistory() ConnectionPasswordOptionsHistory {
+	if c == nil || c.History == nil {
+		return ConnectionPasswordOptionsHistory{}
+	}
+	return *c.History
+}
+
+func (c *ConnectionPasswordOptions) GetProfileData() ConnectionPasswordOptionsProfileData {
+	if c == nil || c.ProfileData == nil {
+		return ConnectionPasswordOptionsProfileData{}
+	}
+	return *c.ProfileData
+}
+
+func (c *ConnectionPasswordOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ConnectionPasswordOptions) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetComplexity sets the Complexity field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptions) SetComplexity(complexity *ConnectionPasswordOptionsComplexity) {
+	c.Complexity = complexity
+	c.require(connectionPasswordOptionsFieldComplexity)
+}
+
+// SetDictionary sets the Dictionary field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptions) SetDictionary(dictionary *ConnectionPasswordOptionsDictionary) {
+	c.Dictionary = dictionary
+	c.require(connectionPasswordOptionsFieldDictionary)
+}
+
+// SetHistory sets the History field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptions) SetHistory(history *ConnectionPasswordOptionsHistory) {
+	c.History = history
+	c.require(connectionPasswordOptionsFieldHistory)
+}
+
+// SetProfileData sets the ProfileData field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptions) SetProfileData(profileData *ConnectionPasswordOptionsProfileData) {
+	c.ProfileData = profileData
+	c.require(connectionPasswordOptionsFieldProfileData)
+}
+
+func (c *ConnectionPasswordOptions) UnmarshalJSON(data []byte) error {
+	type unmarshaler ConnectionPasswordOptions
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ConnectionPasswordOptions(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ConnectionPasswordOptions) MarshalJSON() ([]byte, error) {
+	type embed ConnectionPasswordOptions
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ConnectionPasswordOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Password complexity requirements configuration
+var (
+	connectionPasswordOptionsComplexityFieldMinLength            = big.NewInt(1 << 0)
+	connectionPasswordOptionsComplexityFieldCharacterTypes       = big.NewInt(1 << 1)
+	connectionPasswordOptionsComplexityFieldCharacterTypeRule    = big.NewInt(1 << 2)
+	connectionPasswordOptionsComplexityFieldIdenticalCharacters  = big.NewInt(1 << 3)
+	connectionPasswordOptionsComplexityFieldSequentialCharacters = big.NewInt(1 << 4)
+	connectionPasswordOptionsComplexityFieldMaxLengthExceeded    = big.NewInt(1 << 5)
+)
+
+type ConnectionPasswordOptionsComplexity struct {
+	// Minimum password length required (1-72 characters)
+	MinLength *int `json:"min_length,omitempty" url:"min_length,omitempty"`
+	// Required character types that must be present in passwords. Valid options: uppercase, lowercase, number, special
+	CharacterTypes       []PasswordCharacterTypeEnum             `json:"character_types,omitempty" url:"character_types,omitempty"`
+	CharacterTypeRule    *PasswordCharacterTypeRulePolicyEnum    `json:"character_type_rule,omitempty" url:"character_type_rule,omitempty"`
+	IdenticalCharacters  *PasswordIdenticalCharactersPolicyEnum  `json:"identical_characters,omitempty" url:"identical_characters,omitempty"`
+	SequentialCharacters *PasswordSequentialCharactersPolicyEnum `json:"sequential_characters,omitempty" url:"sequential_characters,omitempty"`
+	MaxLengthExceeded    *PasswordMaxLengthExceededPolicyEnum    `json:"max_length_exceeded,omitempty" url:"max_length_exceeded,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ConnectionPasswordOptionsComplexity) GetMinLength() int {
+	if c == nil || c.MinLength == nil {
+		return 0
+	}
+	return *c.MinLength
+}
+
+func (c *ConnectionPasswordOptionsComplexity) GetCharacterTypes() []PasswordCharacterTypeEnum {
+	if c == nil || c.CharacterTypes == nil {
+		return nil
+	}
+	return c.CharacterTypes
+}
+
+func (c *ConnectionPasswordOptionsComplexity) GetCharacterTypeRule() PasswordCharacterTypeRulePolicyEnum {
+	if c == nil || c.CharacterTypeRule == nil {
+		return ""
+	}
+	return *c.CharacterTypeRule
+}
+
+func (c *ConnectionPasswordOptionsComplexity) GetIdenticalCharacters() PasswordIdenticalCharactersPolicyEnum {
+	if c == nil || c.IdenticalCharacters == nil {
+		return ""
+	}
+	return *c.IdenticalCharacters
+}
+
+func (c *ConnectionPasswordOptionsComplexity) GetSequentialCharacters() PasswordSequentialCharactersPolicyEnum {
+	if c == nil || c.SequentialCharacters == nil {
+		return ""
+	}
+	return *c.SequentialCharacters
+}
+
+func (c *ConnectionPasswordOptionsComplexity) GetMaxLengthExceeded() PasswordMaxLengthExceededPolicyEnum {
+	if c == nil || c.MaxLengthExceeded == nil {
+		return ""
+	}
+	return *c.MaxLengthExceeded
+}
+
+func (c *ConnectionPasswordOptionsComplexity) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ConnectionPasswordOptionsComplexity) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetMinLength sets the MinLength field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsComplexity) SetMinLength(minLength *int) {
+	c.MinLength = minLength
+	c.require(connectionPasswordOptionsComplexityFieldMinLength)
+}
+
+// SetCharacterTypes sets the CharacterTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsComplexity) SetCharacterTypes(characterTypes []PasswordCharacterTypeEnum) {
+	c.CharacterTypes = characterTypes
+	c.require(connectionPasswordOptionsComplexityFieldCharacterTypes)
+}
+
+// SetCharacterTypeRule sets the CharacterTypeRule field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsComplexity) SetCharacterTypeRule(characterTypeRule *PasswordCharacterTypeRulePolicyEnum) {
+	c.CharacterTypeRule = characterTypeRule
+	c.require(connectionPasswordOptionsComplexityFieldCharacterTypeRule)
+}
+
+// SetIdenticalCharacters sets the IdenticalCharacters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsComplexity) SetIdenticalCharacters(identicalCharacters *PasswordIdenticalCharactersPolicyEnum) {
+	c.IdenticalCharacters = identicalCharacters
+	c.require(connectionPasswordOptionsComplexityFieldIdenticalCharacters)
+}
+
+// SetSequentialCharacters sets the SequentialCharacters field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsComplexity) SetSequentialCharacters(sequentialCharacters *PasswordSequentialCharactersPolicyEnum) {
+	c.SequentialCharacters = sequentialCharacters
+	c.require(connectionPasswordOptionsComplexityFieldSequentialCharacters)
+}
+
+// SetMaxLengthExceeded sets the MaxLengthExceeded field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsComplexity) SetMaxLengthExceeded(maxLengthExceeded *PasswordMaxLengthExceededPolicyEnum) {
+	c.MaxLengthExceeded = maxLengthExceeded
+	c.require(connectionPasswordOptionsComplexityFieldMaxLengthExceeded)
+}
+
+func (c *ConnectionPasswordOptionsComplexity) UnmarshalJSON(data []byte) error {
+	type unmarshaler ConnectionPasswordOptionsComplexity
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ConnectionPasswordOptionsComplexity(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ConnectionPasswordOptionsComplexity) MarshalJSON() ([]byte, error) {
+	type embed ConnectionPasswordOptionsComplexity
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ConnectionPasswordOptionsComplexity) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Dictionary-based password restriction policy to prevent common passwords
+var (
+	connectionPasswordOptionsDictionaryFieldActive  = big.NewInt(1 << 0)
+	connectionPasswordOptionsDictionaryFieldCustom  = big.NewInt(1 << 1)
+	connectionPasswordOptionsDictionaryFieldDefault = big.NewInt(1 << 2)
+)
+
+type ConnectionPasswordOptionsDictionary struct {
+	// Enables dictionary checking to prevent use of common passwords and custom blocked words
+	Active *bool `json:"active,omitempty" url:"active,omitempty"`
+	// Array of custom words to block in passwords. Maximum 200 items, each up to 50 characters
+	Custom  []string                         `json:"custom,omitempty" url:"custom,omitempty"`
+	Default *PasswordDefaultDictionariesEnum `json:"default,omitempty" url:"default,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ConnectionPasswordOptionsDictionary) GetActive() bool {
+	if c == nil || c.Active == nil {
+		return false
+	}
+	return *c.Active
+}
+
+func (c *ConnectionPasswordOptionsDictionary) GetCustom() []string {
+	if c == nil || c.Custom == nil {
+		return nil
+	}
+	return c.Custom
+}
+
+func (c *ConnectionPasswordOptionsDictionary) GetDefault() PasswordDefaultDictionariesEnum {
+	if c == nil || c.Default == nil {
+		return ""
+	}
+	return *c.Default
+}
+
+func (c *ConnectionPasswordOptionsDictionary) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ConnectionPasswordOptionsDictionary) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetActive sets the Active field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsDictionary) SetActive(active *bool) {
+	c.Active = active
+	c.require(connectionPasswordOptionsDictionaryFieldActive)
+}
+
+// SetCustom sets the Custom field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsDictionary) SetCustom(custom []string) {
+	c.Custom = custom
+	c.require(connectionPasswordOptionsDictionaryFieldCustom)
+}
+
+// SetDefault sets the Default field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsDictionary) SetDefault(default_ *PasswordDefaultDictionariesEnum) {
+	c.Default = default_
+	c.require(connectionPasswordOptionsDictionaryFieldDefault)
+}
+
+func (c *ConnectionPasswordOptionsDictionary) UnmarshalJSON(data []byte) error {
+	type unmarshaler ConnectionPasswordOptionsDictionary
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ConnectionPasswordOptionsDictionary(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ConnectionPasswordOptionsDictionary) MarshalJSON() ([]byte, error) {
+	type embed ConnectionPasswordOptionsDictionary
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ConnectionPasswordOptionsDictionary) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Password history policy configuration to prevent password reuse
+var (
+	connectionPasswordOptionsHistoryFieldActive = big.NewInt(1 << 0)
+	connectionPasswordOptionsHistoryFieldSize   = big.NewInt(1 << 1)
+)
+
+type ConnectionPasswordOptionsHistory struct {
+	// Enables password history checking to prevent users from reusing recent passwords
+	Active *bool `json:"active,omitempty" url:"active,omitempty"`
+	// Number of previous passwords to remember and prevent reuse (1-24)
+	Size *int `json:"size,omitempty" url:"size,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ConnectionPasswordOptionsHistory) GetActive() bool {
+	if c == nil || c.Active == nil {
+		return false
+	}
+	return *c.Active
+}
+
+func (c *ConnectionPasswordOptionsHistory) GetSize() int {
+	if c == nil || c.Size == nil {
+		return 0
+	}
+	return *c.Size
+}
+
+func (c *ConnectionPasswordOptionsHistory) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ConnectionPasswordOptionsHistory) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetActive sets the Active field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsHistory) SetActive(active *bool) {
+	c.Active = active
+	c.require(connectionPasswordOptionsHistoryFieldActive)
+}
+
+// SetSize sets the Size field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsHistory) SetSize(size *int) {
+	c.Size = size
+	c.require(connectionPasswordOptionsHistoryFieldSize)
+}
+
+func (c *ConnectionPasswordOptionsHistory) UnmarshalJSON(data []byte) error {
+	type unmarshaler ConnectionPasswordOptionsHistory
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ConnectionPasswordOptionsHistory(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ConnectionPasswordOptionsHistory) MarshalJSON() ([]byte, error) {
+	type embed ConnectionPasswordOptionsHistory
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ConnectionPasswordOptionsHistory) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Personal information restriction policy to prevent use of profile data in passwords
+var (
+	connectionPasswordOptionsProfileDataFieldActive        = big.NewInt(1 << 0)
+	connectionPasswordOptionsProfileDataFieldBlockedFields = big.NewInt(1 << 1)
+)
+
+type ConnectionPasswordOptionsProfileData struct {
+	// Prevents users from including profile data (like name, email) in their passwords
+	Active *bool `json:"active,omitempty" url:"active,omitempty"`
+	// Blocked profile fields. An array of up to 12 entries.
+	BlockedFields []string `json:"blocked_fields,omitempty" url:"blocked_fields,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ConnectionPasswordOptionsProfileData) GetActive() bool {
+	if c == nil || c.Active == nil {
+		return false
+	}
+	return *c.Active
+}
+
+func (c *ConnectionPasswordOptionsProfileData) GetBlockedFields() []string {
+	if c == nil || c.BlockedFields == nil {
+		return nil
+	}
+	return c.BlockedFields
+}
+
+func (c *ConnectionPasswordOptionsProfileData) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ConnectionPasswordOptionsProfileData) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetActive sets the Active field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsProfileData) SetActive(active *bool) {
+	c.Active = active
+	c.require(connectionPasswordOptionsProfileDataFieldActive)
+}
+
+// SetBlockedFields sets the BlockedFields field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPasswordOptionsProfileData) SetBlockedFields(blockedFields []string) {
+	c.BlockedFields = blockedFields
+	c.require(connectionPasswordOptionsProfileDataFieldBlockedFields)
+}
+
+func (c *ConnectionPasswordOptionsProfileData) UnmarshalJSON(data []byte) error {
+	type unmarshaler ConnectionPasswordOptionsProfileData
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ConnectionPasswordOptionsProfileData(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ConnectionPasswordOptionsProfileData) MarshalJSON() ([]byte, error) {
+	type embed ConnectionPasswordOptionsProfileData
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ConnectionPasswordOptionsProfileData) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1801,6 +2707,9 @@ func (c *ConnectionPhoneOtpAuthenticationMethod) GetEnabled() bool {
 }
 
 func (c *ConnectionPhoneOtpAuthenticationMethod) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -1846,6 +2755,9 @@ func (c *ConnectionPhoneOtpAuthenticationMethod) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionPhoneOtpAuthenticationMethod) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1866,27 +2778,35 @@ var (
 	connectionPropertiesOptionsFieldEnableScriptContext              = big.NewInt(1 << 4)
 	connectionPropertiesOptionsFieldEnabledDatabaseCustomization     = big.NewInt(1 << 5)
 	connectionPropertiesOptionsFieldImportMode                       = big.NewInt(1 << 6)
-	connectionPropertiesOptionsFieldCustomScripts                    = big.NewInt(1 << 7)
-	connectionPropertiesOptionsFieldAuthenticationMethods            = big.NewInt(1 << 8)
-	connectionPropertiesOptionsFieldPasskeyOptions                   = big.NewInt(1 << 9)
-	connectionPropertiesOptionsFieldPasswordPolicy                   = big.NewInt(1 << 10)
-	connectionPropertiesOptionsFieldPasswordComplexityOptions        = big.NewInt(1 << 11)
-	connectionPropertiesOptionsFieldPasswordHistory                  = big.NewInt(1 << 12)
-	connectionPropertiesOptionsFieldPasswordNoPersonalInfo           = big.NewInt(1 << 13)
-	connectionPropertiesOptionsFieldPasswordDictionary               = big.NewInt(1 << 14)
-	connectionPropertiesOptionsFieldAPIEnableUsers                   = big.NewInt(1 << 15)
-	connectionPropertiesOptionsFieldBasicProfile                     = big.NewInt(1 << 16)
-	connectionPropertiesOptionsFieldExtAdmin                         = big.NewInt(1 << 17)
-	connectionPropertiesOptionsFieldExtIsSuspended                   = big.NewInt(1 << 18)
-	connectionPropertiesOptionsFieldExtAgreedTerms                   = big.NewInt(1 << 19)
-	connectionPropertiesOptionsFieldExtGroups                        = big.NewInt(1 << 20)
-	connectionPropertiesOptionsFieldExtAssignedPlans                 = big.NewInt(1 << 21)
-	connectionPropertiesOptionsFieldExtProfile                       = big.NewInt(1 << 22)
-	connectionPropertiesOptionsFieldDisableSelfServiceChangePassword = big.NewInt(1 << 23)
-	connectionPropertiesOptionsFieldUpstreamParams                   = big.NewInt(1 << 24)
-	connectionPropertiesOptionsFieldSetUserRootAttributes            = big.NewInt(1 << 25)
-	connectionPropertiesOptionsFieldGatewayAuthentication            = big.NewInt(1 << 26)
-	connectionPropertiesOptionsFieldFederatedConnectionsAccessTokens = big.NewInt(1 << 27)
+	connectionPropertiesOptionsFieldConfiguration                    = big.NewInt(1 << 7)
+	connectionPropertiesOptionsFieldCustomScripts                    = big.NewInt(1 << 8)
+	connectionPropertiesOptionsFieldAuthenticationMethods            = big.NewInt(1 << 9)
+	connectionPropertiesOptionsFieldPasskeyOptions                   = big.NewInt(1 << 10)
+	connectionPropertiesOptionsFieldPasswordPolicy                   = big.NewInt(1 << 11)
+	connectionPropertiesOptionsFieldPasswordComplexityOptions        = big.NewInt(1 << 12)
+	connectionPropertiesOptionsFieldPasswordHistory                  = big.NewInt(1 << 13)
+	connectionPropertiesOptionsFieldPasswordNoPersonalInfo           = big.NewInt(1 << 14)
+	connectionPropertiesOptionsFieldPasswordDictionary               = big.NewInt(1 << 15)
+	connectionPropertiesOptionsFieldAPIEnableUsers                   = big.NewInt(1 << 16)
+	connectionPropertiesOptionsFieldAPIEnableGroups                  = big.NewInt(1 << 17)
+	connectionPropertiesOptionsFieldBasicProfile                     = big.NewInt(1 << 18)
+	connectionPropertiesOptionsFieldExtAdmin                         = big.NewInt(1 << 19)
+	connectionPropertiesOptionsFieldExtIsSuspended                   = big.NewInt(1 << 20)
+	connectionPropertiesOptionsFieldExtAgreedTerms                   = big.NewInt(1 << 21)
+	connectionPropertiesOptionsFieldExtGroups                        = big.NewInt(1 << 22)
+	connectionPropertiesOptionsFieldExtAssignedPlans                 = big.NewInt(1 << 23)
+	connectionPropertiesOptionsFieldExtProfile                       = big.NewInt(1 << 24)
+	connectionPropertiesOptionsFieldDisableSelfServiceChangePassword = big.NewInt(1 << 25)
+	connectionPropertiesOptionsFieldUpstreamParams                   = big.NewInt(1 << 26)
+	connectionPropertiesOptionsFieldSetUserRootAttributes            = big.NewInt(1 << 27)
+	connectionPropertiesOptionsFieldGatewayAuthentication            = big.NewInt(1 << 28)
+	connectionPropertiesOptionsFieldFederatedConnectionsAccessTokens = big.NewInt(1 << 29)
+	connectionPropertiesOptionsFieldPasswordOptions                  = big.NewInt(1 << 30)
+	connectionPropertiesOptionsFieldAssertionDecryptionSettings      = big.NewInt(1 << 31)
+	connectionPropertiesOptionsFieldIDTokenSignedResponseAlgs        = big.NewInt(1 << 32)
+	connectionPropertiesOptionsFieldTokenEndpointAuthMethod          = big.NewInt(1 << 33)
+	connectionPropertiesOptionsFieldTokenEndpointAuthSigningAlg      = big.NewInt(1 << 34)
+	connectionPropertiesOptionsFieldTokenEndpointJwtcaAudFormat      = big.NewInt(1 << 35)
 )
 
 type ConnectionPropertiesOptions struct {
@@ -1901,28 +2821,37 @@ type ConnectionPropertiesOptions struct {
 	// Set to true to use a legacy user store
 	EnabledDatabaseCustomization *bool `json:"enabledDatabaseCustomization,omitempty" url:"enabledDatabaseCustomization,omitempty"`
 	// Enable this if you have a legacy user store and you want to gradually migrate those users to the Auth0 user store
-	ImportMode                       *bool                                       `json:"import_mode,omitempty" url:"import_mode,omitempty"`
-	CustomScripts                    *ConnectionCustomScripts                    `json:"customScripts,omitempty" url:"customScripts,omitempty"`
-	AuthenticationMethods            *ConnectionAuthenticationMethods            `json:"authentication_methods,omitempty" url:"authentication_methods,omitempty"`
-	PasskeyOptions                   *ConnectionPasskeyOptions                   `json:"passkey_options,omitempty" url:"passkey_options,omitempty"`
-	PasswordPolicy                   *ConnectionPasswordPolicyEnum               `json:"passwordPolicy,omitempty" url:"passwordPolicy,omitempty"`
-	PasswordComplexityOptions        *ConnectionPasswordComplexityOptions        `json:"password_complexity_options,omitempty" url:"password_complexity_options,omitempty"`
-	PasswordHistory                  *ConnectionPasswordHistoryOptions           `json:"password_history,omitempty" url:"password_history,omitempty"`
-	PasswordNoPersonalInfo           *ConnectionPasswordNoPersonalInfoOptions    `json:"password_no_personal_info,omitempty" url:"password_no_personal_info,omitempty"`
-	PasswordDictionary               *ConnectionPasswordDictionaryOptions        `json:"password_dictionary,omitempty" url:"password_dictionary,omitempty"`
-	APIEnableUsers                   *bool                                       `json:"api_enable_users,omitempty" url:"api_enable_users,omitempty"`
-	BasicProfile                     *bool                                       `json:"basic_profile,omitempty" url:"basic_profile,omitempty"`
-	ExtAdmin                         *bool                                       `json:"ext_admin,omitempty" url:"ext_admin,omitempty"`
-	ExtIsSuspended                   *bool                                       `json:"ext_is_suspended,omitempty" url:"ext_is_suspended,omitempty"`
-	ExtAgreedTerms                   *bool                                       `json:"ext_agreed_terms,omitempty" url:"ext_agreed_terms,omitempty"`
-	ExtGroups                        *bool                                       `json:"ext_groups,omitempty" url:"ext_groups,omitempty"`
-	ExtAssignedPlans                 *bool                                       `json:"ext_assigned_plans,omitempty" url:"ext_assigned_plans,omitempty"`
-	ExtProfile                       *bool                                       `json:"ext_profile,omitempty" url:"ext_profile,omitempty"`
-	DisableSelfServiceChangePassword *bool                                       `json:"disable_self_service_change_password,omitempty" url:"disable_self_service_change_password,omitempty"`
-	UpstreamParams                   *ConnectionUpstreamParams                   `json:"upstream_params,omitempty" url:"upstream_params,omitempty"`
-	SetUserRootAttributes            *ConnectionSetUserRootAttributesEnum        `json:"set_user_root_attributes,omitempty" url:"set_user_root_attributes,omitempty"`
-	GatewayAuthentication            *ConnectionGatewayAuthentication            `json:"gateway_authentication,omitempty" url:"gateway_authentication,omitempty"`
-	FederatedConnectionsAccessTokens *ConnectionFederatedConnectionsAccessTokens `json:"federated_connections_access_tokens,omitempty" url:"federated_connections_access_tokens,omitempty"`
+	ImportMode *bool `json:"import_mode,omitempty" url:"import_mode,omitempty"`
+	// Stores encrypted string only configurations for connections
+	Configuration                    map[string]*string                             `json:"configuration,omitempty" url:"configuration,omitempty"`
+	CustomScripts                    *ConnectionCustomScripts                       `json:"customScripts,omitempty" url:"customScripts,omitempty"`
+	AuthenticationMethods            *ConnectionAuthenticationMethods               `json:"authentication_methods,omitempty" url:"authentication_methods,omitempty"`
+	PasskeyOptions                   *ConnectionPasskeyOptions                      `json:"passkey_options,omitempty" url:"passkey_options,omitempty"`
+	PasswordPolicy                   *ConnectionPasswordPolicyEnum                  `json:"passwordPolicy,omitempty" url:"passwordPolicy,omitempty"`
+	PasswordComplexityOptions        *ConnectionPasswordComplexityOptions           `json:"password_complexity_options,omitempty" url:"password_complexity_options,omitempty"`
+	PasswordHistory                  *ConnectionPasswordHistoryOptions              `json:"password_history,omitempty" url:"password_history,omitempty"`
+	PasswordNoPersonalInfo           *ConnectionPasswordNoPersonalInfoOptions       `json:"password_no_personal_info,omitempty" url:"password_no_personal_info,omitempty"`
+	PasswordDictionary               *ConnectionPasswordDictionaryOptions           `json:"password_dictionary,omitempty" url:"password_dictionary,omitempty"`
+	APIEnableUsers                   *bool                                          `json:"api_enable_users,omitempty" url:"api_enable_users,omitempty"`
+	APIEnableGroups                  *bool                                          `json:"api_enable_groups,omitempty" url:"api_enable_groups,omitempty"`
+	BasicProfile                     *bool                                          `json:"basic_profile,omitempty" url:"basic_profile,omitempty"`
+	ExtAdmin                         *bool                                          `json:"ext_admin,omitempty" url:"ext_admin,omitempty"`
+	ExtIsSuspended                   *bool                                          `json:"ext_is_suspended,omitempty" url:"ext_is_suspended,omitempty"`
+	ExtAgreedTerms                   *bool                                          `json:"ext_agreed_terms,omitempty" url:"ext_agreed_terms,omitempty"`
+	ExtGroups                        *bool                                          `json:"ext_groups,omitempty" url:"ext_groups,omitempty"`
+	ExtAssignedPlans                 *bool                                          `json:"ext_assigned_plans,omitempty" url:"ext_assigned_plans,omitempty"`
+	ExtProfile                       *bool                                          `json:"ext_profile,omitempty" url:"ext_profile,omitempty"`
+	DisableSelfServiceChangePassword *bool                                          `json:"disable_self_service_change_password,omitempty" url:"disable_self_service_change_password,omitempty"`
+	UpstreamParams                   *ConnectionUpstreamParams                      `json:"upstream_params,omitempty" url:"upstream_params,omitempty"`
+	SetUserRootAttributes            *ConnectionSetUserRootAttributesEnum           `json:"set_user_root_attributes,omitempty" url:"set_user_root_attributes,omitempty"`
+	GatewayAuthentication            *ConnectionGatewayAuthentication               `json:"gateway_authentication,omitempty" url:"gateway_authentication,omitempty"`
+	FederatedConnectionsAccessTokens *ConnectionFederatedConnectionsAccessTokens    `json:"federated_connections_access_tokens,omitempty" url:"federated_connections_access_tokens,omitempty"`
+	PasswordOptions                  *ConnectionPasswordOptions                     `json:"password_options,omitempty" url:"password_options,omitempty"`
+	AssertionDecryptionSettings      *ConnectionAssertionDecryptionSettings         `json:"assertion_decryption_settings,omitempty" url:"assertion_decryption_settings,omitempty"`
+	IDTokenSignedResponseAlgs        *ConnectionIDTokenSignedResponseAlgs           `json:"id_token_signed_response_algs,omitempty" url:"id_token_signed_response_algs,omitempty"`
+	TokenEndpointAuthMethod          *ConnectionTokenEndpointAuthMethodEnum         `json:"token_endpoint_auth_method,omitempty" url:"token_endpoint_auth_method,omitempty"`
+	TokenEndpointAuthSigningAlg      *ConnectionTokenEndpointAuthSigningAlgEnum     `json:"token_endpoint_auth_signing_alg,omitempty" url:"token_endpoint_auth_signing_alg,omitempty"`
+	TokenEndpointJwtcaAudFormat      *ConnectionTokenEndpointJwtcaAudFormatEnumOidc `json:"token_endpoint_jwtca_aud_format,omitempty" url:"token_endpoint_jwtca_aud_format,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -1979,6 +2908,13 @@ func (c *ConnectionPropertiesOptions) GetImportMode() bool {
 		return false
 	}
 	return *c.ImportMode
+}
+
+func (c *ConnectionPropertiesOptions) GetConfiguration() map[string]*string {
+	if c == nil || c.Configuration == nil {
+		return nil
+	}
+	return c.Configuration
 }
 
 func (c *ConnectionPropertiesOptions) GetCustomScripts() ConnectionCustomScripts {
@@ -2042,6 +2978,13 @@ func (c *ConnectionPropertiesOptions) GetAPIEnableUsers() bool {
 		return false
 	}
 	return *c.APIEnableUsers
+}
+
+func (c *ConnectionPropertiesOptions) GetAPIEnableGroups() bool {
+	if c == nil || c.APIEnableGroups == nil {
+		return false
+	}
+	return *c.APIEnableGroups
 }
 
 func (c *ConnectionPropertiesOptions) GetBasicProfile() bool {
@@ -2128,7 +3071,52 @@ func (c *ConnectionPropertiesOptions) GetFederatedConnectionsAccessTokens() Conn
 	return *c.FederatedConnectionsAccessTokens
 }
 
+func (c *ConnectionPropertiesOptions) GetPasswordOptions() ConnectionPasswordOptions {
+	if c == nil || c.PasswordOptions == nil {
+		return ConnectionPasswordOptions{}
+	}
+	return *c.PasswordOptions
+}
+
+func (c *ConnectionPropertiesOptions) GetAssertionDecryptionSettings() ConnectionAssertionDecryptionSettings {
+	if c == nil || c.AssertionDecryptionSettings == nil {
+		return ConnectionAssertionDecryptionSettings{}
+	}
+	return *c.AssertionDecryptionSettings
+}
+
+func (c *ConnectionPropertiesOptions) GetIDTokenSignedResponseAlgs() ConnectionIDTokenSignedResponseAlgs {
+	if c == nil || c.IDTokenSignedResponseAlgs == nil {
+		return nil
+	}
+	return *c.IDTokenSignedResponseAlgs
+}
+
+func (c *ConnectionPropertiesOptions) GetTokenEndpointAuthMethod() ConnectionTokenEndpointAuthMethodEnum {
+	if c == nil || c.TokenEndpointAuthMethod == nil {
+		return ""
+	}
+	return *c.TokenEndpointAuthMethod
+}
+
+func (c *ConnectionPropertiesOptions) GetTokenEndpointAuthSigningAlg() ConnectionTokenEndpointAuthSigningAlgEnum {
+	if c == nil || c.TokenEndpointAuthSigningAlg == nil {
+		return ""
+	}
+	return *c.TokenEndpointAuthSigningAlg
+}
+
+func (c *ConnectionPropertiesOptions) GetTokenEndpointJwtcaAudFormat() ConnectionTokenEndpointJwtcaAudFormatEnumOidc {
+	if c == nil || c.TokenEndpointJwtcaAudFormat == nil {
+		return ""
+	}
+	return *c.TokenEndpointJwtcaAudFormat
+}
+
 func (c *ConnectionPropertiesOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2186,6 +3174,13 @@ func (c *ConnectionPropertiesOptions) SetEnabledDatabaseCustomization(enabledDat
 func (c *ConnectionPropertiesOptions) SetImportMode(importMode *bool) {
 	c.ImportMode = importMode
 	c.require(connectionPropertiesOptionsFieldImportMode)
+}
+
+// SetConfiguration sets the Configuration field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPropertiesOptions) SetConfiguration(configuration map[string]*string) {
+	c.Configuration = configuration
+	c.require(connectionPropertiesOptionsFieldConfiguration)
 }
 
 // SetCustomScripts sets the CustomScripts field and marks it as non-optional;
@@ -2249,6 +3244,13 @@ func (c *ConnectionPropertiesOptions) SetPasswordDictionary(passwordDictionary *
 func (c *ConnectionPropertiesOptions) SetAPIEnableUsers(apiEnableUsers *bool) {
 	c.APIEnableUsers = apiEnableUsers
 	c.require(connectionPropertiesOptionsFieldAPIEnableUsers)
+}
+
+// SetAPIEnableGroups sets the APIEnableGroups field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPropertiesOptions) SetAPIEnableGroups(apiEnableGroups *bool) {
+	c.APIEnableGroups = apiEnableGroups
+	c.require(connectionPropertiesOptionsFieldAPIEnableGroups)
 }
 
 // SetBasicProfile sets the BasicProfile field and marks it as non-optional;
@@ -2335,6 +3337,48 @@ func (c *ConnectionPropertiesOptions) SetFederatedConnectionsAccessTokens(federa
 	c.require(connectionPropertiesOptionsFieldFederatedConnectionsAccessTokens)
 }
 
+// SetPasswordOptions sets the PasswordOptions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPropertiesOptions) SetPasswordOptions(passwordOptions *ConnectionPasswordOptions) {
+	c.PasswordOptions = passwordOptions
+	c.require(connectionPropertiesOptionsFieldPasswordOptions)
+}
+
+// SetAssertionDecryptionSettings sets the AssertionDecryptionSettings field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPropertiesOptions) SetAssertionDecryptionSettings(assertionDecryptionSettings *ConnectionAssertionDecryptionSettings) {
+	c.AssertionDecryptionSettings = assertionDecryptionSettings
+	c.require(connectionPropertiesOptionsFieldAssertionDecryptionSettings)
+}
+
+// SetIDTokenSignedResponseAlgs sets the IDTokenSignedResponseAlgs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPropertiesOptions) SetIDTokenSignedResponseAlgs(idTokenSignedResponseAlgs *ConnectionIDTokenSignedResponseAlgs) {
+	c.IDTokenSignedResponseAlgs = idTokenSignedResponseAlgs
+	c.require(connectionPropertiesOptionsFieldIDTokenSignedResponseAlgs)
+}
+
+// SetTokenEndpointAuthMethod sets the TokenEndpointAuthMethod field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPropertiesOptions) SetTokenEndpointAuthMethod(tokenEndpointAuthMethod *ConnectionTokenEndpointAuthMethodEnum) {
+	c.TokenEndpointAuthMethod = tokenEndpointAuthMethod
+	c.require(connectionPropertiesOptionsFieldTokenEndpointAuthMethod)
+}
+
+// SetTokenEndpointAuthSigningAlg sets the TokenEndpointAuthSigningAlg field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPropertiesOptions) SetTokenEndpointAuthSigningAlg(tokenEndpointAuthSigningAlg *ConnectionTokenEndpointAuthSigningAlgEnum) {
+	c.TokenEndpointAuthSigningAlg = tokenEndpointAuthSigningAlg
+	c.require(connectionPropertiesOptionsFieldTokenEndpointAuthSigningAlg)
+}
+
+// SetTokenEndpointJwtcaAudFormat sets the TokenEndpointJwtcaAudFormat field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ConnectionPropertiesOptions) SetTokenEndpointJwtcaAudFormat(tokenEndpointJwtcaAudFormat *ConnectionTokenEndpointJwtcaAudFormatEnumOidc) {
+	c.TokenEndpointJwtcaAudFormat = tokenEndpointJwtcaAudFormat
+	c.require(connectionPropertiesOptionsFieldTokenEndpointJwtcaAudFormat)
+}
+
 func (c *ConnectionPropertiesOptions) UnmarshalJSON(data []byte) error {
 	type embed ConnectionPropertiesOptions
 	var unmarshaler = struct {
@@ -2367,6 +3411,9 @@ func (c *ConnectionPropertiesOptions) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionPropertiesOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2401,6 +3448,113 @@ func NewConnectionSetUserRootAttributesEnumFromString(s string) (ConnectionSetUs
 }
 
 func (c ConnectionSetUserRootAttributesEnum) Ptr() *ConnectionSetUserRootAttributesEnum {
+	return &c
+}
+
+// Specifies the signup behavior for password authentication
+type ConnectionSignupBehaviorEnum string
+
+const (
+	ConnectionSignupBehaviorEnumAllow ConnectionSignupBehaviorEnum = "allow"
+	ConnectionSignupBehaviorEnumBlock ConnectionSignupBehaviorEnum = "block"
+)
+
+func NewConnectionSignupBehaviorEnumFromString(s string) (ConnectionSignupBehaviorEnum, error) {
+	switch s {
+	case "allow":
+		return ConnectionSignupBehaviorEnumAllow, nil
+	case "block":
+		return ConnectionSignupBehaviorEnumBlock, nil
+	}
+	var t ConnectionSignupBehaviorEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ConnectionSignupBehaviorEnum) Ptr() *ConnectionSignupBehaviorEnum {
+	return &c
+}
+
+// Authentication method used at the identity provider's token endpoint. 'client_secret_post' sends credentials in the request body; 'private_key_jwt' uses a signed JWT assertion for enhanced security.
+type ConnectionTokenEndpointAuthMethodEnum string
+
+const (
+	ConnectionTokenEndpointAuthMethodEnumClientSecretPost ConnectionTokenEndpointAuthMethodEnum = "client_secret_post"
+	ConnectionTokenEndpointAuthMethodEnumPrivateKeyJwt    ConnectionTokenEndpointAuthMethodEnum = "private_key_jwt"
+)
+
+func NewConnectionTokenEndpointAuthMethodEnumFromString(s string) (ConnectionTokenEndpointAuthMethodEnum, error) {
+	switch s {
+	case "client_secret_post":
+		return ConnectionTokenEndpointAuthMethodEnumClientSecretPost, nil
+	case "private_key_jwt":
+		return ConnectionTokenEndpointAuthMethodEnumPrivateKeyJwt, nil
+	}
+	var t ConnectionTokenEndpointAuthMethodEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ConnectionTokenEndpointAuthMethodEnum) Ptr() *ConnectionTokenEndpointAuthMethodEnum {
+	return &c
+}
+
+// Algorithm used to sign client_assertions.
+type ConnectionTokenEndpointAuthSigningAlgEnum string
+
+const (
+	ConnectionTokenEndpointAuthSigningAlgEnumEs256 ConnectionTokenEndpointAuthSigningAlgEnum = "ES256"
+	ConnectionTokenEndpointAuthSigningAlgEnumEs384 ConnectionTokenEndpointAuthSigningAlgEnum = "ES384"
+	ConnectionTokenEndpointAuthSigningAlgEnumPs256 ConnectionTokenEndpointAuthSigningAlgEnum = "PS256"
+	ConnectionTokenEndpointAuthSigningAlgEnumPs384 ConnectionTokenEndpointAuthSigningAlgEnum = "PS384"
+	ConnectionTokenEndpointAuthSigningAlgEnumRs256 ConnectionTokenEndpointAuthSigningAlgEnum = "RS256"
+	ConnectionTokenEndpointAuthSigningAlgEnumRs384 ConnectionTokenEndpointAuthSigningAlgEnum = "RS384"
+	ConnectionTokenEndpointAuthSigningAlgEnumRs512 ConnectionTokenEndpointAuthSigningAlgEnum = "RS512"
+)
+
+func NewConnectionTokenEndpointAuthSigningAlgEnumFromString(s string) (ConnectionTokenEndpointAuthSigningAlgEnum, error) {
+	switch s {
+	case "ES256":
+		return ConnectionTokenEndpointAuthSigningAlgEnumEs256, nil
+	case "ES384":
+		return ConnectionTokenEndpointAuthSigningAlgEnumEs384, nil
+	case "PS256":
+		return ConnectionTokenEndpointAuthSigningAlgEnumPs256, nil
+	case "PS384":
+		return ConnectionTokenEndpointAuthSigningAlgEnumPs384, nil
+	case "RS256":
+		return ConnectionTokenEndpointAuthSigningAlgEnumRs256, nil
+	case "RS384":
+		return ConnectionTokenEndpointAuthSigningAlgEnumRs384, nil
+	case "RS512":
+		return ConnectionTokenEndpointAuthSigningAlgEnumRs512, nil
+	}
+	var t ConnectionTokenEndpointAuthSigningAlgEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ConnectionTokenEndpointAuthSigningAlgEnum) Ptr() *ConnectionTokenEndpointAuthSigningAlgEnum {
+	return &c
+}
+
+// Specifies the format of the aud (audience) claim included in the JWT used for client authentication at the token endpoint. Accepted values are: 'issuer' (the aud claim is set to the OIDC issuer URL) or 'token_endpoint' (the aud claim is set to the token endpoint URL).
+type ConnectionTokenEndpointJwtcaAudFormatEnumOidc string
+
+const (
+	ConnectionTokenEndpointJwtcaAudFormatEnumOidcIssuer        ConnectionTokenEndpointJwtcaAudFormatEnumOidc = "issuer"
+	ConnectionTokenEndpointJwtcaAudFormatEnumOidcTokenEndpoint ConnectionTokenEndpointJwtcaAudFormatEnumOidc = "token_endpoint"
+)
+
+func NewConnectionTokenEndpointJwtcaAudFormatEnumOidcFromString(s string) (ConnectionTokenEndpointJwtcaAudFormatEnumOidc, error) {
+	switch s {
+	case "issuer":
+		return ConnectionTokenEndpointJwtcaAudFormatEnumOidcIssuer, nil
+	case "token_endpoint":
+		return ConnectionTokenEndpointJwtcaAudFormatEnumOidcTokenEndpoint, nil
+	}
+	var t ConnectionTokenEndpointJwtcaAudFormatEnumOidc
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ConnectionTokenEndpointJwtcaAudFormatEnumOidc) Ptr() *ConnectionTokenEndpointJwtcaAudFormatEnumOidc {
 	return &c
 }
 
@@ -2488,6 +3642,9 @@ func (c *ConnectionUpstreamAlias) GetAlias() ConnectionUpstreamAliasEnum {
 }
 
 func (c *ConnectionUpstreamAlias) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -2533,6 +3690,9 @@ func (c *ConnectionUpstreamAlias) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionUpstreamAlias) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2621,6 +3781,9 @@ func (c *ConnectionUpstreamValue) GetValue() string {
 }
 
 func (c *ConnectionUpstreamValue) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -2666,6 +3829,9 @@ func (c *ConnectionUpstreamValue) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionUpstreamValue) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2708,6 +3874,9 @@ func (c *ConnectionUsernameValidationOptions) GetMax() int {
 }
 
 func (c *ConnectionUsernameValidationOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -2760,6 +3929,9 @@ func (c *ConnectionUsernameValidationOptions) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionUsernameValidationOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2794,6 +3966,9 @@ func (c *ConnectionValidationOptions) GetUsername() ConnectionUsernameValidation
 }
 
 func (c *ConnectionValidationOptions) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -2839,6 +4014,9 @@ func (c *ConnectionValidationOptions) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ConnectionValidationOptions) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2979,6 +4157,9 @@ func (c *CreateConnectionResponseContent) GetConnectedAccounts() ConnectionConne
 }
 
 func (c *CreateConnectionResponseContent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -3101,6 +4282,9 @@ func (c *CreateConnectionResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CreateConnectionResponseContent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -3196,6 +4380,9 @@ func (e *EmailAttribute) GetSignup() SignupVerified {
 }
 
 func (e *EmailAttribute) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -3269,6 +4456,9 @@ func (e *EmailAttribute) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EmailAttribute) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -3409,6 +4599,9 @@ func (g *GetConnectionResponseContent) GetConnectedAccounts() ConnectionConnecte
 }
 
 func (g *GetConnectionResponseContent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
 	return g.extraProperties
 }
 
@@ -3531,6 +4724,9 @@ func (g *GetConnectionResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetConnectionResponseContent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
@@ -3574,6 +4770,9 @@ func (l *ListConnectionsCheckpointPaginatedResponseContent) GetConnections() []*
 }
 
 func (l *ListConnectionsCheckpointPaginatedResponseContent) GetExtraProperties() map[string]interface{} {
+	if l == nil {
+		return nil
+	}
 	return l.extraProperties
 }
 
@@ -3626,6 +4825,9 @@ func (l *ListConnectionsCheckpointPaginatedResponseContent) MarshalJSON() ([]byt
 }
 
 func (l *ListConnectionsCheckpointPaginatedResponseContent) String() string {
+	if l == nil {
+		return "<nil>"
+	}
 	if len(l.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
 			return value
@@ -3635,6 +4837,149 @@ func (l *ListConnectionsCheckpointPaginatedResponseContent) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", l)
+}
+
+type PasswordCharacterTypeEnum string
+
+const (
+	PasswordCharacterTypeEnumUppercase PasswordCharacterTypeEnum = "uppercase"
+	PasswordCharacterTypeEnumLowercase PasswordCharacterTypeEnum = "lowercase"
+	PasswordCharacterTypeEnumNumber    PasswordCharacterTypeEnum = "number"
+	PasswordCharacterTypeEnumSpecial   PasswordCharacterTypeEnum = "special"
+)
+
+func NewPasswordCharacterTypeEnumFromString(s string) (PasswordCharacterTypeEnum, error) {
+	switch s {
+	case "uppercase":
+		return PasswordCharacterTypeEnumUppercase, nil
+	case "lowercase":
+		return PasswordCharacterTypeEnumLowercase, nil
+	case "number":
+		return PasswordCharacterTypeEnumNumber, nil
+	case "special":
+		return PasswordCharacterTypeEnumSpecial, nil
+	}
+	var t PasswordCharacterTypeEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (p PasswordCharacterTypeEnum) Ptr() *PasswordCharacterTypeEnum {
+	return &p
+}
+
+// When enabled, passwords must contain at least 3 out of 4 character types. Can only be enabled when all 4 character types are specified
+type PasswordCharacterTypeRulePolicyEnum string
+
+const (
+	PasswordCharacterTypeRulePolicyEnumAll         PasswordCharacterTypeRulePolicyEnum = "all"
+	PasswordCharacterTypeRulePolicyEnumThreeOfFour PasswordCharacterTypeRulePolicyEnum = "three_of_four"
+)
+
+func NewPasswordCharacterTypeRulePolicyEnumFromString(s string) (PasswordCharacterTypeRulePolicyEnum, error) {
+	switch s {
+	case "all":
+		return PasswordCharacterTypeRulePolicyEnumAll, nil
+	case "three_of_four":
+		return PasswordCharacterTypeRulePolicyEnumThreeOfFour, nil
+	}
+	var t PasswordCharacterTypeRulePolicyEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (p PasswordCharacterTypeRulePolicyEnum) Ptr() *PasswordCharacterTypeRulePolicyEnum {
+	return &p
+}
+
+// Default dictionary to use for password validation. Options: "en_10k" (10,000 common words) or "en_100k" (100,000 common words)
+type PasswordDefaultDictionariesEnum string
+
+const (
+	PasswordDefaultDictionariesEnumEn10K  PasswordDefaultDictionariesEnum = "en_10k"
+	PasswordDefaultDictionariesEnumEn100K PasswordDefaultDictionariesEnum = "en_100k"
+)
+
+func NewPasswordDefaultDictionariesEnumFromString(s string) (PasswordDefaultDictionariesEnum, error) {
+	switch s {
+	case "en_10k":
+		return PasswordDefaultDictionariesEnumEn10K, nil
+	case "en_100k":
+		return PasswordDefaultDictionariesEnumEn100K, nil
+	}
+	var t PasswordDefaultDictionariesEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (p PasswordDefaultDictionariesEnum) Ptr() *PasswordDefaultDictionariesEnum {
+	return &p
+}
+
+// Controls whether identical consecutive characters are allowed in passwords
+type PasswordIdenticalCharactersPolicyEnum string
+
+const (
+	PasswordIdenticalCharactersPolicyEnumAllow PasswordIdenticalCharactersPolicyEnum = "allow"
+	PasswordIdenticalCharactersPolicyEnumBlock PasswordIdenticalCharactersPolicyEnum = "block"
+)
+
+func NewPasswordIdenticalCharactersPolicyEnumFromString(s string) (PasswordIdenticalCharactersPolicyEnum, error) {
+	switch s {
+	case "allow":
+		return PasswordIdenticalCharactersPolicyEnumAllow, nil
+	case "block":
+		return PasswordIdenticalCharactersPolicyEnumBlock, nil
+	}
+	var t PasswordIdenticalCharactersPolicyEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (p PasswordIdenticalCharactersPolicyEnum) Ptr() *PasswordIdenticalCharactersPolicyEnum {
+	return &p
+}
+
+// Controls whether passwords that exceed the maximum length are truncated or rejected
+type PasswordMaxLengthExceededPolicyEnum string
+
+const (
+	PasswordMaxLengthExceededPolicyEnumTruncate PasswordMaxLengthExceededPolicyEnum = "truncate"
+	PasswordMaxLengthExceededPolicyEnumError    PasswordMaxLengthExceededPolicyEnum = "error"
+)
+
+func NewPasswordMaxLengthExceededPolicyEnumFromString(s string) (PasswordMaxLengthExceededPolicyEnum, error) {
+	switch s {
+	case "truncate":
+		return PasswordMaxLengthExceededPolicyEnumTruncate, nil
+	case "error":
+		return PasswordMaxLengthExceededPolicyEnumError, nil
+	}
+	var t PasswordMaxLengthExceededPolicyEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (p PasswordMaxLengthExceededPolicyEnum) Ptr() *PasswordMaxLengthExceededPolicyEnum {
+	return &p
+}
+
+// Controls whether sequential characters are allowed in passwords
+type PasswordSequentialCharactersPolicyEnum string
+
+const (
+	PasswordSequentialCharactersPolicyEnumAllow PasswordSequentialCharactersPolicyEnum = "allow"
+	PasswordSequentialCharactersPolicyEnumBlock PasswordSequentialCharactersPolicyEnum = "block"
+)
+
+func NewPasswordSequentialCharactersPolicyEnumFromString(s string) (PasswordSequentialCharactersPolicyEnum, error) {
+	switch s {
+	case "allow":
+		return PasswordSequentialCharactersPolicyEnumAllow, nil
+	case "block":
+		return PasswordSequentialCharactersPolicyEnumBlock, nil
+	}
+	var t PasswordSequentialCharactersPolicyEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (p PasswordSequentialCharactersPolicyEnum) Ptr() *PasswordSequentialCharactersPolicyEnum {
+	return &p
 }
 
 // Configuration for the phone number attribute for users.
@@ -3679,6 +5024,9 @@ func (p *PhoneAttribute) GetSignup() SignupVerified {
 }
 
 func (p *PhoneAttribute) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
 	return p.extraProperties
 }
 
@@ -3738,6 +5086,9 @@ func (p *PhoneAttribute) MarshalJSON() ([]byte, error) {
 }
 
 func (p *PhoneAttribute) String() string {
+	if p == nil {
+		return "<nil>"
+	}
 	if len(p.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
 			return value
@@ -3771,6 +5122,9 @@ func (s *SignupSchema) GetStatus() SignupStatusEnum {
 }
 
 func (s *SignupSchema) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
 	return s.extraProperties
 }
 
@@ -3816,6 +5170,9 @@ func (s *SignupSchema) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SignupSchema) String() string {
+	if s == nil {
+		return "<nil>"
+	}
 	if len(s.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
@@ -3874,6 +5231,9 @@ func (s *SignupVerification) GetActive() bool {
 }
 
 func (s *SignupVerification) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
 	return s.extraProperties
 }
 
@@ -3919,6 +5279,9 @@ func (s *SignupVerification) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SignupVerification) String() string {
+	if s == nil {
+		return "<nil>"
+	}
 	if len(s.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
@@ -3961,6 +5324,9 @@ func (s *SignupVerified) GetVerification() SignupVerification {
 }
 
 func (s *SignupVerified) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
 	return s.extraProperties
 }
 
@@ -4013,6 +5379,9 @@ func (s *SignupVerified) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SignupVerified) String() string {
+	if s == nil {
+		return "<nil>"
+	}
 	if len(s.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
@@ -4033,27 +5402,35 @@ var (
 	updateConnectionOptionsFieldEnableScriptContext              = big.NewInt(1 << 4)
 	updateConnectionOptionsFieldEnabledDatabaseCustomization     = big.NewInt(1 << 5)
 	updateConnectionOptionsFieldImportMode                       = big.NewInt(1 << 6)
-	updateConnectionOptionsFieldCustomScripts                    = big.NewInt(1 << 7)
-	updateConnectionOptionsFieldAuthenticationMethods            = big.NewInt(1 << 8)
-	updateConnectionOptionsFieldPasskeyOptions                   = big.NewInt(1 << 9)
-	updateConnectionOptionsFieldPasswordPolicy                   = big.NewInt(1 << 10)
-	updateConnectionOptionsFieldPasswordComplexityOptions        = big.NewInt(1 << 11)
-	updateConnectionOptionsFieldPasswordHistory                  = big.NewInt(1 << 12)
-	updateConnectionOptionsFieldPasswordNoPersonalInfo           = big.NewInt(1 << 13)
-	updateConnectionOptionsFieldPasswordDictionary               = big.NewInt(1 << 14)
-	updateConnectionOptionsFieldAPIEnableUsers                   = big.NewInt(1 << 15)
-	updateConnectionOptionsFieldBasicProfile                     = big.NewInt(1 << 16)
-	updateConnectionOptionsFieldExtAdmin                         = big.NewInt(1 << 17)
-	updateConnectionOptionsFieldExtIsSuspended                   = big.NewInt(1 << 18)
-	updateConnectionOptionsFieldExtAgreedTerms                   = big.NewInt(1 << 19)
-	updateConnectionOptionsFieldExtGroups                        = big.NewInt(1 << 20)
-	updateConnectionOptionsFieldExtAssignedPlans                 = big.NewInt(1 << 21)
-	updateConnectionOptionsFieldExtProfile                       = big.NewInt(1 << 22)
-	updateConnectionOptionsFieldDisableSelfServiceChangePassword = big.NewInt(1 << 23)
-	updateConnectionOptionsFieldUpstreamParams                   = big.NewInt(1 << 24)
-	updateConnectionOptionsFieldSetUserRootAttributes            = big.NewInt(1 << 25)
-	updateConnectionOptionsFieldGatewayAuthentication            = big.NewInt(1 << 26)
-	updateConnectionOptionsFieldFederatedConnectionsAccessTokens = big.NewInt(1 << 27)
+	updateConnectionOptionsFieldConfiguration                    = big.NewInt(1 << 7)
+	updateConnectionOptionsFieldCustomScripts                    = big.NewInt(1 << 8)
+	updateConnectionOptionsFieldAuthenticationMethods            = big.NewInt(1 << 9)
+	updateConnectionOptionsFieldPasskeyOptions                   = big.NewInt(1 << 10)
+	updateConnectionOptionsFieldPasswordPolicy                   = big.NewInt(1 << 11)
+	updateConnectionOptionsFieldPasswordComplexityOptions        = big.NewInt(1 << 12)
+	updateConnectionOptionsFieldPasswordHistory                  = big.NewInt(1 << 13)
+	updateConnectionOptionsFieldPasswordNoPersonalInfo           = big.NewInt(1 << 14)
+	updateConnectionOptionsFieldPasswordDictionary               = big.NewInt(1 << 15)
+	updateConnectionOptionsFieldAPIEnableUsers                   = big.NewInt(1 << 16)
+	updateConnectionOptionsFieldAPIEnableGroups                  = big.NewInt(1 << 17)
+	updateConnectionOptionsFieldBasicProfile                     = big.NewInt(1 << 18)
+	updateConnectionOptionsFieldExtAdmin                         = big.NewInt(1 << 19)
+	updateConnectionOptionsFieldExtIsSuspended                   = big.NewInt(1 << 20)
+	updateConnectionOptionsFieldExtAgreedTerms                   = big.NewInt(1 << 21)
+	updateConnectionOptionsFieldExtGroups                        = big.NewInt(1 << 22)
+	updateConnectionOptionsFieldExtAssignedPlans                 = big.NewInt(1 << 23)
+	updateConnectionOptionsFieldExtProfile                       = big.NewInt(1 << 24)
+	updateConnectionOptionsFieldDisableSelfServiceChangePassword = big.NewInt(1 << 25)
+	updateConnectionOptionsFieldUpstreamParams                   = big.NewInt(1 << 26)
+	updateConnectionOptionsFieldSetUserRootAttributes            = big.NewInt(1 << 27)
+	updateConnectionOptionsFieldGatewayAuthentication            = big.NewInt(1 << 28)
+	updateConnectionOptionsFieldFederatedConnectionsAccessTokens = big.NewInt(1 << 29)
+	updateConnectionOptionsFieldPasswordOptions                  = big.NewInt(1 << 30)
+	updateConnectionOptionsFieldAssertionDecryptionSettings      = big.NewInt(1 << 31)
+	updateConnectionOptionsFieldIDTokenSignedResponseAlgs        = big.NewInt(1 << 32)
+	updateConnectionOptionsFieldTokenEndpointAuthMethod          = big.NewInt(1 << 33)
+	updateConnectionOptionsFieldTokenEndpointAuthSigningAlg      = big.NewInt(1 << 34)
+	updateConnectionOptionsFieldTokenEndpointJwtcaAudFormat      = big.NewInt(1 << 35)
 )
 
 type UpdateConnectionOptions struct {
@@ -4068,28 +5445,37 @@ type UpdateConnectionOptions struct {
 	// Set to true to use a legacy user store
 	EnabledDatabaseCustomization *bool `json:"enabledDatabaseCustomization,omitempty" url:"enabledDatabaseCustomization,omitempty"`
 	// Enable this if you have a legacy user store and you want to gradually migrate those users to the Auth0 user store
-	ImportMode                       *bool                                       `json:"import_mode,omitempty" url:"import_mode,omitempty"`
-	CustomScripts                    *ConnectionCustomScripts                    `json:"customScripts,omitempty" url:"customScripts,omitempty"`
-	AuthenticationMethods            *ConnectionAuthenticationMethods            `json:"authentication_methods,omitempty" url:"authentication_methods,omitempty"`
-	PasskeyOptions                   *ConnectionPasskeyOptions                   `json:"passkey_options,omitempty" url:"passkey_options,omitempty"`
-	PasswordPolicy                   *ConnectionPasswordPolicyEnum               `json:"passwordPolicy,omitempty" url:"passwordPolicy,omitempty"`
-	PasswordComplexityOptions        *ConnectionPasswordComplexityOptions        `json:"password_complexity_options,omitempty" url:"password_complexity_options,omitempty"`
-	PasswordHistory                  *ConnectionPasswordHistoryOptions           `json:"password_history,omitempty" url:"password_history,omitempty"`
-	PasswordNoPersonalInfo           *ConnectionPasswordNoPersonalInfoOptions    `json:"password_no_personal_info,omitempty" url:"password_no_personal_info,omitempty"`
-	PasswordDictionary               *ConnectionPasswordDictionaryOptions        `json:"password_dictionary,omitempty" url:"password_dictionary,omitempty"`
-	APIEnableUsers                   *bool                                       `json:"api_enable_users,omitempty" url:"api_enable_users,omitempty"`
-	BasicProfile                     *bool                                       `json:"basic_profile,omitempty" url:"basic_profile,omitempty"`
-	ExtAdmin                         *bool                                       `json:"ext_admin,omitempty" url:"ext_admin,omitempty"`
-	ExtIsSuspended                   *bool                                       `json:"ext_is_suspended,omitempty" url:"ext_is_suspended,omitempty"`
-	ExtAgreedTerms                   *bool                                       `json:"ext_agreed_terms,omitempty" url:"ext_agreed_terms,omitempty"`
-	ExtGroups                        *bool                                       `json:"ext_groups,omitempty" url:"ext_groups,omitempty"`
-	ExtAssignedPlans                 *bool                                       `json:"ext_assigned_plans,omitempty" url:"ext_assigned_plans,omitempty"`
-	ExtProfile                       *bool                                       `json:"ext_profile,omitempty" url:"ext_profile,omitempty"`
-	DisableSelfServiceChangePassword *bool                                       `json:"disable_self_service_change_password,omitempty" url:"disable_self_service_change_password,omitempty"`
-	UpstreamParams                   *ConnectionUpstreamParams                   `json:"upstream_params,omitempty" url:"upstream_params,omitempty"`
-	SetUserRootAttributes            *ConnectionSetUserRootAttributesEnum        `json:"set_user_root_attributes,omitempty" url:"set_user_root_attributes,omitempty"`
-	GatewayAuthentication            *ConnectionGatewayAuthentication            `json:"gateway_authentication,omitempty" url:"gateway_authentication,omitempty"`
-	FederatedConnectionsAccessTokens *ConnectionFederatedConnectionsAccessTokens `json:"federated_connections_access_tokens,omitempty" url:"federated_connections_access_tokens,omitempty"`
+	ImportMode *bool `json:"import_mode,omitempty" url:"import_mode,omitempty"`
+	// Stores encrypted string only configurations for connections
+	Configuration                    map[string]*string                             `json:"configuration,omitempty" url:"configuration,omitempty"`
+	CustomScripts                    *ConnectionCustomScripts                       `json:"customScripts,omitempty" url:"customScripts,omitempty"`
+	AuthenticationMethods            *ConnectionAuthenticationMethods               `json:"authentication_methods,omitempty" url:"authentication_methods,omitempty"`
+	PasskeyOptions                   *ConnectionPasskeyOptions                      `json:"passkey_options,omitempty" url:"passkey_options,omitempty"`
+	PasswordPolicy                   *ConnectionPasswordPolicyEnum                  `json:"passwordPolicy,omitempty" url:"passwordPolicy,omitempty"`
+	PasswordComplexityOptions        *ConnectionPasswordComplexityOptions           `json:"password_complexity_options,omitempty" url:"password_complexity_options,omitempty"`
+	PasswordHistory                  *ConnectionPasswordHistoryOptions              `json:"password_history,omitempty" url:"password_history,omitempty"`
+	PasswordNoPersonalInfo           *ConnectionPasswordNoPersonalInfoOptions       `json:"password_no_personal_info,omitempty" url:"password_no_personal_info,omitempty"`
+	PasswordDictionary               *ConnectionPasswordDictionaryOptions           `json:"password_dictionary,omitempty" url:"password_dictionary,omitempty"`
+	APIEnableUsers                   *bool                                          `json:"api_enable_users,omitempty" url:"api_enable_users,omitempty"`
+	APIEnableGroups                  *bool                                          `json:"api_enable_groups,omitempty" url:"api_enable_groups,omitempty"`
+	BasicProfile                     *bool                                          `json:"basic_profile,omitempty" url:"basic_profile,omitempty"`
+	ExtAdmin                         *bool                                          `json:"ext_admin,omitempty" url:"ext_admin,omitempty"`
+	ExtIsSuspended                   *bool                                          `json:"ext_is_suspended,omitempty" url:"ext_is_suspended,omitempty"`
+	ExtAgreedTerms                   *bool                                          `json:"ext_agreed_terms,omitempty" url:"ext_agreed_terms,omitempty"`
+	ExtGroups                        *bool                                          `json:"ext_groups,omitempty" url:"ext_groups,omitempty"`
+	ExtAssignedPlans                 *bool                                          `json:"ext_assigned_plans,omitempty" url:"ext_assigned_plans,omitempty"`
+	ExtProfile                       *bool                                          `json:"ext_profile,omitempty" url:"ext_profile,omitempty"`
+	DisableSelfServiceChangePassword *bool                                          `json:"disable_self_service_change_password,omitempty" url:"disable_self_service_change_password,omitempty"`
+	UpstreamParams                   *ConnectionUpstreamParams                      `json:"upstream_params,omitempty" url:"upstream_params,omitempty"`
+	SetUserRootAttributes            *ConnectionSetUserRootAttributesEnum           `json:"set_user_root_attributes,omitempty" url:"set_user_root_attributes,omitempty"`
+	GatewayAuthentication            *ConnectionGatewayAuthentication               `json:"gateway_authentication,omitempty" url:"gateway_authentication,omitempty"`
+	FederatedConnectionsAccessTokens *ConnectionFederatedConnectionsAccessTokens    `json:"federated_connections_access_tokens,omitempty" url:"federated_connections_access_tokens,omitempty"`
+	PasswordOptions                  *ConnectionPasswordOptions                     `json:"password_options,omitempty" url:"password_options,omitempty"`
+	AssertionDecryptionSettings      *ConnectionAssertionDecryptionSettings         `json:"assertion_decryption_settings,omitempty" url:"assertion_decryption_settings,omitempty"`
+	IDTokenSignedResponseAlgs        *ConnectionIDTokenSignedResponseAlgs           `json:"id_token_signed_response_algs,omitempty" url:"id_token_signed_response_algs,omitempty"`
+	TokenEndpointAuthMethod          *ConnectionTokenEndpointAuthMethodEnum         `json:"token_endpoint_auth_method,omitempty" url:"token_endpoint_auth_method,omitempty"`
+	TokenEndpointAuthSigningAlg      *ConnectionTokenEndpointAuthSigningAlgEnum     `json:"token_endpoint_auth_signing_alg,omitempty" url:"token_endpoint_auth_signing_alg,omitempty"`
+	TokenEndpointJwtcaAudFormat      *ConnectionTokenEndpointJwtcaAudFormatEnumOidc `json:"token_endpoint_jwtca_aud_format,omitempty" url:"token_endpoint_jwtca_aud_format,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -4146,6 +5532,13 @@ func (u *UpdateConnectionOptions) GetImportMode() bool {
 		return false
 	}
 	return *u.ImportMode
+}
+
+func (u *UpdateConnectionOptions) GetConfiguration() map[string]*string {
+	if u == nil || u.Configuration == nil {
+		return nil
+	}
+	return u.Configuration
 }
 
 func (u *UpdateConnectionOptions) GetCustomScripts() ConnectionCustomScripts {
@@ -4209,6 +5602,13 @@ func (u *UpdateConnectionOptions) GetAPIEnableUsers() bool {
 		return false
 	}
 	return *u.APIEnableUsers
+}
+
+func (u *UpdateConnectionOptions) GetAPIEnableGroups() bool {
+	if u == nil || u.APIEnableGroups == nil {
+		return false
+	}
+	return *u.APIEnableGroups
 }
 
 func (u *UpdateConnectionOptions) GetBasicProfile() bool {
@@ -4295,7 +5695,52 @@ func (u *UpdateConnectionOptions) GetFederatedConnectionsAccessTokens() Connecti
 	return *u.FederatedConnectionsAccessTokens
 }
 
+func (u *UpdateConnectionOptions) GetPasswordOptions() ConnectionPasswordOptions {
+	if u == nil || u.PasswordOptions == nil {
+		return ConnectionPasswordOptions{}
+	}
+	return *u.PasswordOptions
+}
+
+func (u *UpdateConnectionOptions) GetAssertionDecryptionSettings() ConnectionAssertionDecryptionSettings {
+	if u == nil || u.AssertionDecryptionSettings == nil {
+		return ConnectionAssertionDecryptionSettings{}
+	}
+	return *u.AssertionDecryptionSettings
+}
+
+func (u *UpdateConnectionOptions) GetIDTokenSignedResponseAlgs() ConnectionIDTokenSignedResponseAlgs {
+	if u == nil || u.IDTokenSignedResponseAlgs == nil {
+		return nil
+	}
+	return *u.IDTokenSignedResponseAlgs
+}
+
+func (u *UpdateConnectionOptions) GetTokenEndpointAuthMethod() ConnectionTokenEndpointAuthMethodEnum {
+	if u == nil || u.TokenEndpointAuthMethod == nil {
+		return ""
+	}
+	return *u.TokenEndpointAuthMethod
+}
+
+func (u *UpdateConnectionOptions) GetTokenEndpointAuthSigningAlg() ConnectionTokenEndpointAuthSigningAlgEnum {
+	if u == nil || u.TokenEndpointAuthSigningAlg == nil {
+		return ""
+	}
+	return *u.TokenEndpointAuthSigningAlg
+}
+
+func (u *UpdateConnectionOptions) GetTokenEndpointJwtcaAudFormat() ConnectionTokenEndpointJwtcaAudFormatEnumOidc {
+	if u == nil || u.TokenEndpointJwtcaAudFormat == nil {
+		return ""
+	}
+	return *u.TokenEndpointJwtcaAudFormat
+}
+
 func (u *UpdateConnectionOptions) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.ExtraProperties
 }
 
@@ -4353,6 +5798,13 @@ func (u *UpdateConnectionOptions) SetEnabledDatabaseCustomization(enabledDatabas
 func (u *UpdateConnectionOptions) SetImportMode(importMode *bool) {
 	u.ImportMode = importMode
 	u.require(updateConnectionOptionsFieldImportMode)
+}
+
+// SetConfiguration sets the Configuration field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateConnectionOptions) SetConfiguration(configuration map[string]*string) {
+	u.Configuration = configuration
+	u.require(updateConnectionOptionsFieldConfiguration)
 }
 
 // SetCustomScripts sets the CustomScripts field and marks it as non-optional;
@@ -4416,6 +5868,13 @@ func (u *UpdateConnectionOptions) SetPasswordDictionary(passwordDictionary *Conn
 func (u *UpdateConnectionOptions) SetAPIEnableUsers(apiEnableUsers *bool) {
 	u.APIEnableUsers = apiEnableUsers
 	u.require(updateConnectionOptionsFieldAPIEnableUsers)
+}
+
+// SetAPIEnableGroups sets the APIEnableGroups field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateConnectionOptions) SetAPIEnableGroups(apiEnableGroups *bool) {
+	u.APIEnableGroups = apiEnableGroups
+	u.require(updateConnectionOptionsFieldAPIEnableGroups)
 }
 
 // SetBasicProfile sets the BasicProfile field and marks it as non-optional;
@@ -4502,6 +5961,48 @@ func (u *UpdateConnectionOptions) SetFederatedConnectionsAccessTokens(federatedC
 	u.require(updateConnectionOptionsFieldFederatedConnectionsAccessTokens)
 }
 
+// SetPasswordOptions sets the PasswordOptions field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateConnectionOptions) SetPasswordOptions(passwordOptions *ConnectionPasswordOptions) {
+	u.PasswordOptions = passwordOptions
+	u.require(updateConnectionOptionsFieldPasswordOptions)
+}
+
+// SetAssertionDecryptionSettings sets the AssertionDecryptionSettings field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateConnectionOptions) SetAssertionDecryptionSettings(assertionDecryptionSettings *ConnectionAssertionDecryptionSettings) {
+	u.AssertionDecryptionSettings = assertionDecryptionSettings
+	u.require(updateConnectionOptionsFieldAssertionDecryptionSettings)
+}
+
+// SetIDTokenSignedResponseAlgs sets the IDTokenSignedResponseAlgs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateConnectionOptions) SetIDTokenSignedResponseAlgs(idTokenSignedResponseAlgs *ConnectionIDTokenSignedResponseAlgs) {
+	u.IDTokenSignedResponseAlgs = idTokenSignedResponseAlgs
+	u.require(updateConnectionOptionsFieldIDTokenSignedResponseAlgs)
+}
+
+// SetTokenEndpointAuthMethod sets the TokenEndpointAuthMethod field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateConnectionOptions) SetTokenEndpointAuthMethod(tokenEndpointAuthMethod *ConnectionTokenEndpointAuthMethodEnum) {
+	u.TokenEndpointAuthMethod = tokenEndpointAuthMethod
+	u.require(updateConnectionOptionsFieldTokenEndpointAuthMethod)
+}
+
+// SetTokenEndpointAuthSigningAlg sets the TokenEndpointAuthSigningAlg field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateConnectionOptions) SetTokenEndpointAuthSigningAlg(tokenEndpointAuthSigningAlg *ConnectionTokenEndpointAuthSigningAlgEnum) {
+	u.TokenEndpointAuthSigningAlg = tokenEndpointAuthSigningAlg
+	u.require(updateConnectionOptionsFieldTokenEndpointAuthSigningAlg)
+}
+
+// SetTokenEndpointJwtcaAudFormat sets the TokenEndpointJwtcaAudFormat field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateConnectionOptions) SetTokenEndpointJwtcaAudFormat(tokenEndpointJwtcaAudFormat *ConnectionTokenEndpointJwtcaAudFormatEnumOidc) {
+	u.TokenEndpointJwtcaAudFormat = tokenEndpointJwtcaAudFormat
+	u.require(updateConnectionOptionsFieldTokenEndpointJwtcaAudFormat)
+}
+
 func (u *UpdateConnectionOptions) UnmarshalJSON(data []byte) error {
 	type embed UpdateConnectionOptions
 	var unmarshaler = struct {
@@ -4534,6 +6035,9 @@ func (u *UpdateConnectionOptions) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UpdateConnectionOptions) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
@@ -4674,6 +6178,9 @@ func (u *UpdateConnectionResponseContent) GetConnectedAccounts() ConnectionConne
 }
 
 func (u *UpdateConnectionResponseContent) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.extraProperties
 }
 
@@ -4796,6 +6303,9 @@ func (u *UpdateConnectionResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UpdateConnectionResponseContent) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
@@ -4838,6 +6348,9 @@ func (u *UsernameAllowedTypes) GetPhoneNumber() bool {
 }
 
 func (u *UsernameAllowedTypes) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.extraProperties
 }
 
@@ -4890,6 +6403,9 @@ func (u *UsernameAllowedTypes) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UsernameAllowedTypes) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
@@ -4952,6 +6468,9 @@ func (u *UsernameAttribute) GetValidation() UsernameValidation {
 }
 
 func (u *UsernameAttribute) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.extraProperties
 }
 
@@ -5018,6 +6537,9 @@ func (u *UsernameAttribute) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UsernameAttribute) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
@@ -5071,6 +6593,9 @@ func (u *UsernameValidation) GetAllowedTypes() UsernameAllowedTypes {
 }
 
 func (u *UsernameValidation) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.extraProperties
 }
 
@@ -5130,6 +6655,9 @@ func (u *UsernameValidation) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UsernameValidation) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value

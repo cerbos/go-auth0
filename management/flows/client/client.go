@@ -5,14 +5,15 @@ package client
 import (
 	context "context"
 	fmt "fmt"
+	http "net/http"
+	strconv "strconv"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	core "github.com/auth0/go-auth0/v2/management/core"
 	executions "github.com/auth0/go-auth0/v2/management/flows/executions"
 	client "github.com/auth0/go-auth0/v2/management/flows/vault/client"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
 	option "github.com/auth0/go-auth0/v2/management/option"
-	http "net/http"
-	strconv "strconv"
 )
 
 type Client struct {
@@ -43,7 +44,7 @@ func NewClient(options *core.RequestOptions) *Client {
 
 func (c *Client) List(
 	ctx context.Context,
-	request *management.FlowsListRequest,
+	request *management.ListFlowsRequestParameters,
 	opts ...option.RequestOption,
 ) (*core.Page[*int, *management.FlowSummary, *management.ListFlowsOffsetPaginatedResponseContent], error) {
 	options := core.NewRequestOptions(opts...)

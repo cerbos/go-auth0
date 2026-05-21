@@ -4,6 +4,7 @@ package customtext
 
 import (
 	context "context"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	core "github.com/auth0/go-auth0/v2/management/core"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
@@ -32,7 +33,7 @@ func NewClient(options *core.RequestOptions) *Client {
 	}
 }
 
-// Retrieves text customizations for a given self-service profile, language and Self Service SSO Flow page.
+// Retrieves text customizations for a given self-service profile, language and Self-Service Enterprise Configuration flow page.
 func (c *Client) List(
 	ctx context.Context,
 	// The id of the self-service profile.
@@ -56,7 +57,7 @@ func (c *Client) List(
 	return response.Body, nil
 }
 
-// Updates text customizations for a given self-service profile, language and Self Service SSO Flow page.
+// Updates text customizations for a given self-service profile, language and Self-Service Enterprise Configuration flow page.
 func (c *Client) Set(
 	ctx context.Context,
 	// The id of the self-service profile.

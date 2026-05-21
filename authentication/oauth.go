@@ -26,7 +26,6 @@ func (o *OAuth) LoginWithGrant(ctx context.Context, grantType string, body url.V
 			Nonce:        validationOptions.Nonce,
 			Organization: validationOptions.Organization,
 		})
-
 		if err != nil {
 			return nil, err
 		}
@@ -73,7 +72,6 @@ func (o *OAuth) LoginWithPassword(ctx context.Context, body oauth.LoginWithPassw
 	}
 
 	err = o.authentication.addClientAuthenticationToURLValues(body.ClientAuthentication, data, false)
-
 	if err != nil {
 		return
 	}
@@ -99,7 +97,6 @@ func (o *OAuth) LoginWithAuthCode(ctx context.Context, body oauth.LoginWithAuthC
 	}
 
 	err = o.authentication.addClientAuthenticationToURLValues(body.ClientAuthentication, data, true)
-
 	if err != nil {
 		return
 	}
@@ -127,7 +124,6 @@ func (o *OAuth) LoginWithAuthCodeWithPKCE(ctx context.Context, body oauth.LoginW
 	}
 
 	err = o.authentication.addClientAuthenticationToURLValues(body.ClientAuthentication, data, false)
-
 	if err != nil {
 		return
 	}
@@ -157,12 +153,59 @@ func (o *OAuth) LoginWithClientCredentials(ctx context.Context, body oauth.Login
 	}
 
 	err = o.authentication.addClientAuthenticationToURLValues(body.ClientAuthentication, data, true)
-
 	if err != nil {
 		return
 	}
 
 	t, err = o.LoginWithGrant(ctx, "client_credentials", data, validationOptions, opts...)
+
+	return
+}
+
+// LoginWithCustomTokenExchange performs the Custom Token Exchange grant (RFC 8693).
+//
+// This flow allows applications to exchange an existing external token (for example, a legacy
+// IdP refresh token, a partner identity provider ID token or an auth0 token with a different audience)
+// for Auth0 access, ID, and refresh tokens without requiring the end user to re-authenticate.
+//
+// Each request maps to a Custom Token Exchange Profile configured in the Auth0 tenant. The profile
+// is identified by the SubjectTokenType field and triggers the associated Action that validates the
+// subject token and sets the user.
+//
+// Prerequisites:
+//   - The application must be a first-party, OIDC-conformant client.
+//   - Custom Token Exchange must be enabled on the application.
+//   - A Custom Token Exchange Profile must exist for the given SubjectTokenType.
+//
+// See: https://auth0.com/docs/authenticate/custom-token-exchange
+func (o *OAuth) LoginWithCustomTokenExchange(ctx context.Context, body oauth.LoginWithCustomTokenExchangeRequest, validationOptions oauth.IDTokenValidationOptions, opts ...RequestOption) (t *oauth.TokenSet, err error) {
+	missing := []string{}
+	check(&missing, "SubjectToken", body.SubjectToken != "")
+	check(&missing, "SubjectTokenType", body.SubjectTokenType != "")
+
+	if len(missing) > 0 {
+		return nil, fmt.Errorf("missing required fields: %s", strings.Join(missing, ", "))
+	}
+
+	data := url.Values{
+		"subject_token":      []string{body.SubjectToken},
+		"subject_token_type": []string{body.SubjectTokenType},
+	}
+
+	addIfNotEmpty("audience", body.Audience, data)
+	addIfNotEmpty("organization", body.Organization, data)
+	addIfNotEmpty("scope", body.Scope, data)
+
+	for k, v := range body.ExtraParameters {
+		data.Set(k, v)
+	}
+
+	err = o.authentication.addClientAuthenticationToURLValues(body.ClientAuthentication, data, false)
+	if err != nil {
+		return
+	}
+
+	t, err = o.LoginWithGrant(ctx, "urn:ietf:params:oauth:grant-type:token-exchange", data, validationOptions, opts...)
 
 	return
 }
@@ -180,7 +223,6 @@ func (o *OAuth) RefreshToken(ctx context.Context, body oauth.RefreshTokenRequest
 	}
 
 	err = o.authentication.addClientAuthenticationToURLValues(body.ClientAuthentication, data, false)
-
 	if err != nil {
 		return
 	}
@@ -244,13 +286,11 @@ func (o *OAuth) PushedAuthorization(ctx context.Context, body oauth.PushedAuthor
 	}
 
 	err = o.authentication.addClientAuthenticationToURLValues(body.ClientAuthentication, data, true)
-
 	if err != nil {
 		return nil, err
 	}
 
 	err = o.authentication.Request(ctx, "POST", o.authentication.URI("oauth", "par"), data, &p, opts...)
-
 	if err != nil {
 		return nil, err
 	}

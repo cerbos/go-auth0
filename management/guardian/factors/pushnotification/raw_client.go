@@ -4,11 +4,13 @@ package pushnotification
 
 import (
 	context "context"
+	http "net/http"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	core "github.com/auth0/go-auth0/v2/management/core"
+	factors "github.com/auth0/go-auth0/v2/management/guardian/factors"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
 	option "github.com/auth0/go-auth0/v2/management/option"
-	http "net/http"
 )
 
 type RawClient struct {
@@ -57,7 +59,7 @@ func (r *RawClient) GetApnsProvider(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -100,7 +102,7 @@ func (r *RawClient) SetApnsProvider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -143,7 +145,7 @@ func (r *RawClient) UpdateApnsProvider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -186,7 +188,7 @@ func (r *RawClient) SetFcmProvider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -229,7 +231,7 @@ func (r *RawClient) UpdateFcmProvider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -272,7 +274,7 @@ func (r *RawClient) SetFcmv1Provider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -315,7 +317,7 @@ func (r *RawClient) UpdateFcmv1Provider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -355,7 +357,7 @@ func (r *RawClient) GetSnsProvider(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -398,7 +400,7 @@ func (r *RawClient) SetSnsProvider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -441,7 +443,7 @@ func (r *RawClient) UpdateSnsProvider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -481,7 +483,7 @@ func (r *RawClient) GetSelectedProvider(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -524,7 +526,7 @@ func (r *RawClient) SetProvider(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(factors.ErrorCodes),
 		},
 	)
 	if err != nil {

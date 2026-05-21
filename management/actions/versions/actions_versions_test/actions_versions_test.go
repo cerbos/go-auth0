@@ -3,9 +3,9 @@
 package actions_versions_test
 
 import (
-	"bytes"
+	bytes "bytes"
 	context "context"
-	"encoding/json"
+	json "encoding/json"
 	http "net/http"
 	os "os"
 	testing "testing"
@@ -16,67 +16,77 @@ import (
 	require "github.com/stretchr/testify/require"
 )
 
-// WireMock configuration - expects WireMock to be running via docker compose
-var (
-	WireMockBaseURL = getWireMockBaseURL()
-)
-
-func getWireMockBaseURL() string {
-	if url := os.Getenv("WIREMOCK_URL"); url != "" {
-		return url
+func VerifyRequestCount(
+	t *testing.T,
+	testId string,
+	method string,
+	urlPath string,
+	queryParams map[string]any,
+	expected int,
+) {
+	wiremockURL := os.Getenv("WIREMOCK_URL")
+	if wiremockURL == "" {
+		wiremockURL = "http://localhost:8080"
 	}
-	return "http://localhost:8080"
-}
-
-// setupWireMockStub creates a stub via WireMock's HTTP API
-func setupWireMockStub(t *testing.T, stub map[string]interface{}) {
-	t.Helper()
-
-	body, err := json.Marshal(stub)
+	WiremockAdminURL := wiremockURL + "/__admin"
+	var reqBody bytes.Buffer
+	reqBody.WriteString(`{"method":"`)
+	reqBody.WriteString(method)
+	reqBody.WriteString(`","urlPath":"`)
+	reqBody.WriteString(urlPath)
+	reqBody.WriteString(`","headers":{"X-Test-Id":{"equalTo":"`)
+	reqBody.WriteString(testId)
+	reqBody.WriteString(`"}}`)
+	if len(queryParams) > 0 {
+		reqBody.WriteString(`,"queryParameters":{`)
+		first := true
+		for key, value := range queryParams {
+			if !first {
+				reqBody.WriteString(",")
+			}
+			reqBody.WriteString(`"`)
+			reqBody.WriteString(key)
+			switch v := value.(type) {
+			case string:
+				reqBody.WriteString(`":{"equalTo":"`)
+				reqBody.WriteString(v)
+				reqBody.WriteString(`"}`)
+			case []string:
+				reqBody.WriteString(`":{"hasExactly":[`)
+				for i, item := range v {
+					if i > 0 {
+						reqBody.WriteString(",")
+					}
+					reqBody.WriteString(`{"equalTo":"`)
+					reqBody.WriteString(item)
+					reqBody.WriteString(`"}`)
+				}
+				reqBody.WriteString(`]}`)
+			}
+			first = false
+		}
+		reqBody.WriteString("}")
+	}
+	reqBody.WriteString("}")
+	resp, err := http.Post(WiremockAdminURL+"/requests/find", "application/json", &reqBody)
 	require.NoError(t, err)
-
-	resp, err := http.Post(WireMockBaseURL+"/__admin/mappings", "application/json", bytes.NewReader(body))
-	require.NoError(t, err)
-	defer resp.Body.Close()
-	require.Equal(t, http.StatusCreated, resp.StatusCode, "Failed to create WireMock stub")
-}
-
-// resetWireMock clears all stubs
-func resetWireMock(t *testing.T) {
-	t.Helper()
-
-	req, err := http.NewRequest(http.MethodDelete, WireMockBaseURL+"/__admin/mappings", nil)
-	require.NoError(t, err)
-
-	resp, err := http.DefaultClient.Do(req)
-	require.NoError(t, err)
-	defer resp.Body.Close()
+	var result struct {
+		Requests []interface{} `json:"requests"`
+	}
+	json.NewDecoder(resp.Body).Decode(&result)
+	require.Equal(t, expected, len(result.Requests))
 }
 
 func TestActionsVersionsListWithWireMock(
 	t *testing.T,
 ) {
-	defer resetWireMock(t)
-
-	stub := map[string]interface{}{
-		"request": map[string]interface{}{
-			"method":         "GET",
-			"urlPathPattern": "/actions/actions/[^/]+/versions",
-		},
-		"response": map[string]interface{}{
-			"status": http.StatusOK,
-			"headers": map[string]string{
-				"Content-Type": "application/json",
-			},
-			"jsonBody": map[string]interface{}{"total": 1.1, "page": 1.1, "per_page": 1.1, "versions": []interface{}{map[string]interface{}{"id": "id", "action_id": "action_id", "code": "code", "dependencies": []interface{}{map[string]interface{}{}}, "deployed": true, "runtime": "runtime", "secrets": []interface{}{map[string]interface{}{}}, "status": "pending", "number": 1.1, "errors": []interface{}{map[string]interface{}{}}, "built_at": "2024-01-15T09:30:00Z", "created_at": "2024-01-15T09:30:00Z", "updated_at": "2024-01-15T09:30:00Z", "supported_triggers": []interface{}{map[string]interface{}{"id": "id"}}}}},
-		},
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
 	}
-	setupWireMockStub(t, stub)
-
-	c := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+	client := client.NewWithOptions(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.ListActionVersionsRequestParameters{
 		Page: management.Int(
@@ -86,81 +96,65 @@ func TestActionsVersionsListWithWireMock(
 			1,
 		),
 	}
-	_, invocationErr := c.Actions.Versions.List(
+	_, invocationErr := client.Actions.Versions.List(
 		context.TODO(),
 		"actionId",
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestActionsVersionsListWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestActionsVersionsListWithWireMock", "GET", "/actions/actions/actionId/versions", map[string]interface{}{"page": "1", "per_page": "1"}, 1)
 }
 
 func TestActionsVersionsGetWithWireMock(
 	t *testing.T,
 ) {
-	defer resetWireMock(t)
-
-	stub := map[string]interface{}{
-		"request": map[string]interface{}{
-			"method":         "GET",
-			"urlPathPattern": "/actions/actions/[^/]+/versions/[^/]+",
-		},
-		"response": map[string]interface{}{
-			"status": http.StatusOK,
-			"headers": map[string]string{
-				"Content-Type": "application/json",
-			},
-			"jsonBody": map[string]interface{}{"id": "id", "action_id": "action_id", "code": "code", "dependencies": []interface{}{map[string]interface{}{"name": "name", "version": "version", "registry_url": "registry_url"}}, "deployed": true, "runtime": "runtime", "secrets": []interface{}{map[string]interface{}{"name": "name", "updated_at": "2024-01-15T09:30:00Z"}}, "status": "pending", "number": 1.1, "errors": []interface{}{map[string]interface{}{"id": "id", "msg": "msg", "url": "url"}}, "action": map[string]interface{}{"id": "id", "name": "name", "supported_triggers": []interface{}{map[string]interface{}{"id": "id"}}, "all_changes_deployed": true, "created_at": "2024-01-15T09:30:00Z", "updated_at": "2024-01-15T09:30:00Z"}, "built_at": "2024-01-15T09:30:00Z", "created_at": "2024-01-15T09:30:00Z", "updated_at": "2024-01-15T09:30:00Z", "supported_triggers": []interface{}{map[string]interface{}{"id": "id", "version": "version", "status": "status", "runtimes": []interface{}{"runtimes"}, "default_runtime": "default_runtime", "compatible_triggers": []interface{}{map[string]interface{}{"id": "id", "version": "version"}}, "binding_policy": "trigger-bound"}}},
-		},
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
 	}
-	setupWireMockStub(t, stub)
-
-	c := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+	client := client.NewWithOptions(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
-	_, invocationErr := c.Actions.Versions.Get(
+	_, invocationErr := client.Actions.Versions.Get(
 		context.TODO(),
 		"actionId",
 		"id",
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestActionsVersionsGetWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestActionsVersionsGetWithWireMock", "GET", "/actions/actions/actionId/versions/id", nil, 1)
 }
 
 func TestActionsVersionsDeployWithWireMock(
 	t *testing.T,
 ) {
-	defer resetWireMock(t)
-
-	stub := map[string]interface{}{
-		"request": map[string]interface{}{
-			"method":         "POST",
-			"urlPathPattern": "/actions/actions/[^/]+/versions/[^/]+/deploy",
-		},
-		"response": map[string]interface{}{
-			"status": http.StatusOK,
-			"headers": map[string]string{
-				"Content-Type": "application/json",
-			},
-			"jsonBody": map[string]interface{}{"id": "id", "action_id": "action_id", "code": "code", "dependencies": []interface{}{map[string]interface{}{"name": "name", "version": "version", "registry_url": "registry_url"}}, "deployed": true, "runtime": "runtime", "secrets": []interface{}{map[string]interface{}{"name": "name", "updated_at": "2024-01-15T09:30:00Z"}}, "status": "pending", "number": 1.1, "errors": []interface{}{map[string]interface{}{"id": "id", "msg": "msg", "url": "url"}}, "action": map[string]interface{}{"id": "id", "name": "name", "supported_triggers": []interface{}{map[string]interface{}{"id": "id"}}, "all_changes_deployed": true, "created_at": "2024-01-15T09:30:00Z", "updated_at": "2024-01-15T09:30:00Z"}, "built_at": "2024-01-15T09:30:00Z", "created_at": "2024-01-15T09:30:00Z", "updated_at": "2024-01-15T09:30:00Z", "supported_triggers": []interface{}{map[string]interface{}{"id": "id", "version": "version", "status": "status", "runtimes": []interface{}{"runtimes"}, "default_runtime": "default_runtime", "compatible_triggers": []interface{}{map[string]interface{}{"id": "id", "version": "version"}}, "binding_policy": "trigger-bound"}}},
-		},
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
 	}
-	setupWireMockStub(t, stub)
-
-	c := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+	client := client.NewWithOptions(
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
-	request := &management.DeployActionVersionRequestBodyParams{}
-	_, invocationErr := c.Actions.Versions.Deploy(
+	request := &management.DeployActionVersionRequestContent{}
+	_, invocationErr := client.Actions.Versions.Deploy(
 		context.TODO(),
 		"actionId",
 		"id",
-		&request,
+		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestActionsVersionsDeployWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
+	VerifyRequestCount(t, "TestActionsVersionsDeployWithWireMock", "POST", "/actions/actions/actionId/versions/id/deploy", nil, 1)
 }

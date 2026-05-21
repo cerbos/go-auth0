@@ -4,6 +4,7 @@ package keys
 
 import (
 	context "context"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	core "github.com/auth0/go-auth0/v2/management/core"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
@@ -42,6 +43,26 @@ func (c *Client) Get(
 	response, err := c.WithRawResponse.Get(
 		ctx,
 		id,
+		opts...,
+	)
+	if err != nil {
+		return nil, err
+	}
+	return response.Body, nil
+}
+
+// Provision initial connection keys for Okta or OIDC connection strategies. This endpoint allows you to create keys before configuring the connection to use Private Key JWT authentication, enabling zero-downtime transitions.
+func (c *Client) Create(
+	ctx context.Context,
+	// ID of the connection
+	id string,
+	request *management.PostConnectionKeysRequestContent,
+	opts ...option.RequestOption,
+) (management.PostConnectionsKeysResponseContent, error) {
+	response, err := c.WithRawResponse.Create(
+		ctx,
+		id,
+		request,
 		opts...,
 	)
 	if err != nil {

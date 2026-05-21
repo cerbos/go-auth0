@@ -61,6 +61,9 @@ func (c *CreateEventStreamActionRequestContent) GetStatus() EventStreamStatusEnu
 }
 
 func (c *CreateEventStreamActionRequestContent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -127,6 +130,9 @@ func (c *CreateEventStreamActionRequestContent) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CreateEventStreamActionRequestContent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -189,6 +195,9 @@ func (c *CreateEventStreamEventBridgeRequestContent) GetStatus() EventStreamStat
 }
 
 func (c *CreateEventStreamEventBridgeRequestContent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -255,6 +264,9 @@ func (c *CreateEventStreamEventBridgeRequestContent) MarshalJSON() ([]byte, erro
 }
 
 func (c *CreateEventStreamEventBridgeRequestContent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -420,6 +432,9 @@ func (c *CreateEventStreamTestEventResponseContent) GetEvent() EventStreamCloudE
 }
 
 func (c *CreateEventStreamTestEventResponseContent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -500,6 +515,9 @@ func (c *CreateEventStreamTestEventResponseContent) MarshalJSON() ([]byte, error
 }
 
 func (c *CreateEventStreamTestEventResponseContent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -562,6 +580,9 @@ func (c *CreateEventStreamWebHookRequestContent) GetStatus() EventStreamStatusEn
 }
 
 func (c *CreateEventStreamWebHookRequestContent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -628,6 +649,9 @@ func (c *CreateEventStreamWebHookRequestContent) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CreateEventStreamWebHookRequestContent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -663,6 +687,9 @@ func (e *EventStreamActionConfiguration) GetActionID() string {
 }
 
 func (e *EventStreamActionConfiguration) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -708,6 +735,9 @@ func (e *EventStreamActionConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamActionConfiguration) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -750,6 +780,9 @@ func (e *EventStreamActionDestination) GetConfiguration() *EventStreamActionConf
 }
 
 func (e *EventStreamActionDestination) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -802,6 +835,9 @@ func (e *EventStreamActionDestination) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamActionDestination) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -913,6 +949,9 @@ func (e *EventStreamActionResponseContent) GetUpdatedAt() time.Time {
 }
 
 func (e *EventStreamActionResponseContent) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -1012,6 +1051,9 @@ func (e *EventStreamActionResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamActionResponseContent) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -1253,6 +1295,9 @@ func (e *EventStreamEventBridgeConfiguration) GetAwsPartnerEventSource() string 
 }
 
 func (e *EventStreamEventBridgeConfiguration) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -1312,6 +1357,9 @@ func (e *EventStreamEventBridgeConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamEventBridgeConfiguration) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -1354,6 +1402,9 @@ func (e *EventStreamEventBridgeDestination) GetConfiguration() *EventStreamEvent
 }
 
 func (e *EventStreamEventBridgeDestination) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -1406,6 +1457,9 @@ func (e *EventStreamEventBridgeDestination) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamEventBridgeDestination) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -1517,6 +1571,9 @@ func (e *EventStreamEventBridgeResponseContent) GetUpdatedAt() time.Time {
 }
 
 func (e *EventStreamEventBridgeResponseContent) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -1616,6 +1673,9 @@ func (e *EventStreamEventBridgeResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamEventBridgeResponseContent) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -1756,6 +1816,9 @@ func (e *EventStreamSubscription) GetEventType() string {
 }
 
 func (e *EventStreamSubscription) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -1801,6 +1864,9 @@ func (e *EventStreamSubscription) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamSubscription) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -1816,40 +1882,60 @@ func (e *EventStreamSubscription) String() string {
 type EventStreamTestEventTypeEnum string
 
 const (
-	EventStreamTestEventTypeEnumUserCreated                    EventStreamTestEventTypeEnum = "user.created"
-	EventStreamTestEventTypeEnumUserDeleted                    EventStreamTestEventTypeEnum = "user.deleted"
-	EventStreamTestEventTypeEnumUserUpdated                    EventStreamTestEventTypeEnum = "user.updated"
+	EventStreamTestEventTypeEnumGroupCreated                   EventStreamTestEventTypeEnum = "group.created"
+	EventStreamTestEventTypeEnumGroupDeleted                   EventStreamTestEventTypeEnum = "group.deleted"
+	EventStreamTestEventTypeEnumGroupMemberAdded               EventStreamTestEventTypeEnum = "group.member.added"
+	EventStreamTestEventTypeEnumGroupMemberDeleted             EventStreamTestEventTypeEnum = "group.member.deleted"
+	EventStreamTestEventTypeEnumGroupRoleAssigned              EventStreamTestEventTypeEnum = "group.role.assigned"
+	EventStreamTestEventTypeEnumGroupRoleDeleted               EventStreamTestEventTypeEnum = "group.role.deleted"
+	EventStreamTestEventTypeEnumGroupUpdated                   EventStreamTestEventTypeEnum = "group.updated"
+	EventStreamTestEventTypeEnumOrganizationConnectionAdded    EventStreamTestEventTypeEnum = "organization.connection.added"
+	EventStreamTestEventTypeEnumOrganizationConnectionRemoved  EventStreamTestEventTypeEnum = "organization.connection.removed"
+	EventStreamTestEventTypeEnumOrganizationConnectionUpdated  EventStreamTestEventTypeEnum = "organization.connection.updated"
 	EventStreamTestEventTypeEnumOrganizationCreated            EventStreamTestEventTypeEnum = "organization.created"
-	EventStreamTestEventTypeEnumOrganizationUpdated            EventStreamTestEventTypeEnum = "organization.updated"
 	EventStreamTestEventTypeEnumOrganizationDeleted            EventStreamTestEventTypeEnum = "organization.deleted"
+	EventStreamTestEventTypeEnumOrganizationGroupRoleAssigned  EventStreamTestEventTypeEnum = "organization.group.role.assigned"
+	EventStreamTestEventTypeEnumOrganizationGroupRoleDeleted   EventStreamTestEventTypeEnum = "organization.group.role.deleted"
 	EventStreamTestEventTypeEnumOrganizationMemberAdded        EventStreamTestEventTypeEnum = "organization.member.added"
 	EventStreamTestEventTypeEnumOrganizationMemberDeleted      EventStreamTestEventTypeEnum = "organization.member.deleted"
 	EventStreamTestEventTypeEnumOrganizationMemberRoleAssigned EventStreamTestEventTypeEnum = "organization.member.role.assigned"
 	EventStreamTestEventTypeEnumOrganizationMemberRoleDeleted  EventStreamTestEventTypeEnum = "organization.member.role.deleted"
-	EventStreamTestEventTypeEnumOrganizationConnectionAdded    EventStreamTestEventTypeEnum = "organization.connection.added"
-	EventStreamTestEventTypeEnumOrganizationConnectionUpdated  EventStreamTestEventTypeEnum = "organization.connection.updated"
-	EventStreamTestEventTypeEnumOrganizationConnectionRemoved  EventStreamTestEventTypeEnum = "organization.connection.removed"
-	EventStreamTestEventTypeEnumGroupCreated                   EventStreamTestEventTypeEnum = "group.created"
-	EventStreamTestEventTypeEnumGroupUpdated                   EventStreamTestEventTypeEnum = "group.updated"
-	EventStreamTestEventTypeEnumGroupDeleted                   EventStreamTestEventTypeEnum = "group.deleted"
-	EventStreamTestEventTypeEnumGroupMemberAdded               EventStreamTestEventTypeEnum = "group.member.added"
-	EventStreamTestEventTypeEnumGroupMemberDeleted             EventStreamTestEventTypeEnum = "group.member.deleted"
+	EventStreamTestEventTypeEnumOrganizationUpdated            EventStreamTestEventTypeEnum = "organization.updated"
+	EventStreamTestEventTypeEnumUserCreated                    EventStreamTestEventTypeEnum = "user.created"
+	EventStreamTestEventTypeEnumUserDeleted                    EventStreamTestEventTypeEnum = "user.deleted"
+	EventStreamTestEventTypeEnumUserUpdated                    EventStreamTestEventTypeEnum = "user.updated"
 )
 
 func NewEventStreamTestEventTypeEnumFromString(s string) (EventStreamTestEventTypeEnum, error) {
 	switch s {
-	case "user.created":
-		return EventStreamTestEventTypeEnumUserCreated, nil
-	case "user.deleted":
-		return EventStreamTestEventTypeEnumUserDeleted, nil
-	case "user.updated":
-		return EventStreamTestEventTypeEnumUserUpdated, nil
+	case "group.created":
+		return EventStreamTestEventTypeEnumGroupCreated, nil
+	case "group.deleted":
+		return EventStreamTestEventTypeEnumGroupDeleted, nil
+	case "group.member.added":
+		return EventStreamTestEventTypeEnumGroupMemberAdded, nil
+	case "group.member.deleted":
+		return EventStreamTestEventTypeEnumGroupMemberDeleted, nil
+	case "group.role.assigned":
+		return EventStreamTestEventTypeEnumGroupRoleAssigned, nil
+	case "group.role.deleted":
+		return EventStreamTestEventTypeEnumGroupRoleDeleted, nil
+	case "group.updated":
+		return EventStreamTestEventTypeEnumGroupUpdated, nil
+	case "organization.connection.added":
+		return EventStreamTestEventTypeEnumOrganizationConnectionAdded, nil
+	case "organization.connection.removed":
+		return EventStreamTestEventTypeEnumOrganizationConnectionRemoved, nil
+	case "organization.connection.updated":
+		return EventStreamTestEventTypeEnumOrganizationConnectionUpdated, nil
 	case "organization.created":
 		return EventStreamTestEventTypeEnumOrganizationCreated, nil
-	case "organization.updated":
-		return EventStreamTestEventTypeEnumOrganizationUpdated, nil
 	case "organization.deleted":
 		return EventStreamTestEventTypeEnumOrganizationDeleted, nil
+	case "organization.group.role.assigned":
+		return EventStreamTestEventTypeEnumOrganizationGroupRoleAssigned, nil
+	case "organization.group.role.deleted":
+		return EventStreamTestEventTypeEnumOrganizationGroupRoleDeleted, nil
 	case "organization.member.added":
 		return EventStreamTestEventTypeEnumOrganizationMemberAdded, nil
 	case "organization.member.deleted":
@@ -1858,22 +1944,14 @@ func NewEventStreamTestEventTypeEnumFromString(s string) (EventStreamTestEventTy
 		return EventStreamTestEventTypeEnumOrganizationMemberRoleAssigned, nil
 	case "organization.member.role.deleted":
 		return EventStreamTestEventTypeEnumOrganizationMemberRoleDeleted, nil
-	case "organization.connection.added":
-		return EventStreamTestEventTypeEnumOrganizationConnectionAdded, nil
-	case "organization.connection.updated":
-		return EventStreamTestEventTypeEnumOrganizationConnectionUpdated, nil
-	case "organization.connection.removed":
-		return EventStreamTestEventTypeEnumOrganizationConnectionRemoved, nil
-	case "group.created":
-		return EventStreamTestEventTypeEnumGroupCreated, nil
-	case "group.updated":
-		return EventStreamTestEventTypeEnumGroupUpdated, nil
-	case "group.deleted":
-		return EventStreamTestEventTypeEnumGroupDeleted, nil
-	case "group.member.added":
-		return EventStreamTestEventTypeEnumGroupMemberAdded, nil
-	case "group.member.deleted":
-		return EventStreamTestEventTypeEnumGroupMemberDeleted, nil
+	case "organization.updated":
+		return EventStreamTestEventTypeEnumOrganizationUpdated, nil
+	case "user.created":
+		return EventStreamTestEventTypeEnumUserCreated, nil
+	case "user.deleted":
+		return EventStreamTestEventTypeEnumUserDeleted, nil
+	case "user.updated":
+		return EventStreamTestEventTypeEnumUserUpdated, nil
 	}
 	var t EventStreamTestEventTypeEnum
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -1884,8 +1962,9 @@ func (e EventStreamTestEventTypeEnum) Ptr() *EventStreamTestEventTypeEnum {
 }
 
 type EventStreamWebhookAuthorizationResponse struct {
-	EventStreamWebhookBasicAuth  *EventStreamWebhookBasicAuth
-	EventStreamWebhookBearerAuth *EventStreamWebhookBearerAuth
+	EventStreamWebhookBasicAuth        *EventStreamWebhookBasicAuth
+	EventStreamWebhookBearerAuth       *EventStreamWebhookBearerAuth
+	EventStreamWebhookCustomHeaderAuth *EventStreamWebhookCustomHeaderAuth
 
 	typ string
 }
@@ -1904,6 +1983,13 @@ func (e *EventStreamWebhookAuthorizationResponse) GetEventStreamWebhookBearerAut
 	return e.EventStreamWebhookBearerAuth
 }
 
+func (e *EventStreamWebhookAuthorizationResponse) GetEventStreamWebhookCustomHeaderAuth() *EventStreamWebhookCustomHeaderAuth {
+	if e == nil {
+		return nil
+	}
+	return e.EventStreamWebhookCustomHeaderAuth
+}
+
 func (e *EventStreamWebhookAuthorizationResponse) UnmarshalJSON(data []byte) error {
 	valueEventStreamWebhookBasicAuth := new(EventStreamWebhookBasicAuth)
 	if err := json.Unmarshal(data, &valueEventStreamWebhookBasicAuth); err == nil {
@@ -1917,6 +2003,12 @@ func (e *EventStreamWebhookAuthorizationResponse) UnmarshalJSON(data []byte) err
 		e.EventStreamWebhookBearerAuth = valueEventStreamWebhookBearerAuth
 		return nil
 	}
+	valueEventStreamWebhookCustomHeaderAuth := new(EventStreamWebhookCustomHeaderAuth)
+	if err := json.Unmarshal(data, &valueEventStreamWebhookCustomHeaderAuth); err == nil {
+		e.typ = "EventStreamWebhookCustomHeaderAuth"
+		e.EventStreamWebhookCustomHeaderAuth = valueEventStreamWebhookCustomHeaderAuth
+		return nil
+	}
 	return fmt.Errorf("%s cannot be deserialized as a %T", data, e)
 }
 
@@ -1927,12 +2019,16 @@ func (e EventStreamWebhookAuthorizationResponse) MarshalJSON() ([]byte, error) {
 	if e.typ == "EventStreamWebhookBearerAuth" || e.EventStreamWebhookBearerAuth != nil {
 		return json.Marshal(e.EventStreamWebhookBearerAuth)
 	}
+	if e.typ == "EventStreamWebhookCustomHeaderAuth" || e.EventStreamWebhookCustomHeaderAuth != nil {
+		return json.Marshal(e.EventStreamWebhookCustomHeaderAuth)
+	}
 	return nil, fmt.Errorf("type %T does not include a non-empty union type", e)
 }
 
 type EventStreamWebhookAuthorizationResponseVisitor interface {
 	VisitEventStreamWebhookBasicAuth(*EventStreamWebhookBasicAuth) error
 	VisitEventStreamWebhookBearerAuth(*EventStreamWebhookBearerAuth) error
+	VisitEventStreamWebhookCustomHeaderAuth(*EventStreamWebhookCustomHeaderAuth) error
 }
 
 func (e *EventStreamWebhookAuthorizationResponse) Accept(visitor EventStreamWebhookAuthorizationResponseVisitor) error {
@@ -1941,6 +2037,9 @@ func (e *EventStreamWebhookAuthorizationResponse) Accept(visitor EventStreamWebh
 	}
 	if e.typ == "EventStreamWebhookBearerAuth" || e.EventStreamWebhookBearerAuth != nil {
 		return visitor.VisitEventStreamWebhookBearerAuth(e.EventStreamWebhookBearerAuth)
+	}
+	if e.typ == "EventStreamWebhookCustomHeaderAuth" || e.EventStreamWebhookCustomHeaderAuth != nil {
+		return visitor.VisitEventStreamWebhookCustomHeaderAuth(e.EventStreamWebhookCustomHeaderAuth)
 	}
 	return fmt.Errorf("type %T does not include a non-empty union type", e)
 }
@@ -1978,6 +2077,9 @@ func (e *EventStreamWebhookBasicAuth) GetUsername() string {
 }
 
 func (e *EventStreamWebhookBasicAuth) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -2030,6 +2132,9 @@ func (e *EventStreamWebhookBasicAuth) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamWebhookBasicAuth) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -2084,6 +2189,9 @@ func (e *EventStreamWebhookBearerAuth) GetMethod() EventStreamWebhookBearerAuthM
 }
 
 func (e *EventStreamWebhookBearerAuth) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -2129,6 +2237,9 @@ func (e *EventStreamWebhookBearerAuth) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamWebhookBearerAuth) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -2193,6 +2304,9 @@ func (e *EventStreamWebhookConfiguration) GetWebhookAuthorization() *EventStream
 }
 
 func (e *EventStreamWebhookConfiguration) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -2245,6 +2359,9 @@ func (e *EventStreamWebhookConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamWebhookConfiguration) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -2254,6 +2371,128 @@ func (e *EventStreamWebhookConfiguration) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", e)
+}
+
+// Custom header authorization for HTTP requests.
+var (
+	eventStreamWebhookCustomHeaderAuthFieldMethod    = big.NewInt(1 << 0)
+	eventStreamWebhookCustomHeaderAuthFieldHeaderKey = big.NewInt(1 << 1)
+)
+
+type EventStreamWebhookCustomHeaderAuth struct {
+	Method EventStreamWebhookCustomHeaderAuthMethodEnum `json:"method" url:"method"`
+	// HTTP header name.
+	HeaderKey string `json:"header_key" url:"header_key"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (e *EventStreamWebhookCustomHeaderAuth) GetMethod() EventStreamWebhookCustomHeaderAuthMethodEnum {
+	if e == nil {
+		return ""
+	}
+	return e.Method
+}
+
+func (e *EventStreamWebhookCustomHeaderAuth) GetHeaderKey() string {
+	if e == nil {
+		return ""
+	}
+	return e.HeaderKey
+}
+
+func (e *EventStreamWebhookCustomHeaderAuth) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
+	return e.extraProperties
+}
+
+func (e *EventStreamWebhookCustomHeaderAuth) require(field *big.Int) {
+	if e.explicitFields == nil {
+		e.explicitFields = big.NewInt(0)
+	}
+	e.explicitFields.Or(e.explicitFields, field)
+}
+
+// SetMethod sets the Method field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EventStreamWebhookCustomHeaderAuth) SetMethod(method EventStreamWebhookCustomHeaderAuthMethodEnum) {
+	e.Method = method
+	e.require(eventStreamWebhookCustomHeaderAuthFieldMethod)
+}
+
+// SetHeaderKey sets the HeaderKey field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (e *EventStreamWebhookCustomHeaderAuth) SetHeaderKey(headerKey string) {
+	e.HeaderKey = headerKey
+	e.require(eventStreamWebhookCustomHeaderAuthFieldHeaderKey)
+}
+
+func (e *EventStreamWebhookCustomHeaderAuth) UnmarshalJSON(data []byte) error {
+	type unmarshaler EventStreamWebhookCustomHeaderAuth
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*e = EventStreamWebhookCustomHeaderAuth(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *e)
+	if err != nil {
+		return err
+	}
+	e.extraProperties = extraProperties
+	e.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (e *EventStreamWebhookCustomHeaderAuth) MarshalJSON() ([]byte, error) {
+	type embed EventStreamWebhookCustomHeaderAuth
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*e),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, e.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (e *EventStreamWebhookCustomHeaderAuth) String() string {
+	if e == nil {
+		return "<nil>"
+	}
+	if len(e.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(e); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", e)
+}
+
+// Type of authorization.
+type EventStreamWebhookCustomHeaderAuthMethodEnum string
+
+const (
+	EventStreamWebhookCustomHeaderAuthMethodEnumCustomHeader EventStreamWebhookCustomHeaderAuthMethodEnum = "custom_header"
+)
+
+func NewEventStreamWebhookCustomHeaderAuthMethodEnumFromString(s string) (EventStreamWebhookCustomHeaderAuthMethodEnum, error) {
+	switch s {
+	case "custom_header":
+		return EventStreamWebhookCustomHeaderAuthMethodEnumCustomHeader, nil
+	}
+	var t EventStreamWebhookCustomHeaderAuthMethodEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (e EventStreamWebhookCustomHeaderAuthMethodEnum) Ptr() *EventStreamWebhookCustomHeaderAuthMethodEnum {
+	return &e
 }
 
 var (
@@ -2287,6 +2526,9 @@ func (e *EventStreamWebhookDestination) GetConfiguration() *EventStreamWebhookCo
 }
 
 func (e *EventStreamWebhookDestination) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -2339,6 +2581,9 @@ func (e *EventStreamWebhookDestination) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamWebhookDestination) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -2450,6 +2695,9 @@ func (e *EventStreamWebhookResponseContent) GetUpdatedAt() time.Time {
 }
 
 func (e *EventStreamWebhookResponseContent) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -2549,6 +2797,9 @@ func (e *EventStreamWebhookResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (e *EventStreamWebhookResponseContent) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -2676,6 +2927,9 @@ func (l *ListEventStreamsResponseContent) GetNext() string {
 }
 
 func (l *ListEventStreamsResponseContent) GetExtraProperties() map[string]interface{} {
+	if l == nil {
+		return nil
+	}
 	return l.ExtraProperties
 }
 
@@ -2732,6 +2986,9 @@ func (l *ListEventStreamsResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (l *ListEventStreamsResponseContent) String() string {
+	if l == nil {
+		return "<nil>"
+	}
 	if len(l.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
 			return value
@@ -2744,7 +3001,7 @@ func (l *ListEventStreamsResponseContent) String() string {
 }
 
 // The raw payload of the test event.
-type TestEventDataContent = map[string]interface{}
+type TestEventDataContent = map[string]any
 
 type UpdateEventStreamResponseContent struct {
 	EventStreamWebhookResponseContent     *EventStreamWebhookResponseContent

@@ -29,14 +29,14 @@ type CreateSelfServiceProfileResponseContent struct {
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// The description of the self-service Profile.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	// List of attributes to be mapped that will be shown to the user during the SS-SSO flow.
+	// List of attributes to be mapped that will be shown to the user during the Self-Service Enterprise Configuration flow.
 	UserAttributes []*SelfServiceProfileUserAttribute `json:"user_attributes,omitempty" url:"user_attributes,omitempty"`
 	// The time when this self-service Profile was created.
 	CreatedAt *time.Time `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The time when this self-service Profile was updated.
 	UpdatedAt *time.Time                            `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	Branding  *SelfServiceProfileBrandingProperties `json:"branding,omitempty" url:"branding,omitempty"`
-	// List of IdP strategies that will be shown to users during the Self-Service SSO flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `keycloak-samlp`, `pingfederate`]
+	// List of IdP strategies that will be shown to users during the Self-Service Enterprise Configuration flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `auth0-samlp`, `okta-samlp`, `keycloak-samlp`, `pingfederate`]
 	AllowedStrategies []SelfServiceProfileAllowedStrategyEnum `json:"allowed_strategies,omitempty" url:"allowed_strategies,omitempty"`
 	// ID of the user-attribute-profile to associate with this self-service profile.
 	UserAttributeProfileID *string `json:"user_attribute_profile_id,omitempty" url:"user_attribute_profile_id,omitempty"`
@@ -112,6 +112,9 @@ func (c *CreateSelfServiceProfileResponseContent) GetUserAttributeProfileID() st
 }
 
 func (c *CreateSelfServiceProfileResponseContent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -225,6 +228,9 @@ func (c *CreateSelfServiceProfileResponseContent) MarshalJSON() ([]byte, error) 
 }
 
 func (c *CreateSelfServiceProfileResponseContent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -255,14 +261,14 @@ type GetSelfServiceProfileResponseContent struct {
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// The description of the self-service Profile.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	// List of attributes to be mapped that will be shown to the user during the SS-SSO flow.
+	// List of attributes to be mapped that will be shown to the user during the Self-Service Enterprise Configuration flow.
 	UserAttributes []*SelfServiceProfileUserAttribute `json:"user_attributes,omitempty" url:"user_attributes,omitempty"`
 	// The time when this self-service Profile was created.
 	CreatedAt *time.Time `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The time when this self-service Profile was updated.
 	UpdatedAt *time.Time                            `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	Branding  *SelfServiceProfileBrandingProperties `json:"branding,omitempty" url:"branding,omitempty"`
-	// List of IdP strategies that will be shown to users during the Self-Service SSO flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `keycloak-samlp`, `pingfederate`]
+	// List of IdP strategies that will be shown to users during the Self-Service Enterprise Configuration flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `auth0-samlp`, `okta-samlp`, `keycloak-samlp`, `pingfederate`]
 	AllowedStrategies []SelfServiceProfileAllowedStrategyEnum `json:"allowed_strategies,omitempty" url:"allowed_strategies,omitempty"`
 	// ID of the user-attribute-profile to associate with this self-service profile.
 	UserAttributeProfileID *string `json:"user_attribute_profile_id,omitempty" url:"user_attribute_profile_id,omitempty"`
@@ -338,6 +344,9 @@ func (g *GetSelfServiceProfileResponseContent) GetUserAttributeProfileID() strin
 }
 
 func (g *GetSelfServiceProfileResponseContent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
 	return g.extraProperties
 }
 
@@ -451,6 +460,9 @@ func (g *GetSelfServiceProfileResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetSelfServiceProfileResponseContent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
@@ -511,6 +523,9 @@ func (l *ListSelfServiceProfilesPaginatedResponseContent) GetSelfServiceProfiles
 }
 
 func (l *ListSelfServiceProfilesPaginatedResponseContent) GetExtraProperties() map[string]interface{} {
+	if l == nil {
+		return nil
+	}
 	return l.extraProperties
 }
 
@@ -577,6 +592,9 @@ func (l *ListSelfServiceProfilesPaginatedResponseContent) MarshalJSON() ([]byte,
 }
 
 func (l *ListSelfServiceProfilesPaginatedResponseContent) String() string {
+	if l == nil {
+		return "<nil>"
+	}
 	if len(l.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
 			return value
@@ -607,14 +625,14 @@ type SelfServiceProfile struct {
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// The description of the self-service Profile.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	// List of attributes to be mapped that will be shown to the user during the SS-SSO flow.
+	// List of attributes to be mapped that will be shown to the user during the Self-Service Enterprise Configuration flow.
 	UserAttributes []*SelfServiceProfileUserAttribute `json:"user_attributes,omitempty" url:"user_attributes,omitempty"`
 	// The time when this self-service Profile was created.
 	CreatedAt *time.Time `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The time when this self-service Profile was updated.
 	UpdatedAt *time.Time                            `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	Branding  *SelfServiceProfileBrandingProperties `json:"branding,omitempty" url:"branding,omitempty"`
-	// List of IdP strategies that will be shown to users during the Self-Service SSO flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `keycloak-samlp`, `pingfederate`]
+	// List of IdP strategies that will be shown to users during the Self-Service Enterprise Configuration flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `auth0-samlp`, `okta-samlp`, `keycloak-samlp`, `pingfederate`]
 	AllowedStrategies []SelfServiceProfileAllowedStrategyEnum `json:"allowed_strategies,omitempty" url:"allowed_strategies,omitempty"`
 	// ID of the user-attribute-profile to associate with this self-service profile.
 	UserAttributeProfileID *string `json:"user_attribute_profile_id,omitempty" url:"user_attribute_profile_id,omitempty"`
@@ -690,6 +708,9 @@ func (s *SelfServiceProfile) GetUserAttributeProfileID() string {
 }
 
 func (s *SelfServiceProfile) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
 	return s.extraProperties
 }
 
@@ -803,6 +824,9 @@ func (s *SelfServiceProfile) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SelfServiceProfile) String() string {
+	if s == nil {
+		return "<nil>"
+	}
 	if len(s.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
@@ -823,6 +847,8 @@ const (
 	SelfServiceProfileAllowedStrategyEnumGoogleApps    SelfServiceProfileAllowedStrategyEnum = "google-apps"
 	SelfServiceProfileAllowedStrategyEnumAdfs          SelfServiceProfileAllowedStrategyEnum = "adfs"
 	SelfServiceProfileAllowedStrategyEnumOkta          SelfServiceProfileAllowedStrategyEnum = "okta"
+	SelfServiceProfileAllowedStrategyEnumAuth0Samlp    SelfServiceProfileAllowedStrategyEnum = "auth0-samlp"
+	SelfServiceProfileAllowedStrategyEnumOktaSamlp     SelfServiceProfileAllowedStrategyEnum = "okta-samlp"
 	SelfServiceProfileAllowedStrategyEnumKeycloakSamlp SelfServiceProfileAllowedStrategyEnum = "keycloak-samlp"
 	SelfServiceProfileAllowedStrategyEnumPingfederate  SelfServiceProfileAllowedStrategyEnum = "pingfederate"
 )
@@ -841,6 +867,10 @@ func NewSelfServiceProfileAllowedStrategyEnumFromString(s string) (SelfServicePr
 		return SelfServiceProfileAllowedStrategyEnumAdfs, nil
 	case "okta":
 		return SelfServiceProfileAllowedStrategyEnumOkta, nil
+	case "auth0-samlp":
+		return SelfServiceProfileAllowedStrategyEnumAuth0Samlp, nil
+	case "okta-samlp":
+		return SelfServiceProfileAllowedStrategyEnumOktaSamlp, nil
 	case "keycloak-samlp":
 		return SelfServiceProfileAllowedStrategyEnumKeycloakSamlp, nil
 	case "pingfederate":
@@ -879,6 +909,9 @@ func (s *SelfServiceProfileBrandingColors) GetPrimary() string {
 }
 
 func (s *SelfServiceProfileBrandingColors) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
 	return s.ExtraProperties
 }
 
@@ -928,6 +961,9 @@ func (s *SelfServiceProfileBrandingColors) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SelfServiceProfileBrandingColors) String() string {
+	if s == nil {
+		return "<nil>"
+	}
 	if len(s.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
@@ -971,6 +1007,9 @@ func (s *SelfServiceProfileBrandingProperties) GetColors() SelfServiceProfileBra
 }
 
 func (s *SelfServiceProfileBrandingProperties) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
 	return s.ExtraProperties
 }
 
@@ -1027,6 +1066,9 @@ func (s *SelfServiceProfileBrandingProperties) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SelfServiceProfileBrandingProperties) String() string {
+	if s == nil {
+		return "<nil>"
+	}
 	if len(s.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
@@ -1084,6 +1126,9 @@ func (s *SelfServiceProfileUserAttribute) GetIsOptional() bool {
 }
 
 func (s *SelfServiceProfileUserAttribute) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
 	return s.extraProperties
 }
 
@@ -1143,6 +1188,9 @@ func (s *SelfServiceProfileUserAttribute) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SelfServiceProfileUserAttribute) String() string {
+	if s == nil {
+		return "<nil>"
+	}
 	if len(s.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
@@ -1154,7 +1202,7 @@ func (s *SelfServiceProfileUserAttribute) String() string {
 	return fmt.Sprintf("%#v", s)
 }
 
-// List of attributes to be mapped that will be shown to the user during the SS-SSO flow.
+// List of attributes to be mapped that will be shown to the user during the Self-Service Enterprise Configuration flow.
 type SelfServiceProfileUserAttributes = []*SelfServiceProfileUserAttribute
 
 var (
@@ -1176,14 +1224,14 @@ type UpdateSelfServiceProfileResponseContent struct {
 	Name *string `json:"name,omitempty" url:"name,omitempty"`
 	// The description of the self-service Profile.
 	Description *string `json:"description,omitempty" url:"description,omitempty"`
-	// List of attributes to be mapped that will be shown to the user during the SS-SSO flow.
+	// List of attributes to be mapped that will be shown to the user during the Self-Service Enterprise Configuration flow.
 	UserAttributes []*SelfServiceProfileUserAttribute `json:"user_attributes,omitempty" url:"user_attributes,omitempty"`
 	// The time when this self-service Profile was created.
 	CreatedAt *time.Time `json:"created_at,omitempty" url:"created_at,omitempty"`
 	// The time when this self-service Profile was updated.
 	UpdatedAt *time.Time                            `json:"updated_at,omitempty" url:"updated_at,omitempty"`
 	Branding  *SelfServiceProfileBrandingProperties `json:"branding,omitempty" url:"branding,omitempty"`
-	// List of IdP strategies that will be shown to users during the Self-Service SSO flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `keycloak-samlp`, `pingfederate`]
+	// List of IdP strategies that will be shown to users during the Self-Service Enterprise Configuration flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `auth0-samlp`, `okta-samlp`, `keycloak-samlp`, `pingfederate`]
 	AllowedStrategies []SelfServiceProfileAllowedStrategyEnum `json:"allowed_strategies,omitempty" url:"allowed_strategies,omitempty"`
 	// ID of the user-attribute-profile to associate with this self-service profile.
 	UserAttributeProfileID *string `json:"user_attribute_profile_id,omitempty" url:"user_attribute_profile_id,omitempty"`
@@ -1259,6 +1307,9 @@ func (u *UpdateSelfServiceProfileResponseContent) GetUserAttributeProfileID() st
 }
 
 func (u *UpdateSelfServiceProfileResponseContent) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.extraProperties
 }
 
@@ -1372,6 +1423,9 @@ func (u *UpdateSelfServiceProfileResponseContent) MarshalJSON() ([]byte, error) 
 }
 
 func (u *UpdateSelfServiceProfileResponseContent) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value

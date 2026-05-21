@@ -29,6 +29,7 @@ type RequestOptions struct {
 	BodyProperties  map[string]interface{}
 	QueryParameters url.Values
 	MaxAttempts     uint
+	MaxBufSize      int
 
 	Ctx         context.Context
 	Token       string
@@ -162,6 +163,15 @@ func (m *MaxAttemptsOption) applyRequestOptions(opts *RequestOptions) {
 	opts.MaxAttempts = m.MaxAttempts
 }
 
+// MaxBufSizeOption implements the RequestOption interface.
+type MaxBufSizeOption struct {
+	MaxBufSize int
+}
+
+func (m *MaxBufSizeOption) applyRequestOptions(opts *RequestOptions) {
+	opts.MaxBufSize = m.MaxBufSize
+}
+
 // TokenOption implements the RequestOption interface.
 type TokenOption struct {
 	Token string
@@ -284,6 +294,15 @@ func (c *ClientCredentialsPrivateKeyJwtAndAudienceOption) applyRequestOptions(op
 
 	// Set the token source for automatic token management
 	options.TokenSource = c.tokenSource
+}
+
+// TokenSourceOption implements the RequestOption interface.
+type TokenSourceOption struct {
+	TokenSource oauth2.TokenSource
+}
+
+func (t *TokenSourceOption) applyRequestOptions(opts *RequestOptions) {
+	opts.TokenSource = t.TokenSource
 }
 
 // DebugOption implements the RequestOption interface.

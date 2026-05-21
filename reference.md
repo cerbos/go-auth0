@@ -28,9 +28,7 @@ Retrieve all actions.
 
 ```go
 request := &management.ListActionsRequestParameters{
-        TriggerID: management.String(
-            "triggerId",
-        ),
+        TriggerID: management.ActionTriggerTypeEnumPostLogin.Ptr(),
         ActionName: management.String(
             "actionName",
         ),
@@ -149,7 +147,7 @@ request := &management.CreateActionRequestContent{
         Name: "name",
         SupportedTriggers: []*management.ActionTrigger{
             &management.ActionTrigger{
-                ID: "id",
+                ID: management.ActionTriggerTypeEnumPostLogin,
             },
         },
     }
@@ -730,6 +728,14 @@ client.Branding.Update(
 <dl>
 <dd>
 
+**identifiers:** `*management.UpdateBrandingIdentifiers` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **font:** `*management.UpdateBrandingFont` 
     
 </dd>
@@ -787,6 +793,7 @@ request := &management.ListClientGrantsRequestParameters{
             true,
         ),
         SubjectType: management.ClientGrantSubjectTypeEnumClient.Ptr(),
+        DefaultFor: management.ClientGrantDefaultForEnumThirdPartyClients.Ptr(),
     }
 client.ClientGrants.List(
         context.TODO(),
@@ -851,6 +858,14 @@ client.ClientGrants.List(
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**defaultFor:** `*management.ClientGrantDefaultForEnum` — Applies this client grant as the default for all clients in the specified group. The only accepted value is <a href="https://auth0.com/docs/get-started/applications/application-access-to-apis-client-grants#default-permissions-for-third-party-applications">`third_party_clients`</a>, which applies the grant to all third-party clients. Per-client grants for the same audience take precedence. Mutually exclusive with `client_id`.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -887,7 +902,6 @@ Create a client grant for a machine-to-machine login flow. To learn more, read <
 
 ```go
 request := &management.CreateClientGrantRequestContent{
-        ClientID: "client_id",
         Audience: "audience",
     }
 client.ClientGrants.Create(
@@ -909,7 +923,7 @@ client.ClientGrants.Create(
 <dl>
 <dd>
 
-**clientID:** `string` — ID of the client.
+**clientID:** `*string` — ID of the client.
     
 </dd>
 </dl>
@@ -918,6 +932,14 @@ client.ClientGrants.Create(
 <dd>
 
 **audience:** `string` — The audience (API identifier) of this client grant
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**defaultFor:** `*management.ClientGrantDefaultForEnum` 
     
 </dd>
 </dl>
@@ -1279,6 +1301,9 @@ request := &management.ListClientsRequestParameters{
         AppType: management.String(
             "app_type",
         ),
+        ExternalClientID: management.String(
+            "external_client_id",
+        ),
         Q: management.String(
             "q",
         ),
@@ -1366,7 +1391,15 @@ client.Clients.List(
 <dl>
 <dd>
 
-**q:** `*string` — Advanced Query in <a href="http://www.lucenetutorial.com/lucene-query-syntax.html">Lucene</a> syntax.<br /><b>Permitted Queries</b>:<br /><ul><li><i>client_grant.organization_id:{organization_id}</i></li><li><i>client_grant.allow_any_organization:true</i></li></ul><b>Additional Restrictions</b>:<br /><ul><li>Cannot be used in combination with other filters</li><li>Requires use of the <i>from</i> and <i>take</i> paging parameters (checkpoint paginatinon)</li><li>Reduced rate limits apply. See <a href="https://auth0.com/docs/troubleshoot/customer-support/operational-policies/rate-limit-policy/rate-limit-configurations/enterprise-public">Rate Limit Configurations</a></li></ul><i><b>Note</b>: Recent updates may not be immediately reflected in query results</i>
+**externalClientID:** `*string` — Optional filter by the <a href="https://www.ietf.org/archive/id/draft-ietf-oauth-client-id-metadata-document-04.html">Client ID Metadata Document</a> URI for CIMD-registered clients.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**q:** `*string` — Advanced Query in <a href="https://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene</a> syntax.<br /><b>Permitted Queries</b>:<br /><ul><li><i>client_grant.organization_id:{organization_id}</i></li><li><i>client_grant.allow_any_organization:true</i></li></ul><b>Additional Restrictions</b>:<br /><ul><li>Cannot be used in combination with other filters</li><li>Requires use of the <i>from</i> and <i>take</i> paging parameters (checkpoint paginatinon)</li><li>Reduced rate limits apply. See <a href="https://auth0.com/docs/troubleshoot/customer-support/operational-policies/rate-limit-policy/rate-limit-configurations/enterprise-public">Rate Limit Configurations</a></li></ul><i><b>Note</b>: Recent updates may not be immediately reflected in query results</i>
     
 </dd>
 </dl>
@@ -1480,7 +1513,7 @@ client.Clients.Create(
 <dl>
 <dd>
 
-**oidcBackchannelLogout:** `*management.ClientOidcBackchannelLogoutSettings` 
+**oidcBackchannelLogout:** `*management.ClientOidcBackchannelLogoutSettings` — Configuration for OIDC backchannel logout (deprecated, in favor of oidc_logout)
     
 </dd>
 </dl>
@@ -1828,6 +1861,22 @@ See https://auth0.com/docs/secure/security-guidance/measures-against-app-imperso
 <dl>
 <dd>
 
+**thirdPartySecurityMode:** `*management.ClientThirdPartySecurityModeEnum` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**redirectionPolicy:** `*management.ClientRedirectionPolicyEnum` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **expressConfiguration:** `*management.ExpressConfiguration` 
     
 </dd>
@@ -1836,7 +1885,144 @@ See https://auth0.com/docs/secure/security-guidance/measures-against-app-imperso
 <dl>
 <dd>
 
+**myOrganizationConfiguration:** `*management.ClientMyOrganizationPostConfiguration` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **asyncApprovalNotificationChannels:** `*management.ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Clients.PreviewCimdMetadata(request) -> *management.PreviewCimdMetadataResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+
+      Fetches and validates a Client ID Metadata Document without creating a client.
+      Returns the raw metadata and how it would be mapped to Auth0 client fields.
+      This endpoint is useful for testing metadata URIs before creating CIMD clients.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.PreviewCimdMetadataRequestContent{
+        ExternalClientID: "external_client_id",
+    }
+client.Clients.PreviewCimdMetadata(
+        context.TODO(),
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**externalClientID:** `string` — URL to the Client ID Metadata Document
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Clients.RegisterCimdClient(request) -> *management.RegisterCimdClientResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+
+      Idempotent registration for Client ID Metadata Document (CIMD) clients.
+      Uses external_client_id as the unique identifier for upsert operations.
+      **Create:** Returns 201 when a new client is created (requires \
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.RegisterCimdClientRequestContent{
+        ExternalClientID: "external_client_id",
+    }
+client.Clients.RegisterCimdClient(
+        context.TODO(),
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**externalClientID:** `string` — URL to the Client ID Metadata Document. Acts as the unique identifier for upsert operations.
     
 </dd>
 </dl>
@@ -2131,7 +2317,7 @@ client.Clients.Update(
 <dl>
 <dd>
 
-**oidcBackchannelLogout:** `*management.ClientOidcBackchannelLogoutSettings` 
+**oidcBackchannelLogout:** `*management.ClientOidcBackchannelLogoutSettings` — Configuration for OIDC backchannel logout (deprecated, in favor of oidc_logout)
     
 </dd>
 </dl>
@@ -2187,7 +2373,7 @@ client.Clients.Update(
 <dl>
 <dd>
 
-**allowedLogoutURLs:** `[]string` — URLs that are valid to redirect to after logout from Auth0.
+**allowedLogoutURLs:** `[]string` — URLs that are valid to redirect to after logout from Auth0
     
 </dd>
 </dl>
@@ -2195,7 +2381,7 @@ client.Clients.Update(
 <dl>
 <dd>
 
-**jwtConfiguration:** `*management.ClientJwtConfiguration` 
+**jwtConfiguration:** `*management.ClientJwtConfiguration` — An object that holds settings related to how JWTs are created
     
 </dd>
 </dl>
@@ -2203,7 +2389,7 @@ client.Clients.Update(
 <dl>
 <dd>
 
-**encryptionKey:** `*management.ClientEncryptionKey` 
+**encryptionKey:** `*management.ClientEncryptionKey` — The client's encryption key
     
 </dd>
 </dl>
@@ -2339,7 +2525,7 @@ client.Clients.Update(
 <dl>
 <dd>
 
-**mobile:** `*management.ClientMobile` 
+**mobile:** `*management.ClientMobile` — Configuration related to native mobile apps
     
 </dd>
 </dl>
@@ -2479,7 +2665,31 @@ See https://auth0.com/docs/secure/security-guidance/measures-against-app-imperso
 <dl>
 <dd>
 
+**myOrganizationConfiguration:** `*management.ClientMyOrganizationPatchConfiguration` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **asyncApprovalNotificationChannels:** `*management.ClientAsyncApprovalNotificationsChannelsAPIPatchConfiguration` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**thirdPartySecurityMode:** `*management.ClientThirdPartySecurityModeEnum` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**redirectionPolicy:** `*management.ClientRedirectionPolicyEnum` 
     
 </dd>
 </dl>
@@ -3106,6 +3316,9 @@ request := &management.ListConnectionsQueryParameters{
         Take: management.Int(
             1,
         ),
+        Strategy: []*management.ConnectionStrategyEnum{
+            management.ConnectionStrategyEnumAd.Ptr(),
+        },
         Name: management.String(
             "name",
         ),
@@ -3271,7 +3484,7 @@ client.Connections.Create(
 <dl>
 <dd>
 
-**enabledClients:** `[]string` — DEPRECATED property. Use the PATCH /v2/connections/{id}/clients endpoint to enable the connection for a set of clients.
+**enabledClients:** `[]string` — Use of this property is NOT RECOMMENDED. Use the PATCH /v2/connections/{id}/clients endpoint to enable the connection for a set of clients.
     
 </dd>
 </dl>
@@ -3727,7 +3940,7 @@ client.CustomDomains.List(
 <dl>
 <dd>
 
-**q:** `*string` — Query in <a href ="http://www.lucenetutorial.com/lucene-query-syntax.html">Lucene query string syntax</a>.
+**q:** `*string` — Query in <a href ="https://lucene.apache.org/core/2_9_4/queryparsersyntax.html">Lucene query string syntax</a>.
     
 </dd>
 </dl>
@@ -3875,6 +4088,109 @@ client.CustomDomains.Create(
 <dd>
 
 **relyingPartyIdentifier:** `*string` — Relying Party ID (rpId) to be used for Passkeys on this custom domain. If not provided, the full domain will be used.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.CustomDomains.GetDefault() -> *management.GetDefaultDomainResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve the tenant's default domain.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.CustomDomains.GetDefault(
+        context.TODO(),
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.CustomDomains.SetDefault(request) -> *management.UpdateDefaultDomainResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Set the default custom domain for the tenant.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.SetDefaultCustomDomainRequestContent{
+        Domain: "domain",
+    }
+client.CustomDomains.SetDefault(
+        context.TODO(),
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**domain:** `string` — The domain to set as the default custom domain. Must be a verified custom domain or the canonical domain.
     
 </dd>
 </dl>
@@ -4081,7 +4397,7 @@ client.CustomDomains.Update(
 <dl>
 <dd>
 
-**tlsPolicy:** `*management.CustomDomainTLSPolicyEnum` 
+**tlsPolicy:** `*management.CustomDomainTLSPolicyEnum` — recommended includes TLS 1.2
     
 </dd>
 </dl>
@@ -5286,7 +5602,7 @@ client.EventStreams.Update(
 
 ```go
 request := &management.CreateEventStreamTestEventRequestContent{
-        EventType: management.EventStreamTestEventTypeEnumUserCreated,
+        EventType: management.EventStreamTestEventTypeEnumGroupCreated,
     }
 client.EventStreams.Test(
         context.TODO(),
@@ -5336,6 +5652,92 @@ client.EventStreams.Test(
 </dl>
 </details>
 
+## Events
+<details><summary><code>client.Events.Subscribe() -> management.EventStreamSubscribeEventsResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Subscribe to events via Server-Sent Events (SSE)
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.SubscribeEventsRequestParameters{
+        From: management.String(
+            "from",
+        ),
+        FromTimestamp: management.String(
+            "from_timestamp",
+        ),
+        EventType: []*management.EventStreamSubscribeEventsEventTypeEnum{
+            management.EventStreamSubscribeEventsEventTypeEnumGroupCreated.Ptr(),
+        },
+    }
+client.Events.Subscribe(
+        context.TODO(),
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**from:** `*string` — Opaque token representing position in the stream. If not provided, stream will start from the latest events.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fromTimestamp:** `*string` — RFC-3339 timestamp indicating where to start streaming events from. This should only be used on the initial query when a cursor may not be available. Subsequent requests should use the cursor (from) as it will be more accurate.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**eventType:** `*management.EventStreamSubscribeEventsEventTypeEnum` — Event type(s) to listen for. Specify multiple times for multiple types (e.g., ?event_type=user.created&event_type=user.updated). If not provided, all event types will be streamed.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Flows
 <details><summary><code>client.Flows.List() -> *management.ListFlowsOffsetPaginatedResponseContent</code></summary>
 <dl>
@@ -5350,7 +5752,7 @@ client.EventStreams.Test(
 <dd>
 
 ```go
-request := &management.FlowsListRequest{
+request := &management.ListFlowsRequestParameters{
         Page: management.Int(
             1,
         ),
@@ -5360,6 +5762,9 @@ request := &management.FlowsListRequest{
         IncludeTotals: management.Bool(
             true,
         ),
+        Hydrate: []*management.ListFlowsRequestParametersHydrateEnum{
+            management.ListFlowsRequestParametersHydrateEnumFormCount.Ptr(),
+        },
         Synchronous: management.Bool(
             true,
         ),
@@ -5407,7 +5812,7 @@ client.Flows.List(
 <dl>
 <dd>
 
-**hydrate:** `*management.FlowsListRequestHydrateItem` — hydration param
+**hydrate:** `*management.ListFlowsRequestParametersHydrateEnum` — hydration param
     
 </dd>
 </dl>
@@ -5495,7 +5900,11 @@ client.Flows.Create(
 <dd>
 
 ```go
-request := &management.GetFlowRequestParameters{}
+request := &management.GetFlowRequestParameters{
+        Hydrate: []*management.GetFlowRequestParametersHydrateEnum{
+            management.GetFlowRequestParametersHydrateEnumFormCount.Ptr(),
+        },
+    }
 client.Flows.Get(
         context.TODO(),
         "id",
@@ -5666,6 +6075,9 @@ request := &management.ListFormsRequestParameters{
         IncludeTotals: management.Bool(
             true,
         ),
+        Hydrate: []*management.FormsRequestParametersHydrateEnum{
+            management.FormsRequestParametersHydrateEnumFlowCount.Ptr(),
+        },
     }
 client.Forms.List(
         context.TODO(),
@@ -5838,7 +6250,11 @@ client.Forms.Create(
 <dd>
 
 ```go
-request := &management.GetFormRequestParameters{}
+request := &management.GetFormRequestParameters{
+        Hydrate: []*management.FormsRequestParametersHydrateEnum{
+            management.FormsRequestParametersHydrateEnumFlowCount.Ptr(),
+        },
+    }
 client.Forms.Get(
         context.TODO(),
         "id",
@@ -6309,6 +6725,9 @@ request := &management.ListGroupsRequestParameters{
         ExternalID: management.String(
             "external_id",
         ),
+        Search: management.String(
+            "search",
+        ),
         Fields: management.String(
             "fields",
         ),
@@ -6358,6 +6777,14 @@ client.Groups.List(
 <dd>
 
 **externalID:** `*string` — Filter groups by external ID.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**search:** `*string` — Search for groups by name or external ID.
     
 </dd>
 </dl>
@@ -6429,6 +6856,64 @@ Retrieve a group by its ID.
 
 ```go
 client.Groups.Get(
+        context.TODO(),
+        "id",
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — Unique identifier for the group (service-generated).
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Groups.Delete(ID) -> error</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Delete a group by its ID.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Groups.Delete(
         context.TODO(),
         "id",
     )
@@ -6659,7 +7144,7 @@ client.Hooks.Create(
 <dl>
 <dd>
 
-**triggerID:** `*management.HookTriggerIDEnum` 
+**triggerID:** `*management.HookTriggerIDEnum` — Execution stage of this rule. Can be `credentials-exchange`, `pre-user-registration`, `post-user-registration`, `post-change-password`, or `send-phone-message`.
     
 </dd>
 </dl>
@@ -6965,72 +7450,77 @@ client.Jobs.Get(
 <dl>
 <dd>
 
-Retrieve details on <a href="https://auth0.com/docs/logs/streams">log streams</a>.
-<h5>Sample Response</h5><pre><code>[{
-	"id": "string",
-	"name": "string",
-	"type": "eventbridge",
-	"status": "active|paused|suspended",
-	"sink": {
-		"awsAccountId": "string",
-		"awsRegion": "string",
-		"awsPartnerEventSource": "string"
-	}
+Retrieve details on [log streams](https://auth0.com/docs/logs/streams).
+
+**Sample Response**
+
+```json
+[{
+  "id": "string",
+  "name": "string",
+  "type": "eventbridge",
+  "status": "active|paused|suspended",
+  "sink": {
+    "awsAccountId": "string",
+    "awsRegion": "string",
+    "awsPartnerEventSource": "string"
+  }
 }, {
-	"id": "string",
-	"name": "string",
-	"type": "http",
-	"status": "active|paused|suspended",
-	"sink": {
-		"httpContentFormat": "JSONLINES|JSONARRAY",
-		"httpContentType": "string",
-		"httpEndpoint": "string",
-		"httpAuthorization": "string"
-	}
+  "id": "string",
+  "name": "string",
+  "type": "http",
+  "status": "active|paused|suspended",
+  "sink": {
+    "httpContentFormat": "JSONLINES|JSONARRAY",
+    "httpContentType": "string",
+    "httpEndpoint": "string",
+    "httpAuthorization": "string"
+  }
 },
 {
-	"id": "string",
-	"name": "string",
-	"type": "eventgrid",
-	"status": "active|paused|suspended",
-	"sink": {
-		"azureSubscriptionId": "string",
-		"azureResourceGroup": "string",
-		"azureRegion": "string",
-		"azurePartnerTopic": "string"
-	}
+  "id": "string",
+  "name": "string",
+  "type": "eventgrid",
+  "status": "active|paused|suspended",
+  "sink": {
+    "azureSubscriptionId": "string",
+    "azureResourceGroup": "string",
+    "azureRegion": "string",
+    "azurePartnerTopic": "string"
+  }
 },
 {
-	"id": "string",
-	"name": "string",
-	"type": "splunk",
-	"status": "active|paused|suspended",
-	"sink": {
-		"splunkDomain": "string",
-		"splunkToken": "string",
-		"splunkPort": "string",
-		"splunkSecure": "boolean"
-	}
+  "id": "string",
+  "name": "string",
+  "type": "splunk",
+  "status": "active|paused|suspended",
+  "sink": {
+    "splunkDomain": "string",
+    "splunkToken": "string",
+    "splunkPort": "string",
+    "splunkSecure": "boolean"
+  }
 },
 {
-	"id": "string",
-	"name": "string",
-	"type": "sumo",
-	"status": "active|paused|suspended",
-	"sink": {
-		"sumoSourceAddress": "string",
-	}
+  "id": "string",
+  "name": "string",
+  "type": "sumo",
+  "status": "active|paused|suspended",
+  "sink": {
+    "sumoSourceAddress": "string"
+  }
 },
 {
-	"id": "string",
-	"name": "string",
-	"type": "datadog",
-	"status": "active|paused|suspended",
-	"sink": {
-		"datadogRegion": "string",
-		"datadogApiKey": "string"
-	}
-}]</code></pre>
+  "id": "string",
+  "name": "string",
+  "type": "datadog",
+  "status": "active|paused|suspended",
+  "sink": {
+    "datadogRegion": "string",
+    "datadogApiKey": "string"
+  }
+}]
+```
 </dd>
 </dl>
 </dd>
@@ -7073,131 +7563,202 @@ client.LogStreams.List(
 <dd>
 
 Create a log stream.
-<h5>Log Stream Types</h5> The <code>type</code> of log stream being created determines the properties required in the <code>sink</code> payload.
-<h5>HTTP Stream</h5> For an <code>http</code> Stream, the <code>sink</code> properties are listed in the payload below
-Request: <pre><code>{
-	"name": "string",
-	"type": "http",
-	"sink": {
-		"httpEndpoint": "string",
-		"httpContentType": "string",
-		"httpContentFormat": "JSONLINES|JSONARRAY",
-		"httpAuthorization": "string"
-	}
-}</code></pre>
-Response: <pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "http",
-	"status": "active",
-	"sink": {
-		"httpEndpoint": "string",
-		"httpContentType": "string",
-		"httpContentFormat": "JSONLINES|JSONARRAY",
-		"httpAuthorization": "string"
-	}
-}</code></pre>
-<h5>Amazon EventBridge Stream</h5> For an <code>eventbridge</code> Stream, the <code>sink</code> properties are listed in the payload below
-Request: <pre><code>{
-	"name": "string",
-	"type": "eventbridge",
-	"sink": {
-		"awsRegion": "string",
-		"awsAccountId": "string"
-	}
-}</code></pre>
-The response will include an additional field <code>awsPartnerEventSource</code> in the <code>sink</code>: <pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "eventbridge",
-	"status": "active",
-	"sink": {
-		"awsAccountId": "string",
-		"awsRegion": "string",
-		"awsPartnerEventSource": "string"
-	}
-}</code></pre>
-<h5>Azure Event Grid Stream</h5> For an <code>Azure Event Grid</code> Stream, the <code>sink</code> properties are listed in the payload below
-Request: <pre><code>{
-	"name": "string",
-	"type": "eventgrid",
-	"sink": {
-		"azureSubscriptionId": "string",
-		"azureResourceGroup": "string",
-		"azureRegion": "string"
-	}
-}</code></pre>
-Response: <pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "http",
-	"status": "active",
-	"sink": {
-		"azureSubscriptionId": "string",
-		"azureResourceGroup": "string",
-		"azureRegion": "string",
-		"azurePartnerTopic": "string"
-	}
-}</code></pre>
-<h5>Datadog Stream</h5> For a <code>Datadog</code> Stream, the <code>sink</code> properties are listed in the payload below
-Request: <pre><code>{
-	"name": "string",
-	"type": "datadog",
-	"sink": {
-		"datadogRegion": "string",
-		"datadogApiKey": "string"
-	}
-}</code></pre>
-Response: <pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "datadog",
-	"status": "active",
-	"sink": {
-		"datadogRegion": "string",
-		"datadogApiKey": "string"
-	}
-}</code></pre>
-<h5>Splunk Stream</h5> For a <code>Splunk</code> Stream, the <code>sink</code> properties are listed in the payload below
-Request: <pre><code>{
-	"name": "string",
-	"type": "splunk",
-	"sink": {
-		"splunkDomain": "string",
-		"splunkToken": "string",
-		"splunkPort": "string",
-		"splunkSecure": "boolean"
-	}
-}</code></pre>
-Response: <pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "splunk",
-	"status": "active",
-	"sink": {
-		"splunkDomain": "string",
-		"splunkToken": "string",
-		"splunkPort": "string",
-		"splunkSecure": "boolean"
-	}
-}</code></pre>
-<h5>Sumo Logic Stream</h5> For a <code>Sumo Logic</code> Stream, the <code>sink</code> properties are listed in the payload below
-Request: <pre><code>{
-	"name": "string",
-	"type": "sumo",
-	"sink": {
-		"sumoSourceAddress": "string",
-	}
-}</code></pre>
-Response: <pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "sumo",
-	"status": "active",
-	"sink": {
-		"sumoSourceAddress": "string",
-	}
-}</code></pre>
+
+**Log Stream Types**
+
+The `type` of log stream being created determines the properties required in the `sink` payload.
+
+**HTTP Stream**
+
+For an `http` Stream, the `sink` properties are listed in the payload below.
+
+**Request:**
+```json
+{
+  "name": "string",
+  "type": "http",
+  "sink": {
+    "httpEndpoint": "string",
+    "httpContentType": "string",
+    "httpContentFormat": "JSONLINES|JSONARRAY",
+    "httpAuthorization": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "http",
+  "status": "active",
+  "sink": {
+    "httpEndpoint": "string",
+    "httpContentType": "string",
+    "httpContentFormat": "JSONLINES|JSONARRAY",
+    "httpAuthorization": "string"
+  }
+}
+```
+
+**Amazon EventBridge Stream**
+
+For an `eventbridge` Stream, the `sink` properties are listed in the payload below.
+
+**Request:**
+```json
+{
+  "name": "string",
+  "type": "eventbridge",
+  "sink": {
+    "awsRegion": "string",
+    "awsAccountId": "string"
+  }
+}
+```
+
+The response will include an additional field `awsPartnerEventSource` in the `sink`:
+
+**Response:**
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "eventbridge",
+  "status": "active",
+  "sink": {
+    "awsAccountId": "string",
+    "awsRegion": "string",
+    "awsPartnerEventSource": "string"
+  }
+}
+```
+
+**Azure Event Grid Stream**
+
+For an `Azure Event Grid` Stream, the `sink` properties are listed in the payload below.
+
+**Request:**
+```json
+{
+  "name": "string",
+  "type": "eventgrid",
+  "sink": {
+    "azureSubscriptionId": "string",
+    "azureResourceGroup": "string",
+    "azureRegion": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "http",
+  "status": "active",
+  "sink": {
+    "azureSubscriptionId": "string",
+    "azureResourceGroup": "string",
+    "azureRegion": "string",
+    "azurePartnerTopic": "string"
+  }
+}
+```
+
+**Datadog Stream**
+
+For a `Datadog` Stream, the `sink` properties are listed in the payload below.
+
+**Request:**
+```json
+{
+  "name": "string",
+  "type": "datadog",
+  "sink": {
+    "datadogRegion": "string",
+    "datadogApiKey": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "datadog",
+  "status": "active",
+  "sink": {
+    "datadogRegion": "string",
+    "datadogApiKey": "string"
+  }
+}
+```
+
+**Splunk Stream**
+
+For a `Splunk` Stream, the `sink` properties are listed in the payload below.
+
+**Request:**
+```json
+{
+  "name": "string",
+  "type": "splunk",
+  "sink": {
+    "splunkDomain": "string",
+    "splunkToken": "string",
+    "splunkPort": "string",
+    "splunkSecure": "boolean"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "splunk",
+  "status": "active",
+  "sink": {
+    "splunkDomain": "string",
+    "splunkToken": "string",
+    "splunkPort": "string",
+    "splunkSecure": "boolean"
+  }
+}
+```
+
+**Sumo Logic Stream**
+
+For a `Sumo Logic` Stream, the `sink` properties are listed in the payload below.
+
+**Request:**
+```json
+{
+  "name": "string",
+  "type": "sumo",
+  "sink": {
+    "sumoSourceAddress": "string"
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "sumo",
+  "status": "active",
+  "sink": {
+    "sumoSourceAddress": "string"
+  }
+}
+```
 </dd>
 </dl>
 </dd>
@@ -7264,107 +7825,157 @@ client.LogStreams.Create(
 <dd>
 
 Retrieve a log stream configuration and status.
-<h5>Sample responses</h5><h5>Amazon EventBridge Log Stream</h5><pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "eventbridge",
-	"status": "active|paused|suspended",
-	"sink": {
-		"awsAccountId": "string",
-		"awsRegion": "string",
-		"awsPartnerEventSource": "string"
-	}
-}</code></pre> <h5>HTTP Log Stream</h5><pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "http",
-	"status": "active|paused|suspended",
-	"sink": {
-		"httpContentFormat": "JSONLINES|JSONARRAY",
-		"httpContentType": "string",
-		"httpEndpoint": "string",
-		"httpAuthorization": "string"
-	}
-}</code></pre> <h5>Datadog Log Stream</h5><pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "datadog",
-	"status": "active|paused|suspended",
-	"sink": {
-		"datadogRegion": "string",
-		"datadogApiKey": "string"
-	}
 
-}</code></pre><h5>Mixpanel</h5>
-	
-	Request: <pre><code>{
-	  "name": "string",
-	  "type": "mixpanel",
-	  "sink": {
-		"mixpanelRegion": "string", // "us" | "eu",
-		"mixpanelProjectId": "string",
-		"mixpanelServiceAccountUsername": "string",
-		"mixpanelServiceAccountPassword": "string"
-	  }
-	} </code></pre>
-	
-	
-	Response: <pre><code>{
-		"id": "string",
-		"name": "string",
-		"type": "mixpanel",
-		"status": "active",
-		"sink": {
-		  "mixpanelRegion": "string", // "us" | "eu",
-		  "mixpanelProjectId": "string",
-		  "mixpanelServiceAccountUsername": "string",
-		  "mixpanelServiceAccountPassword": "string" // the following is redacted on return
-		}
-	  } </code></pre>
+**Sample responses**
 
-	<h5>Segment</h5>
+**Amazon EventBridge Log Stream**
 
-	Request: <pre><code> {
-	  "name": "string",
-	  "type": "segment",
-	  "sink": {
-		"segmentWriteKey": "string"
-	  }
-	}</code></pre>
-	
-	Response: <pre><code>{
-	  "id": "string",
-	  "name": "string",
-	  "type": "segment",
-	  "status": "active",
-	  "sink": {
-		"segmentWriteKey": "string"
-	  }
-	} </code></pre>
-	
-<h5>Splunk Log Stream</h5><pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "splunk",
-	"status": "active|paused|suspended",
-	"sink": {
-		"splunkDomain": "string",
-		"splunkToken": "string",
-		"splunkPort": "string",
-		"splunkSecure": "boolean"
-	}
-}</code></pre> <h5>Sumo Logic Log Stream</h5><pre><code>{
-	"id": "string",
-	"name": "string",
-	"type": "sumo",
-	"status": "active|paused|suspended",
-	"sink": {
-		"sumoSourceAddress": "string",
-	}
-}</code></pre> <h5>Status</h5> The <code>status</code> of a log stream maybe any of the following:
-1. <code>active</code> - Stream is currently enabled.
-2. <code>paused</code> - Stream is currently user disabled and will not attempt log delivery.
-3. <code>suspended</code> - Stream is currently disabled because of errors and will not attempt log delivery.
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "eventbridge",
+  "status": "active|paused|suspended",
+  "sink": {
+    "awsAccountId": "string",
+    "awsRegion": "string",
+    "awsPartnerEventSource": "string"
+  }
+}
+```
+
+**HTTP Log Stream**
+
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "http",
+  "status": "active|paused|suspended",
+  "sink": {
+    "httpContentFormat": "JSONLINES|JSONARRAY",
+    "httpContentType": "string",
+    "httpEndpoint": "string",
+    "httpAuthorization": "string"
+  }
+}
+```
+
+**Datadog Log Stream**
+
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "datadog",
+  "status": "active|paused|suspended",
+  "sink": {
+    "datadogRegion": "string",
+    "datadogApiKey": "string"
+  }
+}
+```
+
+**Mixpanel**
+
+**Request:**
+
+```json
+{
+  "name": "string",
+  "type": "mixpanel",
+  "sink": {
+    "mixpanelRegion": "string",
+    "mixpanelProjectId": "string",
+    "mixpanelServiceAccountUsername": "string",
+    "mixpanelServiceAccountPassword": "string"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "mixpanel",
+  "status": "active",
+  "sink": {
+    "mixpanelRegion": "string",
+    "mixpanelProjectId": "string",
+    "mixpanelServiceAccountUsername": "string",
+    "mixpanelServiceAccountPassword": "string"
+  }
+}
+```
+
+**Segment**
+
+**Request:**
+
+```json
+{
+  "name": "string",
+  "type": "segment",
+  "sink": {
+    "segmentWriteKey": "string"
+  }
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "segment",
+  "status": "active",
+  "sink": {
+    "segmentWriteKey": "string"
+  }
+}
+```
+
+**Splunk Log Stream**
+
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "splunk",
+  "status": "active|paused|suspended",
+  "sink": {
+    "splunkDomain": "string",
+    "splunkToken": "string",
+    "splunkPort": "string",
+    "splunkSecure": "boolean"
+  }
+}
+```
+
+**Sumo Logic Log Stream**
+
+```json
+{
+  "id": "string",
+  "name": "string",
+  "type": "sumo",
+  "status": "active|paused|suspended",
+  "sink": {
+    "sumoSourceAddress": "string"
+  }
+}
+```
+
+**Status**
+
+The `status` of a log stream maybe any of the following:
+
+1. `active` - Stream is currently enabled.
+2. `paused` - Stream is currently user disabled and will not attempt log delivery.
+3. `suspended` - Stream is currently disabled because of errors and will not attempt log delivery.
 </dd>
 </dl>
 </dd>
@@ -7481,40 +8092,79 @@ client.LogStreams.Delete(
 <dd>
 
 Update a log stream.
-<h4>Examples of how to use the PATCH endpoint.</h4> The following fields may be updated in a PATCH operation: <ul><li>name</li><li>status</li><li>sink</li></ul> Note: For log streams of type <code>eventbridge</code> and <code>eventgrid</code>, updating the <code>sink</code> is not permitted.
-<h5>Update the status of a log stream</h5><pre><code>{
-	"status": "active|paused"
-}</code></pre>
-<h5>Update the name of a log stream</h5><pre><code>{
-	"name": "string"
-}</code></pre>
-<h5>Update the sink properties of a stream of type <code>http</code></h5><pre><code>{
+
+**Examples of how to use the PATCH endpoint.**
+
+The following fields may be updated in a PATCH operation:
+
+- name
+- status
+- sink
+
+Note: For log streams of type `eventbridge` and `eventgrid`, updating the `sink` is not permitted.
+
+**Update the status of a log stream**
+
+```json
+{
+  "status": "active|paused"
+}
+```
+
+**Update the name of a log stream**
+
+```json
+{
+  "name": "string"
+}
+```
+
+**Update the sink properties of a stream of type `http`**
+
+```json
+{
   "sink": {
     "httpEndpoint": "string",
     "httpContentType": "string",
     "httpContentFormat": "JSONARRAY|JSONLINES",
     "httpAuthorization": "string"
   }
-}</code></pre>
-<h5>Update the sink properties of a stream of type <code>datadog</code></h5><pre><code>{
+}
+```
+
+**Update the sink properties of a stream of type `datadog`**
+
+```json
+{
   "sink": {
-		"datadogRegion": "string",
-		"datadogApiKey": "string"
+    "datadogRegion": "string",
+    "datadogApiKey": "string"
   }
-}</code></pre>
-<h5>Update the sink properties of a stream of type <code>splunk</code></h5><pre><code>{
+}
+```
+
+**Update the sink properties of a stream of type `splunk`**
+
+```json
+{
   "sink": {
     "splunkDomain": "string",
     "splunkToken": "string",
     "splunkPort": "string",
     "splunkSecure": "boolean"
   }
-}</code></pre>
-<h5>Update the sink properties of a stream of type <code>sumo</code></h5><pre><code>{
+}
+```
+
+**Update the sink properties of a stream of type `sumo`**
+
+```json
+{
   "sink": {
     "sumoSourceAddress": "string"
   }
-}</code></pre> 
+}
+```
 </dd>
 </dl>
 </dd>
@@ -7946,7 +8596,6 @@ Create a new access control list for your client.
 request := &management.CreateNetworkACLRequestContent{
         Description: "description",
         Active: true,
-        Priority: 1.1,
         Rule: &management.NetworkACLRule{
             Action: &management.NetworkACLAction{},
             Scope: management.NetworkACLRuleScopeEnumManagement,
@@ -7987,7 +8636,7 @@ client.NetworkACLs.Create(
 <dl>
 <dd>
 
-**priority:** `float64` — Indicates the order in which the ACL will be evaluated relative to other ACL rules.
+**priority:** `*float64` — Indicates the order in which the ACL will be evaluated relative to other ACL rules.
     
 </dd>
 </dl>
@@ -8095,7 +8744,6 @@ Update existing access control list for your client.
 request := &management.SetNetworkACLRequestContent{
         Description: "description",
         Active: true,
-        Priority: 1.1,
         Rule: &management.NetworkACLRule{
             Action: &management.NetworkACLAction{},
             Scope: management.NetworkACLRuleScopeEnumManagement,
@@ -8145,7 +8793,7 @@ client.NetworkACLs.Set(
 <dl>
 <dd>
 
-**priority:** `float64` — Indicates the order in which the ACL will be evaluated relative to other ACL rules.
+**priority:** `*float64` — Indicates the order in which the ACL will be evaluated relative to other ACL rules.
     
 </dd>
 </dl>
@@ -8915,6 +9563,205 @@ client.Prompts.UpdateSettings(
 </details>
 
 ## RefreshTokens
+<details><summary><code>client.RefreshTokens.List() -> *management.GetRefreshTokensPaginatedResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a paginated list of refresh tokens for a specific user, with optional filtering by client ID. Results are sorted by credential_id ascending.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.GetRefreshTokensRequestParameters{
+        UserID: "user_id",
+        ClientID: management.String(
+            "client_id",
+        ),
+        From: management.String(
+            "from",
+        ),
+        Take: management.Int(
+            1,
+        ),
+        Fields: management.String(
+            "fields",
+        ),
+        IncludeFields: management.Bool(
+            true,
+        ),
+    }
+client.RefreshTokens.List(
+        context.TODO(),
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**userID:** `string` — ID of the user whose refresh tokens to retrieve. Required.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**clientID:** `*string` — Filter results by client ID. Only valid when user_id is provided.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**from:** `*string` — An opaque cursor from which to start the selection (exclusive). Expires after 24 hours. Obtained from the next property of a previous response.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**take:** `*int` — Number of results per page. Defaults to 50.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**fields:** `*string` — Comma-separated list of fields to include or exclude (based on value provided for include_fields) in the result. Leave empty to retrieve all fields.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**includeFields:** `*bool` — Whether specified fields are to be included (true) or excluded (false).
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.RefreshTokens.Revoke(request) -> error</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Revoke refresh tokens in bulk by ID list, user, user+client, or client.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.RevokeRefreshTokensRequestContent{}
+client.RefreshTokens.Revoke(
+        context.TODO(),
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**ids:** `[]string` — Array of refresh token IDs to revoke. Limited to 100 at a time.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**userID:** `*string` — Revoke all refresh tokens for this user.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**clientID:** `*string` — Revoke all refresh tokens for this client.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**audience:** `*string` — Resource server identifier (audience) to scope the revocation. Must be used with both `user_id` and `client_id`.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.RefreshTokens.Get(ID) -> *management.GetRefreshTokenResponseContent</code></summary>
 <dl>
 <dd>
@@ -9087,7 +9934,7 @@ client.RefreshTokens.Update(
 <dl>
 <dd>
 
-**refreshTokenMetadata:** `*management.RefreshTokenMetadata` 
+**refreshTokenMetadata:** `*management.RefreshTokenMetadata` — Metadata associated with the refresh token. Pass null or {} to remove all metadata.
     
 </dd>
 </dl>
@@ -9128,6 +9975,11 @@ Retrieve details of all APIs associated with your tenant.
 
 ```go
 request := &management.ListResourceServerRequestParameters{
+        Identifiers: []*string{
+            management.String(
+                "identifiers",
+            ),
+        },
         Page: management.Int(
             1,
         ),
@@ -9301,6 +10153,22 @@ client.ResourceServers.Create(
 <dl>
 <dd>
 
+**allowOnlineAccess:** `*bool` — Whether Online Refresh Tokens can be issued for this API (true) or not (false).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**allowOnlineAccessWithEphemeralSessions:** `*bool` — Whether Online Refresh Tokens can be issued even when sessions are configured as ephemeral (true) or not (false).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **tokenLifetime:** `*int` — Expiration value (in seconds) for access tokens issued for this API from the token endpoint.
     
 </dd>
@@ -9366,6 +10234,14 @@ client.ResourceServers.Create(
 <dd>
 
 **subjectTypeAuthorization:** `*management.ResourceServerSubjectTypeAuthorization` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**authorizationPolicy:** `*management.ResourceServerAuthorizationPolicy` 
     
 </dd>
 </dl>
@@ -9611,6 +10487,22 @@ client.ResourceServers.Update(
 <dl>
 <dd>
 
+**allowOnlineAccess:** `*bool` — Whether Online Refresh Tokens can be issued for this API (true) or not (false).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**allowOnlineAccessWithEphemeralSessions:** `*bool` — Whether Online Refresh Tokens can be issued even when sessions are configured as ephemeral (true) or not (false).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **tokenLifetime:** `*int` — Expiration value (in seconds) for access tokens issued for this API from the token endpoint.
     
 </dd>
@@ -9668,6 +10560,14 @@ client.ResourceServers.Update(
 <dd>
 
 **subjectTypeAuthorization:** `*management.ResourceServerSubjectTypeAuthorization` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**authorizationPolicy:** `*management.ResourceServerAuthorizationPolicy` 
     
 </dd>
 </dl>
@@ -10813,7 +11713,7 @@ client.SelfServiceProfiles.Create(
 <dl>
 <dd>
 
-**allowedStrategies:** `[]*management.SelfServiceProfileAllowedStrategyEnum` — List of IdP strategies that will be shown to users during the Self-Service SSO flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `keycloak-samlp`, `pingfederate`]
+**allowedStrategies:** `[]*management.SelfServiceProfileAllowedStrategyEnum` — List of IdP strategies that will be shown to users during the Self-Service Enterprise Configuration flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `auth0-samlp`, `okta-samlp`, `keycloak-samlp`, `pingfederate`]
     
 </dd>
 </dl>
@@ -10821,7 +11721,7 @@ client.SelfServiceProfiles.Create(
 <dl>
 <dd>
 
-**userAttributes:** `[]*management.SelfServiceProfileUserAttribute` — List of attributes to be mapped that will be shown to the user during the SS-SSO flow.
+**userAttributes:** `[]*management.SelfServiceProfileUserAttribute` — List of attributes to be mapped that will be shown to the user during the Self-Service Enterprise Configuration flow.
     
 </dd>
 </dl>
@@ -11037,7 +11937,7 @@ client.SelfServiceProfiles.Update(
 <dl>
 <dd>
 
-**allowedStrategies:** `[]*management.SelfServiceProfileAllowedStrategyEnum` — List of IdP strategies that will be shown to users during the Self-Service SSO flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `keycloak-samlp`, `pingfederate`]
+**allowedStrategies:** `[]*management.SelfServiceProfileAllowedStrategyEnum` — List of IdP strategies that will be shown to users during the Self-Service Enterprise Configuration flow. Possible values: [`oidc`, `samlp`, `waad`, `google-apps`, `adfs`, `okta`, `auth0-samlp`, `okta-samlp`, `keycloak-samlp`, `pingfederate`]
     
 </dd>
 </dl>
@@ -11238,7 +12138,7 @@ client.Sessions.Update(
 <dl>
 <dd>
 
-**sessionMetadata:** `*management.SessionMetadata` 
+**sessionMetadata:** `*management.SessionMetadata` — Metadata associated with the session. Pass null or {} to remove all session_metadata.
     
 </dd>
 </dl>
@@ -11688,7 +12588,7 @@ client.Tickets.ChangePassword(
 <dl>
 <dd>
 
-**resultURL:** `*string` — URL the user will be redirected to in the classic Universal Login experience once the ticket is used. Cannot be specified when using client_id or organization_id.
+**resultURL:** `*string` — URL the user will be redirected to in the classic Universal Login experience once the ticket is used. Cannot be specified when using organization_id. May be specified together with client_id when the tenant has a custom password reset page enabled and a password-reset-post-challenge Action bound.
     
 </dd>
 </dl>
@@ -12234,7 +13134,7 @@ client.UserAttributeProfiles.List(
 <dl>
 <dd>
 
-Retrieve details about a single User Attribute Profile specified by ID. 
+Create a User Attribute Profile
 </dd>
 </dl>
 </dd>
@@ -13031,7 +13931,7 @@ client.Users.List(
 <dl>
 <dd>
 
-**q:** `*string` — Query in <a target='_new' href ='http://www.lucenetutorial.com/lucene-query-syntax.html'>Lucene query string syntax</a>. Some query types cannot be used on metadata fields, for details see <a href='https://auth0.com/docs/users/search/v3/query-syntax#searchable-fields'>Searchable Fields</a>.
+**q:** `*string` — Query in <a target='_new' href ='https://lucene.apache.org/core/2_9_4/queryparsersyntax.html'>Lucene query string syntax</a>. Some query types cannot be used on metadata fields, for details see <a href='https://auth0.com/docs/users/search/v3/query-syntax#searchable-fields'>Searchable Fields</a>.
     
 </dd>
 </dl>
@@ -13643,7 +14543,7 @@ client.Users.Update(
 <dl>
 <dd>
 
-**userMetadata:** `*management.UserMetadata` 
+**userMetadata:** `*management.UserMetadata` — User metadata to which this user has read/write access.
     
 </dd>
 </dl>
@@ -13651,7 +14551,7 @@ client.Users.Update(
 <dl>
 <dd>
 
-**appMetadata:** `*management.AppMetadata` 
+**appMetadata:** `*management.AppMetadata` — User metadata to which this user has read-only access.
     
 </dd>
 </dl>
@@ -14063,7 +14963,7 @@ Performs the equivalent of a roll-back of an action to an earlier, specified ver
 <dd>
 
 ```go
-request := &management.DeployActionVersionRequestBodyParams{}
+request := &management.DeployActionVersionRequestContent{}
 client.Actions.Versions.Deploy(
         context.TODO(),
         "actionId",
@@ -14773,9 +15673,18 @@ List all published versions of a specific Actions Module.
 <dd>
 
 ```go
+request := &management.GetActionModuleVersionsRequestParameters{
+        Page: management.Int(
+            1,
+        ),
+        PerPage: management.Int(
+            1,
+        ),
+    }
 client.Actions.Modules.Versions.List(
         context.TODO(),
         "id",
+        request,
     )
 }
 ```
@@ -14793,6 +15702,22 @@ client.Actions.Modules.Versions.List(
 <dd>
 
 **id:** `string` — The unique ID of the module.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page:** `*int` — Use this field to request a specific page of the list results.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**perPage:** `*int` — The maximum number of results to be returned by the server in a single response. 20 by default.
     
 </dd>
 </dl>
@@ -14967,7 +15892,7 @@ request := &management.ListActionTriggerBindingsRequestParameters{
     }
 client.Actions.Triggers.Bindings.List(
         context.TODO(),
-        "triggerId",
+        management.ActionTriggerTypeEnumPostLogin.Ptr(),
         request,
     )
 }
@@ -14985,7 +15910,7 @@ client.Actions.Triggers.Bindings.List(
 <dl>
 <dd>
 
-**triggerID:** `management.ActionTriggerTypeEnum` — An actions extensibility point.
+**triggerID:** `*management.ActionTriggerTypeEnum` — An actions extensibility point.
     
 </dd>
 </dl>
@@ -15043,7 +15968,7 @@ Update the actions that are bound (i.e. attached) to a trigger. Once an action i
 request := &management.UpdateActionBindingsRequestContent{}
 client.Actions.Triggers.Bindings.UpdateMany(
         context.TODO(),
-        "triggerId",
+        management.ActionTriggerTypeEnumPostLogin.Ptr(),
         request,
     )
 }
@@ -15061,7 +15986,7 @@ client.Actions.Triggers.Bindings.UpdateMany(
 <dl>
 <dd>
 
-**triggerID:** `management.ActionTriggerTypeEnum` — An actions extensibility point.
+**triggerID:** `*management.ActionTriggerTypeEnum` — An actions extensibility point.
     
 </dd>
 </dl>
@@ -15578,7 +16503,7 @@ client.AttackProtection.BruteForceProtection.Update(
 <dl>
 <dd>
 
-**shields:** `[]*attackprotection.UpdateBruteForceSettingsRequestContentShieldsItem` 
+**shields:** `[]*management.BruteForceProtectionShieldsEnum` 
 
 Action to take when a brute force protection threshold is violated.
         Possible values: <code>block</code>, <code>user_notification</code>.
@@ -15597,10 +16522,7 @@ Action to take when a brute force protection threshold is violated.
 <dl>
 <dd>
 
-**mode:** `*attackprotection.UpdateBruteForceSettingsRequestContentMode` 
-
-Account Lockout: Determines whether or not IP address is used when counting failed attempts.
-          Possible values: <code>count_per_identifier_and_ip</code>, <code>count_per_identifier</code>.
+**mode:** `*management.BruteForceProtectionModeEnum` 
     
 </dd>
 </dl>
@@ -17353,7 +18275,7 @@ client.Branding.Phone.Templates.Test(
 <dl>
 <dd>
 
-**deliveryMethod:** `*management.PhoneProviderDeliveryMethodEnum` 
+**deliveryMethod:** `*management.PhoneProviderDeliveryMethodEnum` — Medium to use to send the notification
     
 </dd>
 </dl>
@@ -17638,6 +18560,14 @@ client.Clients.Credentials.Create(
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**kid:** `*string` — Optional kid (Key ID), used to uniquely identify the credential. If not specified, a kid value will be auto-generated. The kid header parameter in JWTs sent by your client should match this value. Valid format is [0-9a-zA-Z-_]{10,64}
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -17896,6 +18826,9 @@ Retrieve all connections that are enabled for the specified <a href="https://www
 
 ```go
 request := &management.ConnectionsGetRequest{
+        Strategy: []*management.ConnectionStrategyEnum{
+            management.ConnectionStrategyEnumAd.Ptr(),
+        },
         From: management.String(
             "from",
         ),
@@ -18366,8 +19299,7 @@ client.Connections.DirectoryProvisioning.GetDefaultMapping(
 </dl>
 </details>
 
-## Connections Clients
-<details><summary><code>client.Connections.Clients.Get(ID) -> *management.GetConnectionEnabledClientsResponseContent</code></summary>
+<details><summary><code>client.Connections.DirectoryProvisioning.ListSynchronizedGroups(ID) -> *management.ListSynchronizedGroupsResponseContent</code></summary>
 <dl>
 <dd>
 
@@ -18379,9 +19311,7 @@ client.Connections.DirectoryProvisioning.GetDefaultMapping(
 <dl>
 <dd>
 
-Retrieve all clients that have the specified <a href="https://auth0.com/docs/authenticate/identity-providers">connection</a> enabled.
-
-<b>Note</b>: The first time you call this endpoint, omit the <code>from</code> parameter. If there are more results, a <code>next</code> value is included in the response. You can use this for subsequent API calls. When <code>next</code> is no longer included in the response, no further results are remaining.
+Retrieve the configured synchronized groups for a connection directory provisioning configuration.
 </dd>
 </dl>
 </dd>
@@ -18396,15 +19326,15 @@ Retrieve all clients that have the specified <a href="https://auth0.com/docs/aut
 <dd>
 
 ```go
-request := &management.GetConnectionEnabledClientsRequestParameters{
-        Take: management.Int(
-            1,
-        ),
+request := &management.ListSynchronizedGroupsRequestParameters{
         From: management.String(
             "from",
         ),
+        Take: management.Int(
+            1,
+        ),
     }
-client.Connections.Clients.Get(
+client.Connections.DirectoryProvisioning.ListSynchronizedGroups(
         context.TODO(),
         "id",
         request,
@@ -18424,15 +19354,7 @@ client.Connections.Clients.Get(
 <dl>
 <dd>
 
-**id:** `string` — The id of the connection for which enabled clients are to be retrieved
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**take:** `*int` — Number of results per page. Defaults to 50.
+**id:** `string` — The id of the connection to list synchronized groups for.
     
 </dd>
 </dl>
@@ -18444,6 +19366,14 @@ client.Connections.Clients.Get(
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**take:** `*int` — Number of results per page. Defaults to 50.
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -18452,9 +19382,23 @@ client.Connections.Clients.Get(
 </dl>
 </details>
 
-<details><summary><code>client.Connections.Clients.Update(ID, request) -> error</code></summary>
+<details><summary><code>client.Connections.DirectoryProvisioning.Set(ID, request) -> error</code></summary>
 <dl>
 <dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Create or replace the selected groups for a connection directory provisioning configuration.
+</dd>
+</dl>
+</dd>
+</dl>
 
 #### 🔌 Usage
 
@@ -18465,13 +19409,14 @@ client.Connections.Clients.Get(
 <dd>
 
 ```go
-request := []*management.UpdateEnabledClientConnectionsRequestContentItem{
-        &management.UpdateEnabledClientConnectionsRequestContentItem{
-            ClientID: "client_id",
-            Status: true,
+request := &management.ReplaceSynchronizedGroupsRequestContent{
+        Groups: []*management.SynchronizedGroupPayload{
+            &management.SynchronizedGroupPayload{
+                ID: "id",
+            },
         },
     }
-client.Connections.Clients.Update(
+client.Connections.DirectoryProvisioning.Set(
         context.TODO(),
         "id",
         request,
@@ -18491,7 +19436,7 @@ client.Connections.Clients.Update(
 <dl>
 <dd>
 
-**id:** `string` — The id of the connection to modify
+**id:** `string` — The id of the connection to create or replace synchronized groups for
     
 </dd>
 </dl>
@@ -18499,134 +19444,7 @@ client.Connections.Clients.Update(
 <dl>
 <dd>
 
-**request:** `management.UpdateEnabledClientConnectionsRequestContent` 
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-## Connections Keys
-<details><summary><code>client.Connections.Keys.Get(ID) -> []*management.ConnectionKey</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Gets the connection keys for the Okta or OIDC connection strategy.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-client.Connections.Keys.Get(
-        context.TODO(),
-        "id",
-    )
-}
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `string` — ID of the connection
-    
-</dd>
-</dl>
-</dd>
-</dl>
-
-
-</dd>
-</dl>
-</details>
-
-<details><summary><code>client.Connections.Keys.Rotate(ID, request) -> *management.RotateConnectionsKeysResponseContent</code></summary>
-<dl>
-<dd>
-
-#### 📝 Description
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-Rotates the connection keys for the Okta or OIDC connection strategies.
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### 🔌 Usage
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-```go
-request := &management.RotateConnectionKeysRequestContent{}
-client.Connections.Keys.Rotate(
-        context.TODO(),
-        "id",
-        request,
-    )
-}
-```
-</dd>
-</dl>
-</dd>
-</dl>
-
-#### ⚙️ Parameters
-
-<dl>
-<dd>
-
-<dl>
-<dd>
-
-**id:** `string` — ID of the connection
-    
-</dd>
-</dl>
-
-<dl>
-<dd>
-
-**request:** `*management.RotateConnectionKeysRequestContent` 
+**groups:** `[]*management.SynchronizedGroupPayload` — Array of Google Workspace Directory group objects to synchronize.
     
 </dd>
 </dl>
@@ -18639,6 +19457,80 @@ client.Connections.Keys.Rotate(
 </details>
 
 ## Connections SCIMConfiguration
+<details><summary><code>client.Connections.SCIMConfiguration.List() -> *management.ListSCIMConfigurationsResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve a list of SCIM configurations of a tenant.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.ListSCIMConfigurationsRequestParameters{
+        From: management.String(
+            "from",
+        ),
+        Take: management.Int(
+            1,
+        ),
+    }
+client.Connections.SCIMConfiguration.List(
+        context.TODO(),
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**from:** `*string` — Optional Id from which to start selection.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**take:** `*int` — Number of results per page. Defaults to 50.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 <details><summary><code>client.Connections.SCIMConfiguration.Get(ID) -> *management.GetSCIMConfigurationResponseContent</code></summary>
 <dl>
 <dd>
@@ -18951,6 +19843,346 @@ client.Connections.SCIMConfiguration.GetDefaultMapping(
 <dd>
 
 **id:** `string` — The id of the connection to retrieve its default SCIM mapping
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Connections Clients
+<details><summary><code>client.Connections.Clients.Get(ID) -> *management.GetConnectionEnabledClientsResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Retrieve all clients that have the specified <a href="https://auth0.com/docs/authenticate/identity-providers">connection</a> enabled.
+
+<b>Note</b>: The first time you call this endpoint, omit the <code>from</code> parameter. If there are more results, a <code>next</code> value is included in the response. You can use this for subsequent API calls. When <code>next</code> is no longer included in the response, no further results are remaining.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.GetConnectionEnabledClientsRequestParameters{
+        Take: management.Int(
+            1,
+        ),
+        From: management.String(
+            "from",
+        ),
+    }
+client.Connections.Clients.Get(
+        context.TODO(),
+        "id",
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — The id of the connection for which enabled clients are to be retrieved
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**take:** `*int` — Number of results per page. Defaults to 50.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**from:** `*string` — Optional Id from which to start selection.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Connections.Clients.Update(ID, request) -> error</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := []*management.UpdateEnabledClientConnectionsRequestContentItem{
+        &management.UpdateEnabledClientConnectionsRequestContentItem{
+            ClientID: "client_id",
+            Status: true,
+        },
+    }
+client.Connections.Clients.Update(
+        context.TODO(),
+        "id",
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — The id of the connection to modify
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `management.UpdateEnabledClientConnectionsRequestContent` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+## Connections Keys
+<details><summary><code>client.Connections.Keys.Get(ID) -> []*management.ConnectionKey</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Gets the connection keys for the Okta or OIDC connection strategy.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Connections.Keys.Get(
+        context.TODO(),
+        "id",
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — ID of the connection
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Connections.Keys.Create(ID, request) -> management.PostConnectionsKeysResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Provision initial connection keys for Okta or OIDC connection strategies. This endpoint allows you to create keys before configuring the connection to use Private Key JWT authentication, enabling zero-downtime transitions.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.PostConnectionKeysRequestContent{}
+client.Connections.Keys.Create(
+        context.TODO(),
+        "id",
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — ID of the connection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*management.PostConnectionKeysRequestContent` 
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Connections.Keys.Rotate(ID, request) -> *management.RotateConnectionsKeysResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 📝 Description
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+Rotates the connection keys for the Okta or OIDC connection strategies.
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.RotateConnectionKeysRequestContent{}
+client.Connections.Keys.Rotate(
+        context.TODO(),
+        "id",
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — ID of the connection
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**request:** `*management.RotateConnectionKeysRequestContent` 
     
 </dd>
 </dl>
@@ -19993,7 +21225,7 @@ client.EventStreams.Redeliveries.CreateByID(
 <dd>
 
 ```go
-request := &management.ExecutionsListRequest{
+request := &management.ListFlowExecutionsRequestParameters{
         From: management.String(
             "from",
         ),
@@ -20062,7 +21294,11 @@ client.Flows.Executions.List(
 <dd>
 
 ```go
-request := &management.ExecutionsGetRequest{}
+request := &management.GetFlowExecutionRequestParameters{
+        Hydrate: []*management.GetFlowExecutionRequestParametersHydrateEnum{
+            management.GetFlowExecutionRequestParametersHydrateEnumDebug.Ptr(),
+        },
+    }
 client.Flows.Executions.Get(
         context.TODO(),
         "flow_id",
@@ -20100,7 +21336,7 @@ client.Flows.Executions.Get(
 <dl>
 <dd>
 
-**hydrate:** `*flows.ExecutionsGetRequestHydrateItem` — Hydration param
+**hydrate:** `*management.GetFlowExecutionRequestParametersHydrateEnum` — Hydration param
     
 </dd>
 </dl>
@@ -24079,6 +25315,11 @@ request := &management.ListOrganizationClientGrantsRequestParameters{
         ClientID: management.String(
             "client_id",
         ),
+        GrantIDs: []*string{
+            management.String(
+                "grant_ids",
+            ),
+        },
         Page: management.Int(
             1,
         ),
@@ -24278,6 +25519,411 @@ client.Organizations.ClientGrants.Delete(
 </dl>
 </details>
 
+## Organizations Connections
+<details><summary><code>client.Organizations.Connections.List(ID) -> *management.ListOrganizationAllConnectionsOffsetPaginatedResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.ListOrganizationAllConnectionsRequestParameters{
+        Page: management.Int(
+            1,
+        ),
+        PerPage: management.Int(
+            1,
+        ),
+        IncludeTotals: management.Bool(
+            true,
+        ),
+        IsEnabled: management.Bool(
+            true,
+        ),
+    }
+client.Organizations.Connections.List(
+        context.TODO(),
+        "id",
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — Organization identifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**page:** `*int` — Page index of the results to return. First page is 0.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**perPage:** `*int` — Number of results per page. Defaults to 50.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**includeTotals:** `*bool` — Return results inside an object that contains the total result count (true) or as a direct array of results (false, default).
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**isEnabled:** `*bool` — Filter connections by enabled status.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Organizations.Connections.Create(ID, request) -> *management.CreateOrganizationAllConnectionResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.CreateOrganizationAllConnectionRequestParameters{
+        ConnectionID: "connection_id",
+    }
+client.Organizations.Connections.Create(
+        context.TODO(),
+        "id",
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — Organization identifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**organizationConnectionName:** `*string` — Name of the connection in the scope of this organization.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**assignMembershipOnLogin:** `*bool` — When true, all users that log in with this connection will be automatically granted membership in the organization. When false, users must be granted membership in the organization before logging in with this connection.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**showAsButton:** `*bool` — Determines whether a connection should be displayed on this organization’s login prompt. Only applicable for enterprise connections. Default: true.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**isSignupEnabled:** `*bool` — Determines whether organization signup should be enabled for this organization connection. Only applicable for database connections. Default: false.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**organizationAccessLevel:** `*management.OrganizationAccessLevelEnum` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**isEnabled:** `*bool` — Whether the connection is enabled for the organization.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connectionID:** `string` — Connection identifier.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Organizations.Connections.Get(ID, ConnectionID) -> *management.GetOrganizationAllConnectionResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Organizations.Connections.Get(
+        context.TODO(),
+        "id",
+        "connection_id",
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — Organization identifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connectionID:** `string` — Connection identifier.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Organizations.Connections.Delete(ID, ConnectionID) -> error</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+client.Organizations.Connections.Delete(
+        context.TODO(),
+        "id",
+        "connection_id",
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — Organization identifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connectionID:** `string` — Connection identifier.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
+<details><summary><code>client.Organizations.Connections.Update(ID, ConnectionID, request) -> *management.UpdateOrganizationAllConnectionResponseContent</code></summary>
+<dl>
+<dd>
+
+#### 🔌 Usage
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+```go
+request := &management.UpdateOrganizationConnectionRequestParameters{}
+client.Organizations.Connections.Update(
+        context.TODO(),
+        "id",
+        "connection_id",
+        request,
+    )
+}
+```
+</dd>
+</dl>
+</dd>
+</dl>
+
+#### ⚙️ Parameters
+
+<dl>
+<dd>
+
+<dl>
+<dd>
+
+**id:** `string` — Organization identifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**connectionID:** `string` — Connection identifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**organizationConnectionName:** `*string` — Name of the connection in the scope of this organization.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**assignMembershipOnLogin:** `*bool` — When true, all users that log in with this connection will be automatically granted membership in the organization. When false, users must be granted membership in the organization before logging in with this connection.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**showAsButton:** `*bool` — Determines whether a connection should be displayed on this organization’s login prompt. Only applicable for enterprise connections. Default: true.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**isSignupEnabled:** `*bool` — Determines whether organization signup should be enabled for this organization connection. Only applicable for database connections. Default: false.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**organizationAccessLevel:** `*management.OrganizationAccessLevelEnumWithNull` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**isEnabled:** `*bool` — Whether the connection is enabled for the organization.
+    
+</dd>
+</dl>
+</dd>
+</dl>
+
+
+</dd>
+</dl>
+</details>
+
 ## Organizations DiscoveryDomains
 <details><summary><code>client.Organizations.DiscoveryDomains.List(ID) -> *management.ListOrganizationDiscoveryDomainsResponseContent</code></summary>
 <dl>
@@ -24292,6 +25938,7 @@ client.Organizations.ClientGrants.Delete(
 <dd>
 
 Retrieve list of all organization discovery domains associated with the specified organization.
+This endpoint is subject to eventual consistency; newly created, updated, or deleted discovery domains may not immediately appear in the response.
 </dd>
 </dl>
 </dd>
@@ -24461,7 +26108,7 @@ client.Organizations.DiscoveryDomains.Create(
 <dd>
 
 Retrieve details about a single organization discovery domain specified by domain name.
-
+This endpoint is subject to eventual consistency; newly created, updated, or deleted discovery domains may not immediately appear in the response.
 </dd>
 </dl>
 </dd>
@@ -24528,7 +26175,8 @@ client.Organizations.DiscoveryDomains.GetByName(
 <dl>
 <dd>
 
-Retrieve details about a single organization discovery domain specified by ID. 
+Retrieve details about a single organization discovery domain specified by ID.
+This endpoint is subject to eventual consistency; newly created, updated, or deleted discovery domains may not immediately appear in the response.
 </dd>
 </dl>
 </dd>
@@ -26422,7 +28070,7 @@ client.Prompts.Rendering.Update(
 <dl>
 <dd>
 
-**renderingMode:** `*management.AculRenderingModeEnum` 
+**renderingMode:** `*management.AculRenderingModeEnum` — Rendering mode
     
 </dd>
 </dl>
@@ -27392,7 +29040,7 @@ client.Roles.Users.Assign(
 <dl>
 <dd>
 
-Retrieves text customizations for a given self-service profile, language and Self Service SSO Flow page.
+Retrieves text customizations for a given self-service profile, language and Self-Service Enterprise Configuration flow page.
 </dd>
 </dl>
 </dd>
@@ -27468,7 +29116,7 @@ client.SelfServiceProfiles.CustomText.List(
 <dl>
 <dd>
 
-Updates text customizations for a given self-service profile, language and Self Service SSO Flow page.
+Updates text customizations for a given self-service profile, language and Self-Service Enterprise Configuration flow page.
 </dd>
 </dl>
 </dd>
@@ -27557,7 +29205,7 @@ client.SelfServiceProfiles.CustomText.Set(
 <dl>
 <dd>
 
-Creates an SSO access ticket to initiate the Self Service SSO Flow using a self-service profile.
+Creates an access ticket to initiate the Self-Service Enterprise Configuration flow using a self-service profile.
 </dd>
 </dl>
 </dd>
@@ -27601,7 +29249,7 @@ client.SelfServiceProfiles.SSOTicket.Create(
 <dl>
 <dd>
 
-**connectionID:** `*string` — If provided, this will allow editing of the provided connection during the SSO Flow
+**connectionID:** `*string` — If provided, this will allow editing of the provided connection during the Self-Service Enterprise Configuration flow
     
 </dd>
 </dl>
@@ -27661,6 +29309,14 @@ client.SelfServiceProfiles.SSOTicket.Create(
     
 </dd>
 </dl>
+
+<dl>
+<dd>
+
+**enabledFeatures:** `*management.SelfServiceProfileSSOTicketEnabledFeatures` 
+    
+</dd>
+</dl>
 </dd>
 </dl>
 
@@ -27681,7 +29337,7 @@ client.SelfServiceProfiles.SSOTicket.Create(
 <dl>
 <dd>
 
-Revokes an SSO access ticket and invalidates associated sessions. The ticket will no longer be accepted to initiate a Self-Service SSO session. If any users have already started a session through this ticket, their session will be terminated. Clients should expect a `202 Accepted` response upon successful processing, indicating that the request has been acknowledged and that the revocation is underway but may not be fully completed at the time of response. If the specified ticket does not exist, a `202 Accepted` response is also returned, signaling that no further action is required.
+Revokes a Self-Service Enterprise Configuration access ticket and invalidates associated sessions. The ticket will no longer be accepted to initiate a Self-Service Enterprise Configuration session. If any users have already started a session through this ticket, their session will be terminated. Clients should expect a `202 Accepted` response upon successful processing, indicating that the request has been acknowledged and that the revocation is underway but may not be fully completed at the time of response. If the specified ticket does not exist, a `202 Accepted` response is also returned, signaling that no further action is required.
 Clients should treat these `202` responses as an acknowledgment that the request has been accepted and is in progress, even if the ticket was not found.
 </dd>
 </dl>
@@ -27867,7 +29523,7 @@ client.Tenants.Settings.Update(
 <dl>
 <dd>
 
-**deviceFlow:** `*management.TenantSettingsDeviceFlow` 
+**deviceFlow:** `*management.TenantSettingsDeviceFlow` — Device Flow configuration.
     
 </dd>
 </dl>
@@ -28019,7 +29675,7 @@ client.Tenants.Settings.Update(
 <dl>
 <dd>
 
-**enabledLocales:** `[]*tenants.UpdateTenantSettingsRequestContentEnabledLocalesItem` — Supported locales for the user interface
+**enabledLocales:** `[]*management.TenantSettingsSupportedLocalesEnum` — Supported locales for the user interface
     
 </dd>
 </dl>
@@ -28119,6 +29775,14 @@ See https://auth0.com/docs/secure/security-guidance/measures-against-app-imperso
 <dl>
 <dd>
 
+**clientIDMetadataDocumentSupported:** `*bool` — Whether the authorization server supports retrieving client metadata from a client_id URL.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
 **enableAiGuide:** `*bool` — Whether Auth0 Guide (AI-powered assistance) is enabled for this tenant.
     
 </dd>
@@ -28128,6 +29792,14 @@ See https://auth0.com/docs/secure/security-guidance/measures-against-app-imperso
 <dd>
 
 **phoneConsolidatedExperience:** `*bool` — Whether Phone Consolidated Experience is enabled for this tenant.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**dynamicClientRegistrationSecurityMode:** `*management.TenantSettingsDynamicClientRegistrationSecurityMode` 
     
 </dd>
 </dl>
@@ -28340,7 +30012,7 @@ client.Users.AuthenticationMethods.Create(
 <dl>
 <dd>
 
-**keyID:** `*string` — Applies to webauthn authentication methods only. The id of the credential.
+**keyID:** `*string` — Applies to webauthn/passkey authentication methods only. The id of the credential.
     
 </dd>
 </dl>
@@ -28348,7 +30020,15 @@ client.Users.AuthenticationMethods.Create(
 <dl>
 <dd>
 
-**publicKey:** `*string` — Applies to webauthn authentication methods only. The public key, which is encoded as base64.
+**publicKey:** `*string` — Applies to webauthn/passkey authentication methods only. The public key, which is encoded as base64.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**aaguid:** `*string` — Applies to passkeys only. Authenticator Attestation Globally Unique Identifier
     
 </dd>
 </dl>
@@ -28357,6 +30037,54 @@ client.Users.AuthenticationMethods.Create(
 <dd>
 
 **relyingPartyIdentifier:** `*string` — Applies to webauthn authentication methods only. The relying party identifier.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**credentialDeviceType:** `*management.CredentialDeviceTypeEnum` 
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**credentialBackedUp:** `*bool` — Applies to passkeys only. Whether the credential was backed up.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**identityUserID:** `*string` — Applies to passkeys only. The ID of the user identity linked with the authentication method.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**userAgent:** `*string` — Applies to passkeys only. The user-agent of the browser used to create the passkey.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**userHandle:** `*string` — Applies to passkeys only. The user handle of the user identity.
+    
+</dd>
+</dl>
+
+<dl>
+<dd>
+
+**transports:** `[]string` — Applies to passkeys only. The transports used by clients to communicate with the authenticator.
     
 </dd>
 </dl>
@@ -28693,7 +30421,7 @@ client.Users.AuthenticationMethods.Update(
 <dl>
 <dd>
 
-**preferredAuthenticationMethod:** `*management.PreferredAuthenticationMethodEnum` 
+**preferredAuthenticationMethod:** `*management.PreferredAuthenticationMethodEnum` — Preferred phone authentication method
     
 </dd>
 </dl>
@@ -29209,7 +30937,7 @@ client.Users.Identities.Link(
 <dl>
 <dd>
 
-**provider:** `*management.UserIdentityProviderEnum` 
+**provider:** `*management.UserIdentityProviderEnum` — Identity provider of the secondary user account being linked.
     
 </dd>
 </dl>
@@ -30525,7 +32253,7 @@ client.Users.Sessions.Delete(
 <dl>
 <dd>
 
-List a verifiable credential templates.
+List verifiable credential templates.
 </dd>
 </dl>
 </dd>
@@ -30919,3 +32647,4 @@ client.VerifiableCredentials.Verification.Templates.Update(
 </dd>
 </dl>
 </details>
+

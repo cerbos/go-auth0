@@ -4,11 +4,13 @@ package executions
 
 import (
 	context "context"
+	http "net/http"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	core "github.com/auth0/go-auth0/v2/management/core"
+	flows "github.com/auth0/go-auth0/v2/management/flows"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
 	option "github.com/auth0/go-auth0/v2/management/option"
-	http "net/http"
 )
 
 type RawClient struct {
@@ -36,7 +38,7 @@ func (r *RawClient) Get(
 	flowID string,
 	// Flow execution id
 	executionID string,
-	request *management.ExecutionsGetRequest,
+	request *management.GetFlowExecutionRequestParameters,
 	opts ...option.RequestOption,
 ) (*core.Response[*management.GetFlowExecutionResponseContent], error) {
 	options := core.NewRequestOptions(opts...)
@@ -73,7 +75,7 @@ func (r *RawClient) Get(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(flows.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -119,7 +121,7 @@ func (r *RawClient) Delete(
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(flows.ErrorCodes),
 		},
 	)
 	if err != nil {

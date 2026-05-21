@@ -4,11 +4,13 @@ package ssoticket
 
 import (
 	context "context"
+	http "net/http"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	core "github.com/auth0/go-auth0/v2/management/core"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
 	option "github.com/auth0/go-auth0/v2/management/option"
-	http "net/http"
+	selfserviceprofiles "github.com/auth0/go-auth0/v2/management/selfserviceprofiles"
 )
 
 type RawClient struct {
@@ -65,7 +67,7 @@ func (r *RawClient) Create(
 			Client:          options.HTTPClient,
 			Request:         request,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(selfserviceprofiles.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -111,7 +113,7 @@ func (r *RawClient) Revoke(
 			BodyProperties:  options.BodyProperties,
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(selfserviceprofiles.ErrorCodes),
 		},
 	)
 	if err != nil {

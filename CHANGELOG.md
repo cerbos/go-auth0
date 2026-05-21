@@ -1,5 +1,94 @@
 # Change Log
 
+## [v2.11.0](https://github.com/auth0/go-auth0/tree/v2.11.0) (2026-05-14)
+[Full Changelog](https://github.com/auth0/go-auth0/compare/v2.10.0...v2.11.0)
+
+**Added**
+- feat: add passkey-related fields (`aaguid`, `credential_device_type`, `credential_backed_up`, `identity_user_id`, `user_agent`, `user_handle`, `transports`) to user authentication method types [\#770](https://github.com/auth0/go-auth0/pull/770) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `CredentialDeviceTypeEnum` with `single_device` and `multi_device` values [\#770](https://github.com/auth0/go-auth0/pull/770) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `allow_online_access_with_ephemeral_sessions` field to resource server types [\#770](https://github.com/auth0/go-auth0/pull/770) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `audience` field to `RevokeRefreshTokensRequestContent` for audience-scoped revocation [\#770](https://github.com/auth0/go-auth0/pull/770) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `LoginWithCustomTokenExchange` method for Custom Token Exchange (RFC 8693) [\#766](https://github.com/auth0/go-auth0/pull/766) ([JohnRoesler](https://github.com/JohnRoesler))
+
+**Fixed**
+- fix: preserve request body in debug output for POST, PATCH, and PUT methods [\#751](https://github.com/auth0/go-auth0/pull/751) ([bkiran6398](https://github.com/bkiran6398))
+
+## [v2.10.0](https://github.com/auth0/go-auth0/tree/v2.10.0) (2026-04-29)
+[Full Changelog](https://github.com/auth0/go-auth0/compare/v2.9.0...v2.10.0)
+
+**Added**
+- feat: add SSE Events API with `Subscribe()` method for consuming events via Server-Sent Events [\#761](https://github.com/auth0/go-auth0/pull/761) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add streaming infrastructure in `core/stream.go` with SSE spec-compliant parsing and event discriminator injection [\#761](https://github.com/auth0/go-auth0/pull/761) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `GoneError` (HTTP 410) error type for expired stream cursors [\#761](https://github.com/auth0/go-auth0/pull/761) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `WithMaxStreamBufSize` request option for configuring streaming buffer size [\#761](https://github.com/auth0/go-auth0/pull/761) ([developerkunal](https://github.com/developerkunal))
+- feat: add `Revoke()` method for bulk refresh token revocation [\#761](https://github.com/auth0/go-auth0/pull/761) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `BrandingIdentifiers` with login display, OTP autocomplete, and phone display settings [\#761](https://github.com/auth0/go-auth0/pull/761) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `ConnectionAssertionDecryptionSettings` for SAML assertion decryption [\#761](https://github.com/auth0/go-auth0/pull/761) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `TokenEndpointJwtcaAudFormat` field to OIDC connection options [\#761](https://github.com/auth0/go-auth0/pull/761) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `Strategy` query parameter for filtering connections by strategy [\#761](https://github.com/auth0/go-auth0/pull/761) ([fern-api[bot]](https://github.com/apps/fern-api))
+
+## [v2.9.0](https://github.com/auth0/go-auth0/tree/v2.9.0) (2026-04-22)
+[Full Changelog](https://github.com/auth0/go-auth0/compare/v2.8.0...v2.9.0)
+
+**Added**
+- feat: add `default_for` field to client grant response types (`ClientGrantDefaultForEnum`) [\#755](https://github.com/auth0/go-auth0/pull/755) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `my_organization_configuration`, `third_party_security_mode`, and `redirection_policy` client fields [\#755](https://github.com/auth0/go-auth0/pull/755) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `ClientSessionTransferDelegationConfiguration` with `allow_delegated_access` and `enforce_device_binding` fields [\#755](https://github.com/auth0/go-auth0/pull/755) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `dpop_signing_alg` field to OIDC and Okta connection options (`ConnectionDpopSigningAlgEnum`) [\#755](https://github.com/auth0/go-auth0/pull/755) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `organization_id` field to `ConnectedAccount` [\#755](https://github.com/auth0/go-auth0/pull/755) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `ListSynchronizedGroups` and `Set` operations for directory provisioning [\#755](https://github.com/auth0/go-auth0/pull/755) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add `TenantSettingsDynamicClientRegistrationSecurityMode` enum [\#755](https://github.com/auth0/go-auth0/pull/755) ([fern-api[bot]](https://github.com/apps/fern-api))
+
+## [v2.8.0](https://github.com/auth0/go-auth0/tree/v2.8.0) (2026-04-09)
+[Full Changelog](https://github.com/auth0/go-auth0/compare/v2.7.0...v2.8.0)
+
+**Added**
+- feat: SDK regeneration with typed error codes and org connections client [\#746](https://github.com/auth0/go-auth0/pull/746) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add CIMD client registration, refresh token listing, and group deletion [\#741](https://github.com/auth0/go-auth0/pull/741) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add custom domain defaults, credential kid, and connection configuration [\#732](https://github.com/auth0/go-auth0/pull/732) ([fern-api[bot]](https://github.com/apps/fern-api))
+
+**Changed**
+- refactor: replace interface{} with any and use millisecond time formatting [\#733](https://github.com/auth0/go-auth0/pull/733) ([fern-api[bot]](https://github.com/apps/fern-api))
+
+**Fixed**
+- fix: prevent double-slash in base URL when domain has trailing slash [\#745](https://github.com/auth0/go-auth0/pull/745) ([developerkunal](https://github.com/developerkunal))
+- fix: serialize client assertion aud claim as string instead of array [\#727](https://github.com/auth0/go-auth0/pull/727) ([developerkunal](https://github.com/developerkunal))
+
+**Security**
+- chore(deps): bump codecov/codecov-action from 5.5.2 to 6.0.0 [\#736](https://github.com/auth0/go-auth0/pull/736) ([dependabot[bot]](https://github.com/apps/dependabot))
+- chore: add SCA scan workflow [\#729](https://github.com/auth0/go-auth0/pull/729) ([developerkunal](https://github.com/developerkunal))
+
+## [v2.7.0](https://github.com/auth0/go-auth0/tree/v2.7.0) (2026-03-11)
+[Full Changelog](https://github.com/auth0/go-auth0/compare/v2.6.0...v2.7.0)
+
+**Added**
+- feat: improve DateTime parsing with multi-format support [\#723](https://github.com/auth0/go-auth0/pull/723) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add Auth0Managed network ACL field, additional signing algorithms, and SCIM group provisioning scopes [\#717](https://github.com/auth0/go-auth0/pull/717) ([fern-api[bot]](https://github.com/apps/fern-api))
+
+**Fixed**
+- fix: remove redundant WithContext call in HTTP request builder [\#724](https://github.com/auth0/go-auth0/pull/724) ([fern-api[bot]](https://github.com/apps/fern-api))
+
+## [v2.6.0](https://github.com/auth0/go-auth0/tree/v2.6.0) (2026-02-25)
+[Full Changelog](https://github.com/auth0/go-auth0/compare/v2.5.0...v2.6.0)
+
+**Added**
+- feat: add connection keys provisioning, SCIM config list, DPoP signing, and on-behalf-of token exchange support [\#706](https://github.com/auth0/go-auth0/pull/706) ([fern-api[bot]](https://github.com/apps/fern-api))
+- feat: add WithTokenSource option for custom token management [\#705](https://github.com/auth0/go-auth0/pull/705) ([developerkunal](https://github.com/developerkunal))
+
+**Fixed**
+- fix: clone http.DefaultClient in authentication.New to avoid mutating global state [\#704](https://github.com/auth0/go-auth0/pull/704) ([developerkunal](https://github.com/developerkunal))
+
+## [v2.5.0](https://github.com/auth0/go-auth0/tree/v2.5.0) (2026-02-11)
+[Full Changelog](https://github.com/auth0/go-auth0/compare/v2.4.0...v2.5.0)
+
+**Changed**
+- feat!: Consolidate types to root package with consistent naming [\#692](https://github.com/auth0/go-auth0/pull/692) ([fern-api[bot]](https://github.com/apps/fern-api))
+
+**Fixed**
+- chore: Add MarshalJSON/UnmarshalJSON to all request content types for correct explicit-field serialization [\#696](https://github.com/auth0/go-auth0/pull/696) ([fern-api[bot]](https://github.com/apps/fern-api))
+- chore: Add pagination for Action Module Versions, enhance social connection options, and fix session signal serialization [\#695](https://github.com/auth0/go-auth0/pull/695) ([fern-api[bot]](https://github.com/apps/fern-api))
+- chore: Improve WireMock test infrastructure and add package-level error codes [\#693](https://github.com/auth0/go-auth0/pull/693) ([fern-api[bot]](https://github.com/apps/fern-api))
+
 ## [v2.4.0](https://github.com/auth0/go-auth0/tree/v2.4.0) (2026-01-27)
 [Full Changelog](https://github.com/auth0/go-auth0/compare/v2.3.0...v2.4.0)
 

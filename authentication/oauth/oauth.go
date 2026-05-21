@@ -1,3 +1,4 @@
+// Package oauth provides types for the Auth0 OAuth authentication endpoints.
 package oauth
 
 import "time"
@@ -8,7 +9,7 @@ type ClientAuthentication struct {
 	ClientID string `json:"client_id,omitempty"`
 	// ClientSecret to use for the specific request. Required when Client Secret Basic or Client
 	// Secret Post is the application authentication method.
-	ClientSecret string `json:"client_secret,omitempty"`
+	ClientSecret string `json:"client_secret,omitempty"` //nolint:gosec // This is a request field, not a hardcoded secret.
 	// ClientAssertion to use for the specific request. Required if `Private Key JWT` is the
 	// authentication method.
 	ClientAssertion string `json:"client_assertion,omitempty"`
@@ -20,13 +21,13 @@ type ClientAuthentication struct {
 // TokenSet defines the response of the OAuth endpoints.
 type TokenSet struct {
 	// The access token.
-	AccessToken string `json:"access_token,omitempty"`
+	AccessToken string `json:"access_token,omitempty"` //nolint:gosec // This is a response field, not a hardcoded secret.
 	// The duration in seconds that the access token is valid for.
 	ExpiresIn int64 `json:"expires_in,omitempty"`
 	// The user's ID token.
 	IDToken string `json:"id_token,omitempty"`
 	// The refresh token, only available if `offline_access` scope was provided.
-	RefreshToken string `json:"refresh_token,omitempty"`
+	RefreshToken string `json:"refresh_token,omitempty"` //nolint:gosec // This is a response field, not a hardcoded secret.
 	// String value of the different scopes the application is asking for.
 	// Multiple scopes are separated with whitespace.
 	Scope string `json:"scope,omitempty"`
@@ -40,7 +41,7 @@ type LoginWithPasswordRequest struct {
 	// The user's username.
 	Username string
 	// The user's password.
-	Password string
+	Password string //nolint:gosec // This is a request field, not a hardcoded secret.
 	// String value of the different scopes the application is asking for. Multiple scopes are separated with whitespace.
 	Scope string
 	// The unique identifier of the target API you want to access.
@@ -91,7 +92,7 @@ type LoginWithClientCredentialsRequest struct {
 type RefreshTokenRequest struct {
 	ClientAuthentication
 	// The refresh token to use.
-	RefreshToken string
+	RefreshToken string //nolint:gosec // This is a request field, not a hardcoded secret.
 	// 	A space-delimited list of requested scope permissions. If not sent, the original scopes will be used;
 	// otherwise you can request a reduced set of scopes. Note that this must be URL encoded.
 	Scope string
@@ -146,4 +147,29 @@ type PushedAuthorizationRequest struct {
 type PushedAuthorizationRequestResponse struct {
 	RequestURI string `json:"request_uri,omitempty"`
 	ExpiresIn  int    `json:"expires_in,omitempty"`
+}
+
+// LoginWithCustomTokenExchangeRequest defines the request body for logging in using the
+// Custom Token Exchange grant (RFC 8693). This flow allows exchanging an external token
+// (e.g., a legacy IdP token or a partner IdP token) for Auth0 tokens.
+//
+// See: https://auth0.com/docs/authenticate/custom-token-exchange
+type LoginWithCustomTokenExchangeRequest struct {
+	ClientAuthentication
+	// The external token to be exchanged. Required.
+	SubjectToken string
+	// A URI that uniquely identifies the type of the subject token and maps to a
+	// Custom Token Exchange Profile configured in the Auth0 tenant. Required.
+	// Must start with "https://" or "urn:" and must not use reserved namespaces
+	// such as "urn:ietf", "urn:auth0", "https://auth0.com", etc.
+	SubjectTokenType string
+	// The unique identifier of the target API you want to access.
+	Audience string
+	// The organization to log the user in to.
+	Organization string
+	// Space-separated list of requested scopes.
+	Scope string
+	// Extra parameters to be merged into the request body. Values set here will
+	// override any existing values.
+	ExtraParameters map[string]string
 }

@@ -88,6 +88,9 @@ func (g *GetNetworkACLsResponseContent) GetUpdatedAt() string {
 }
 
 func (g *GetNetworkACLsResponseContent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
 	return g.ExtraProperties
 }
 
@@ -179,6 +182,9 @@ func (g *GetNetworkACLsResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetNetworkACLsResponseContent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
@@ -239,6 +245,9 @@ func (l *ListNetworkACLsOffsetPaginatedResponseContent) GetTotal() float64 {
 }
 
 func (l *ListNetworkACLsOffsetPaginatedResponseContent) GetExtraProperties() map[string]interface{} {
+	if l == nil {
+		return nil
+	}
 	return l.extraProperties
 }
 
@@ -305,6 +314,9 @@ func (l *ListNetworkACLsOffsetPaginatedResponseContent) MarshalJSON() ([]byte, e
 }
 
 func (l *ListNetworkACLsOffsetPaginatedResponseContent) String() string {
+	if l == nil {
+		return "<nil>"
+	}
 	if len(l.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
 			return value
@@ -375,6 +387,9 @@ func (n *NetworkACLAction) GetRedirectURI() string {
 }
 
 func (n *NetworkACLAction) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
 	return n.extraProperties
 }
 
@@ -448,6 +463,9 @@ func (n *NetworkACLAction) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NetworkACLAction) String() string {
+	if n == nil {
+		return "<nil>"
+	}
 	if len(n.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
@@ -480,17 +498,23 @@ var (
 	networkACLMatchFieldJa3Fingerprints     = big.NewInt(1 << 5)
 	networkACLMatchFieldJa4Fingerprints     = big.NewInt(1 << 6)
 	networkACLMatchFieldUserAgents          = big.NewInt(1 << 7)
+	networkACLMatchFieldHostnames           = big.NewInt(1 << 8)
+	networkACLMatchFieldConnectingIpv4Cidrs = big.NewInt(1 << 9)
+	networkACLMatchFieldConnectingIpv6Cidrs = big.NewInt(1 << 10)
 )
 
 type NetworkACLMatch struct {
-	Asns                []int                     `json:"asns,omitempty" url:"asns,omitempty"`
-	GeoCountryCodes     []string                  `json:"geo_country_codes,omitempty" url:"geo_country_codes,omitempty"`
-	GeoSubdivisionCodes []string                  `json:"geo_subdivision_codes,omitempty" url:"geo_subdivision_codes,omitempty"`
-	Ipv4Cidrs           []NetworkACLMatchIpv4Cidr `json:"ipv4_cidrs,omitempty" url:"ipv4_cidrs,omitempty"`
-	Ipv6Cidrs           []NetworkACLMatchIpv6Cidr `json:"ipv6_cidrs,omitempty" url:"ipv6_cidrs,omitempty"`
-	Ja3Fingerprints     []string                  `json:"ja3_fingerprints,omitempty" url:"ja3_fingerprints,omitempty"`
-	Ja4Fingerprints     []string                  `json:"ja4_fingerprints,omitempty" url:"ja4_fingerprints,omitempty"`
-	UserAgents          []string                  `json:"user_agents,omitempty" url:"user_agents,omitempty"`
+	Asns                []int                               `json:"asns,omitempty" url:"asns,omitempty"`
+	GeoCountryCodes     []string                            `json:"geo_country_codes,omitempty" url:"geo_country_codes,omitempty"`
+	GeoSubdivisionCodes []string                            `json:"geo_subdivision_codes,omitempty" url:"geo_subdivision_codes,omitempty"`
+	Ipv4Cidrs           []NetworkACLMatchIpv4Cidr           `json:"ipv4_cidrs,omitempty" url:"ipv4_cidrs,omitempty"`
+	Ipv6Cidrs           []NetworkACLMatchIpv6Cidr           `json:"ipv6_cidrs,omitempty" url:"ipv6_cidrs,omitempty"`
+	Ja3Fingerprints     []string                            `json:"ja3_fingerprints,omitempty" url:"ja3_fingerprints,omitempty"`
+	Ja4Fingerprints     []string                            `json:"ja4_fingerprints,omitempty" url:"ja4_fingerprints,omitempty"`
+	UserAgents          []string                            `json:"user_agents,omitempty" url:"user_agents,omitempty"`
+	Hostnames           []string                            `json:"hostnames,omitempty" url:"hostnames,omitempty"`
+	ConnectingIpv4Cidrs []NetworkACLMatchConnectingIpv4Cidr `json:"connecting_ipv4_cidrs,omitempty" url:"connecting_ipv4_cidrs,omitempty"`
+	ConnectingIpv6Cidrs []NetworkACLMatchConnectingIpv6Cidr `json:"connecting_ipv6_cidrs,omitempty" url:"connecting_ipv6_cidrs,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -555,7 +579,31 @@ func (n *NetworkACLMatch) GetUserAgents() []string {
 	return n.UserAgents
 }
 
+func (n *NetworkACLMatch) GetHostnames() []string {
+	if n == nil || n.Hostnames == nil {
+		return nil
+	}
+	return n.Hostnames
+}
+
+func (n *NetworkACLMatch) GetConnectingIpv4Cidrs() []NetworkACLMatchConnectingIpv4Cidr {
+	if n == nil || n.ConnectingIpv4Cidrs == nil {
+		return nil
+	}
+	return n.ConnectingIpv4Cidrs
+}
+
+func (n *NetworkACLMatch) GetConnectingIpv6Cidrs() []NetworkACLMatchConnectingIpv6Cidr {
+	if n == nil || n.ConnectingIpv6Cidrs == nil {
+		return nil
+	}
+	return n.ConnectingIpv6Cidrs
+}
+
 func (n *NetworkACLMatch) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
 	return n.extraProperties
 }
 
@@ -622,6 +670,27 @@ func (n *NetworkACLMatch) SetUserAgents(userAgents []string) {
 	n.require(networkACLMatchFieldUserAgents)
 }
 
+// SetHostnames sets the Hostnames field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NetworkACLMatch) SetHostnames(hostnames []string) {
+	n.Hostnames = hostnames
+	n.require(networkACLMatchFieldHostnames)
+}
+
+// SetConnectingIpv4Cidrs sets the ConnectingIpv4Cidrs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NetworkACLMatch) SetConnectingIpv4Cidrs(connectingIpv4Cidrs []NetworkACLMatchConnectingIpv4Cidr) {
+	n.ConnectingIpv4Cidrs = connectingIpv4Cidrs
+	n.require(networkACLMatchFieldConnectingIpv4Cidrs)
+}
+
+// SetConnectingIpv6Cidrs sets the ConnectingIpv6Cidrs field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (n *NetworkACLMatch) SetConnectingIpv6Cidrs(connectingIpv6Cidrs []NetworkACLMatchConnectingIpv6Cidr) {
+	n.ConnectingIpv6Cidrs = connectingIpv6Cidrs
+	n.require(networkACLMatchFieldConnectingIpv6Cidrs)
+}
+
 func (n *NetworkACLMatch) UnmarshalJSON(data []byte) error {
 	type unmarshaler NetworkACLMatch
 	var value unmarshaler
@@ -650,6 +719,9 @@ func (n *NetworkACLMatch) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NetworkACLMatch) String() string {
+	if n == nil {
+		return "<nil>"
+	}
 	if len(n.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
@@ -660,6 +732,10 @@ func (n *NetworkACLMatch) String() string {
 	}
 	return fmt.Sprintf("%#v", n)
 }
+
+type NetworkACLMatchConnectingIpv4Cidr = string
+
+type NetworkACLMatchConnectingIpv6Cidr = string
 
 type NetworkACLMatchIpv4Cidr = string
 
@@ -714,6 +790,9 @@ func (n *NetworkACLRule) GetScope() NetworkACLRuleScopeEnum {
 }
 
 func (n *NetworkACLRule) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
 	return n.extraProperties
 }
 
@@ -780,6 +859,9 @@ func (n *NetworkACLRule) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NetworkACLRule) String() string {
+	if n == nil {
+		return "<nil>"
+	}
 	if len(n.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
@@ -899,6 +981,9 @@ func (n *NetworkACLsResponseContent) GetUpdatedAt() string {
 }
 
 func (n *NetworkACLsResponseContent) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
 	return n.ExtraProperties
 }
 
@@ -990,6 +1075,9 @@ func (n *NetworkACLsResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NetworkACLsResponseContent) String() string {
+	if n == nil {
+		return "<nil>"
+	}
 	if len(n.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
@@ -1080,6 +1168,9 @@ func (s *SetNetworkACLsResponseContent) GetUpdatedAt() string {
 }
 
 func (s *SetNetworkACLsResponseContent) GetExtraProperties() map[string]interface{} {
+	if s == nil {
+		return nil
+	}
 	return s.ExtraProperties
 }
 
@@ -1171,6 +1262,9 @@ func (s *SetNetworkACLsResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (s *SetNetworkACLsResponseContent) String() string {
+	if s == nil {
+		return "<nil>"
+	}
 	if len(s.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(s.rawJSON); err == nil {
 			return value
@@ -1261,6 +1355,9 @@ func (u *UpdateNetworkACLResponseContent) GetUpdatedAt() string {
 }
 
 func (u *UpdateNetworkACLResponseContent) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.ExtraProperties
 }
 
@@ -1352,6 +1449,9 @@ func (u *UpdateNetworkACLResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UpdateNetworkACLResponseContent) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value

@@ -6,36 +6,37 @@ import (
 	bytes "bytes"
 	context "context"
 	json "encoding/json"
+	http "net/http"
+	os "os"
+	testing "testing"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	client "github.com/auth0/go-auth0/v2/management/client"
 	option "github.com/auth0/go-auth0/v2/management/option"
 	require "github.com/stretchr/testify/require"
-	http "net/http"
-	testing "testing"
 )
-
-func ResetWireMockRequests(
-	t *testing.T,
-) {
-	WiremockAdminURL := "http://localhost:8080/__admin"
-	_, err := http.Post(WiremockAdminURL+"/requests/reset", "application/json", nil)
-	require.NoError(t, err)
-}
 
 func VerifyRequestCount(
 	t *testing.T,
+	testId string,
 	method string,
 	urlPath string,
-	queryParams map[string]string,
+	queryParams map[string]any,
 	expected int,
 ) {
-	WiremockAdminURL := "http://localhost:8080/__admin"
+	wiremockURL := os.Getenv("WIREMOCK_URL")
+	if wiremockURL == "" {
+		wiremockURL = "http://localhost:8080"
+	}
+	WiremockAdminURL := wiremockURL + "/__admin"
 	var reqBody bytes.Buffer
 	reqBody.WriteString(`{"method":"`)
 	reqBody.WriteString(method)
 	reqBody.WriteString(`","urlPath":"`)
 	reqBody.WriteString(urlPath)
-	reqBody.WriteString(`"}`)
+	reqBody.WriteString(`","headers":{"X-Test-Id":{"equalTo":"`)
+	reqBody.WriteString(testId)
+	reqBody.WriteString(`"}}`)
 	if len(queryParams) > 0 {
 		reqBody.WriteString(`,"queryParameters":{`)
 		first := true
@@ -45,13 +46,28 @@ func VerifyRequestCount(
 			}
 			reqBody.WriteString(`"`)
 			reqBody.WriteString(key)
-			reqBody.WriteString(`":{"equalTo":"`)
-			reqBody.WriteString(value)
-			reqBody.WriteString(`"}`)
+			switch v := value.(type) {
+			case string:
+				reqBody.WriteString(`":{"equalTo":"`)
+				reqBody.WriteString(v)
+				reqBody.WriteString(`"}`)
+			case []string:
+				reqBody.WriteString(`":{"hasExactly":[`)
+				for i, item := range v {
+					if i > 0 {
+						reqBody.WriteString(",")
+					}
+					reqBody.WriteString(`{"equalTo":"`)
+					reqBody.WriteString(item)
+					reqBody.WriteString(`"}`)
+				}
+				reqBody.WriteString(`]}`)
+			}
 			first = false
 		}
 		reqBody.WriteString("}")
 	}
+	reqBody.WriteString("}")
 	resp, err := http.Post(WiremockAdminURL+"/requests/find", "application/json", &reqBody)
 	require.NoError(t, err)
 	var result struct {
@@ -64,12 +80,13 @@ func VerifyRequestCount(
 func TestBrandingPhoneTemplatesListWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.ListPhoneTemplatesRequestParameters{
 		Disabled: management.Bool(
@@ -79,100 +96,120 @@ func TestBrandingPhoneTemplatesListWithWireMock(
 	_, invocationErr := client.Branding.Phone.Templates.List(
 		context.TODO(),
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestBrandingPhoneTemplatesListWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "GET", "/branding/phone/templates", map[string]string{"disabled": "true"}, 1)
+	VerifyRequestCount(t, "TestBrandingPhoneTemplatesListWithWireMock", "GET", "/branding/phone/templates", map[string]interface{}{"disabled": "true"}, 1)
 }
 
 func TestBrandingPhoneTemplatesCreateWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.CreatePhoneTemplateRequestContent{}
 	_, invocationErr := client.Branding.Phone.Templates.Create(
 		context.TODO(),
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestBrandingPhoneTemplatesCreateWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "POST", "/branding/phone/templates", nil, 1)
+	VerifyRequestCount(t, "TestBrandingPhoneTemplatesCreateWithWireMock", "POST", "/branding/phone/templates", nil, 1)
 }
 
 func TestBrandingPhoneTemplatesGetWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	_, invocationErr := client.Branding.Phone.Templates.Get(
 		context.TODO(),
 		"id",
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestBrandingPhoneTemplatesGetWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "GET", "/branding/phone/templates/id", nil, 1)
+	VerifyRequestCount(t, "TestBrandingPhoneTemplatesGetWithWireMock", "GET", "/branding/phone/templates/id", nil, 1)
 }
 
 func TestBrandingPhoneTemplatesDeleteWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	invocationErr := client.Branding.Phone.Templates.Delete(
 		context.TODO(),
 		"id",
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestBrandingPhoneTemplatesDeleteWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "DELETE", "/branding/phone/templates/id", nil, 1)
+	VerifyRequestCount(t, "TestBrandingPhoneTemplatesDeleteWithWireMock", "DELETE", "/branding/phone/templates/id", nil, 1)
 }
 
 func TestBrandingPhoneTemplatesUpdateWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.UpdatePhoneTemplateRequestContent{}
 	_, invocationErr := client.Branding.Phone.Templates.Update(
 		context.TODO(),
 		"id",
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestBrandingPhoneTemplatesUpdateWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "PATCH", "/branding/phone/templates/id", nil, 1)
+	VerifyRequestCount(t, "TestBrandingPhoneTemplatesUpdateWithWireMock", "PATCH", "/branding/phone/templates/id", nil, 1)
 }
 
 func TestBrandingPhoneTemplatesResetWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := map[string]any{
 		"key": "value",
@@ -181,21 +218,25 @@ func TestBrandingPhoneTemplatesResetWithWireMock(
 		context.TODO(),
 		"id",
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestBrandingPhoneTemplatesResetWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "PATCH", "/branding/phone/templates/id/reset", nil, 1)
+	VerifyRequestCount(t, "TestBrandingPhoneTemplatesResetWithWireMock", "PATCH", "/branding/phone/templates/id/reset", nil, 1)
 }
 
 func TestBrandingPhoneTemplatesTestWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.CreatePhoneTemplateTestNotificationRequestContent{
 		To: "to",
@@ -204,8 +245,11 @@ func TestBrandingPhoneTemplatesTestWithWireMock(
 		context.TODO(),
 		"id",
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestBrandingPhoneTemplatesTestWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "POST", "/branding/phone/templates/id/try", nil, 1)
+	VerifyRequestCount(t, "TestBrandingPhoneTemplatesTestWithWireMock", "POST", "/branding/phone/templates/id/try", nil, 1)
 }

@@ -4,11 +4,13 @@ package customtext
 
 import (
 	context "context"
+	http "net/http"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	core "github.com/auth0/go-auth0/v2/management/core"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
 	option "github.com/auth0/go-auth0/v2/management/option"
-	http "net/http"
+	prompts "github.com/auth0/go-auth0/v2/management/prompts"
 )
 
 type RawClient struct {
@@ -65,7 +67,7 @@ func (r *RawClient) Get(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Response:        &response,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(prompts.ErrorCodes),
 		},
 	)
 	if err != nil {
@@ -113,7 +115,7 @@ func (r *RawClient) Set(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(prompts.ErrorCodes),
 		},
 	)
 	if err != nil {

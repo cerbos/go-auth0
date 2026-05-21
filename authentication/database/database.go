@@ -1,3 +1,4 @@
+// Package database provides types for the Auth0 database connection authentication endpoints.
 package database
 
 import (
@@ -13,7 +14,7 @@ type SignupRequest struct {
 	// The user's email address.
 	Email string `json:"email,omitempty"`
 	// The user's desired password.
-	Password string `json:"password,omitempty"`
+	Password string `json:"password,omitempty"` //nolint:gosec // This is a request field, not a hardcoded secret.
 	// The name of the database configured to your client.
 	Connection string `json:"connection,omitempty"`
 	// The user's username. Only valid if the connection requires a username.

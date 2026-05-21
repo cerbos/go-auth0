@@ -4,11 +4,13 @@ package clients
 
 import (
 	context "context"
+	http "net/http"
+
 	management "github.com/auth0/go-auth0/v2/management"
+	connections "github.com/auth0/go-auth0/v2/management/connections"
 	core "github.com/auth0/go-auth0/v2/management/core"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
 	option "github.com/auth0/go-auth0/v2/management/option"
-	http "net/http"
 )
 
 type RawClient struct {
@@ -62,7 +64,7 @@ func (r *RawClient) Update(
 			QueryParameters: options.QueryParameters,
 			Client:          options.HTTPClient,
 			Request:         request,
-			ErrorDecoder:    internal.NewErrorDecoder(management.ErrorCodes),
+			ErrorDecoder:    internal.NewErrorDecoder(connections.ErrorCodes),
 		},
 	)
 	if err != nil {

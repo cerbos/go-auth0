@@ -228,6 +228,9 @@ func (c *CreateUserResponseContent) GetFamilyName() string {
 }
 
 func (c *CreateUserResponseContent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -417,6 +420,9 @@ func (c *CreateUserResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CreateUserResponseContent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -647,6 +653,9 @@ func (g *GetUserResponseContent) GetFamilyName() string {
 }
 
 func (g *GetUserResponseContent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
 	return g.ExtraProperties
 }
 
@@ -836,6 +845,9 @@ func (g *GetUserResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetUserResponseContent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
@@ -905,6 +917,9 @@ func (l *ListUsersOffsetPaginatedResponseContent) GetUsers() []*UserResponseSche
 }
 
 func (l *ListUsersOffsetPaginatedResponseContent) GetExtraProperties() map[string]interface{} {
+	if l == nil {
+		return nil
+	}
 	return l.extraProperties
 }
 
@@ -978,6 +993,9 @@ func (l *ListUsersOffsetPaginatedResponseContent) MarshalJSON() ([]byte, error) 
 }
 
 func (l *ListUsersOffsetPaginatedResponseContent) String() string {
+	if l == nil {
+		return "<nil>"
+	}
 	if len(l.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
 			return value
@@ -1013,6 +1031,9 @@ func (r *RegenerateUsersRecoveryCodeResponseContent) GetRecoveryCode() string {
 }
 
 func (r *RegenerateUsersRecoveryCodeResponseContent) GetExtraProperties() map[string]interface{} {
+	if r == nil {
+		return nil
+	}
 	return r.ExtraProperties
 }
 
@@ -1062,6 +1083,9 @@ func (r *RegenerateUsersRecoveryCodeResponseContent) MarshalJSON() ([]byte, erro
 }
 
 func (r *RegenerateUsersRecoveryCodeResponseContent) String() string {
+	if r == nil {
+		return "<nil>"
+	}
 	if len(r.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(r.rawJSON); err == nil {
 			return value
@@ -1318,6 +1342,9 @@ func (u *UpdateUserResponseContent) GetFamilyName() string {
 }
 
 func (u *UpdateUserResponseContent) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.ExtraProperties
 }
 
@@ -1507,6 +1534,9 @@ func (u *UpdateUserResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UpdateUserResponseContent) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
@@ -1519,13 +1549,13 @@ func (u *UpdateUserResponseContent) String() string {
 }
 
 // User metadata to which this user has read-only access.
-type UserAppMetadataSchema = map[string]interface{}
+type UserAppMetadataSchema = map[string]any
 
 type UserDateSchema struct {
 	// Date and time when this user was created (ISO_8601 format).
 	String string
 	// Date and time when this user was created (ISO_8601 format).
-	StringUnknownMap map[string]interface{}
+	StringUnknownMap map[string]any
 
 	typ string
 }
@@ -1537,7 +1567,7 @@ func (u *UserDateSchema) GetString() string {
 	return u.String
 }
 
-func (u *UserDateSchema) GetStringUnknownMap() map[string]interface{} {
+func (u *UserDateSchema) GetStringUnknownMap() map[string]any {
 	if u == nil {
 		return nil
 	}
@@ -1551,7 +1581,7 @@ func (u *UserDateSchema) UnmarshalJSON(data []byte) error {
 		u.String = valueString
 		return nil
 	}
-	var valueStringUnknownMap map[string]interface{}
+	var valueStringUnknownMap map[string]any
 	if err := json.Unmarshal(data, &valueStringUnknownMap); err == nil {
 		u.typ = "StringUnknownMap"
 		u.StringUnknownMap = valueStringUnknownMap
@@ -1572,7 +1602,7 @@ func (u UserDateSchema) MarshalJSON() ([]byte, error) {
 
 type UserDateSchemaVisitor interface {
 	VisitString(string) error
-	VisitStringUnknownMap(map[string]interface{}) error
+	VisitStringUnknownMap(map[string]any) error
 }
 
 func (u *UserDateSchema) Accept(visitor UserDateSchemaVisitor) error {
@@ -1676,6 +1706,9 @@ func (u *UserIdentitySchema) GetProfileData() UserProfileData {
 }
 
 func (u *UserIdentitySchema) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.extraProperties
 }
 
@@ -1789,6 +1822,9 @@ func (u *UserIdentitySchema) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UserIdentitySchema) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
@@ -1801,7 +1837,7 @@ func (u *UserIdentitySchema) String() string {
 }
 
 // User metadata to which this user has read/write access.
-type UserMetadataSchema = map[string]interface{}
+type UserMetadataSchema = map[string]any
 
 var (
 	userResponseSchemaFieldUserID        = big.NewInt(1 << 0)
@@ -2022,6 +2058,9 @@ func (u *UserResponseSchema) GetFamilyName() string {
 }
 
 func (u *UserResponseSchema) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.ExtraProperties
 }
 
@@ -2211,6 +2250,9 @@ func (u *UserResponseSchema) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UserResponseSchema) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value

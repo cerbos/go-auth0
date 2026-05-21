@@ -4,6 +4,8 @@ package client
 
 import (
 	context "context"
+	http "net/http"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	clients "github.com/auth0/go-auth0/v2/management/connections/clients"
 	client "github.com/auth0/go-auth0/v2/management/connections/directoryprovisioning/client"
@@ -13,15 +15,14 @@ import (
 	core "github.com/auth0/go-auth0/v2/management/core"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
 	option "github.com/auth0/go-auth0/v2/management/option"
-	http "net/http"
 )
 
 type Client struct {
 	WithRawResponse       *RawClient
 	DirectoryProvisioning *client.Client
+	SCIMConfiguration     *scimconfigurationclient.Client
 	Clients               *clients.Client
 	Keys                  *keys.Client
-	SCIMConfiguration     *scimconfigurationclient.Client
 	Users                 *users.Client
 
 	options *core.RequestOptions
@@ -32,9 +33,9 @@ type Client struct {
 func NewClient(options *core.RequestOptions) *Client {
 	return &Client{
 		DirectoryProvisioning: client.NewClient(options),
+		SCIMConfiguration:     scimconfigurationclient.NewClient(options),
 		Clients:               clients.NewClient(options),
 		Keys:                  keys.NewClient(options),
-		SCIMConfiguration:     scimconfigurationclient.NewClient(options),
 		Users:                 users.NewClient(options),
 		WithRawResponse:       NewRawClient(options),
 		options:               options,

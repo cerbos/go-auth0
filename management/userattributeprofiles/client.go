@@ -4,11 +4,12 @@ package userattributeprofiles
 
 import (
 	context "context"
+	http "net/http"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	core "github.com/auth0/go-auth0/v2/management/core"
 	internal "github.com/auth0/go-auth0/v2/management/internal"
 	option "github.com/auth0/go-auth0/v2/management/option"
-	http "net/http"
 )
 
 type Client struct {
@@ -98,7 +99,7 @@ func (c *Client) List(
 	return pager.GetPage(ctx, request.From)
 }
 
-// Retrieve details about a single User Attribute Profile specified by ID.
+// Create a User Attribute Profile
 func (c *Client) Create(
 	ctx context.Context,
 	request *management.CreateUserAttributeProfileRequestContent,

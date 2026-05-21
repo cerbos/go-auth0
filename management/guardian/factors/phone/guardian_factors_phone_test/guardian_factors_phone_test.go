@@ -6,36 +6,37 @@ import (
 	bytes "bytes"
 	context "context"
 	json "encoding/json"
+	http "net/http"
+	os "os"
+	testing "testing"
+
 	management "github.com/auth0/go-auth0/v2/management"
 	client "github.com/auth0/go-auth0/v2/management/client"
 	option "github.com/auth0/go-auth0/v2/management/option"
 	require "github.com/stretchr/testify/require"
-	http "net/http"
-	testing "testing"
 )
-
-func ResetWireMockRequests(
-	t *testing.T,
-) {
-	WiremockAdminURL := "http://localhost:8080/__admin"
-	_, err := http.Post(WiremockAdminURL+"/requests/reset", "application/json", nil)
-	require.NoError(t, err)
-}
 
 func VerifyRequestCount(
 	t *testing.T,
+	testId string,
 	method string,
 	urlPath string,
-	queryParams map[string]string,
+	queryParams map[string]any,
 	expected int,
 ) {
-	WiremockAdminURL := "http://localhost:8080/__admin"
+	wiremockURL := os.Getenv("WIREMOCK_URL")
+	if wiremockURL == "" {
+		wiremockURL = "http://localhost:8080"
+	}
+	WiremockAdminURL := wiremockURL + "/__admin"
 	var reqBody bytes.Buffer
 	reqBody.WriteString(`{"method":"`)
 	reqBody.WriteString(method)
 	reqBody.WriteString(`","urlPath":"`)
 	reqBody.WriteString(urlPath)
-	reqBody.WriteString(`"}`)
+	reqBody.WriteString(`","headers":{"X-Test-Id":{"equalTo":"`)
+	reqBody.WriteString(testId)
+	reqBody.WriteString(`"}}`)
 	if len(queryParams) > 0 {
 		reqBody.WriteString(`,"queryParameters":{`)
 		first := true
@@ -45,13 +46,28 @@ func VerifyRequestCount(
 			}
 			reqBody.WriteString(`"`)
 			reqBody.WriteString(key)
-			reqBody.WriteString(`":{"equalTo":"`)
-			reqBody.WriteString(value)
-			reqBody.WriteString(`"}`)
+			switch v := value.(type) {
+			case string:
+				reqBody.WriteString(`":{"equalTo":"`)
+				reqBody.WriteString(v)
+				reqBody.WriteString(`"}`)
+			case []string:
+				reqBody.WriteString(`":{"hasExactly":[`)
+				for i, item := range v {
+					if i > 0 {
+						reqBody.WriteString(",")
+					}
+					reqBody.WriteString(`{"equalTo":"`)
+					reqBody.WriteString(item)
+					reqBody.WriteString(`"}`)
+				}
+				reqBody.WriteString(`]}`)
+			}
 			first = false
 		}
 		reqBody.WriteString("}")
 	}
+	reqBody.WriteString("}")
 	resp, err := http.Post(WiremockAdminURL+"/requests/find", "application/json", &reqBody)
 	require.NoError(t, err)
 	var result struct {
@@ -64,30 +80,35 @@ func VerifyRequestCount(
 func TestGuardianFactorsPhoneGetMessageTypesWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	_, invocationErr := client.Guardian.Factors.Phone.GetMessageTypes(
 		context.TODO(),
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGuardianFactorsPhoneGetMessageTypesWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "GET", "/guardian/factors/phone/message-types", nil, 1)
+	VerifyRequestCount(t, "TestGuardianFactorsPhoneGetMessageTypesWithWireMock", "GET", "/guardian/factors/phone/message-types", nil, 1)
 }
 
 func TestGuardianFactorsPhoneSetMessageTypesWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.SetGuardianFactorPhoneMessageTypesRequestContent{
 		MessageTypes: []management.GuardianFactorPhoneFactorMessageTypeEnum{
@@ -97,77 +118,93 @@ func TestGuardianFactorsPhoneSetMessageTypesWithWireMock(
 	_, invocationErr := client.Guardian.Factors.Phone.SetMessageTypes(
 		context.TODO(),
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGuardianFactorsPhoneSetMessageTypesWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "PUT", "/guardian/factors/phone/message-types", nil, 1)
+	VerifyRequestCount(t, "TestGuardianFactorsPhoneSetMessageTypesWithWireMock", "PUT", "/guardian/factors/phone/message-types", nil, 1)
 }
 
 func TestGuardianFactorsPhoneGetTwilioProviderWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	_, invocationErr := client.Guardian.Factors.Phone.GetTwilioProvider(
 		context.TODO(),
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGuardianFactorsPhoneGetTwilioProviderWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "GET", "/guardian/factors/phone/providers/twilio", nil, 1)
+	VerifyRequestCount(t, "TestGuardianFactorsPhoneGetTwilioProviderWithWireMock", "GET", "/guardian/factors/phone/providers/twilio", nil, 1)
 }
 
 func TestGuardianFactorsPhoneSetTwilioProviderWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.SetGuardianFactorsProviderPhoneTwilioRequestContent{}
 	_, invocationErr := client.Guardian.Factors.Phone.SetTwilioProvider(
 		context.TODO(),
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGuardianFactorsPhoneSetTwilioProviderWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "PUT", "/guardian/factors/phone/providers/twilio", nil, 1)
+	VerifyRequestCount(t, "TestGuardianFactorsPhoneSetTwilioProviderWithWireMock", "PUT", "/guardian/factors/phone/providers/twilio", nil, 1)
 }
 
 func TestGuardianFactorsPhoneGetSelectedProviderWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	_, invocationErr := client.Guardian.Factors.Phone.GetSelectedProvider(
 		context.TODO(),
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGuardianFactorsPhoneGetSelectedProviderWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "GET", "/guardian/factors/phone/selected-provider", nil, 1)
+	VerifyRequestCount(t, "TestGuardianFactorsPhoneGetSelectedProviderWithWireMock", "GET", "/guardian/factors/phone/selected-provider", nil, 1)
 }
 
 func TestGuardianFactorsPhoneSetProviderWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.SetGuardianFactorsProviderPhoneRequestContent{
 		Provider: management.GuardianFactorsProviderSmsProviderEnumAuth0,
@@ -175,39 +212,47 @@ func TestGuardianFactorsPhoneSetProviderWithWireMock(
 	_, invocationErr := client.Guardian.Factors.Phone.SetProvider(
 		context.TODO(),
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGuardianFactorsPhoneSetProviderWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "PUT", "/guardian/factors/phone/selected-provider", nil, 1)
+	VerifyRequestCount(t, "TestGuardianFactorsPhoneSetProviderWithWireMock", "PUT", "/guardian/factors/phone/selected-provider", nil, 1)
 }
 
 func TestGuardianFactorsPhoneGetTemplatesWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	_, invocationErr := client.Guardian.Factors.Phone.GetTemplates(
 		context.TODO(),
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGuardianFactorsPhoneGetTemplatesWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "GET", "/guardian/factors/phone/templates", nil, 1)
+	VerifyRequestCount(t, "TestGuardianFactorsPhoneGetTemplatesWithWireMock", "GET", "/guardian/factors/phone/templates", nil, 1)
 }
 
 func TestGuardianFactorsPhoneSetTemplatesWithWireMock(
 	t *testing.T,
 ) {
-	ResetWireMockRequests(t)
-	WireMockBaseURL := "http://localhost:8080"
+	WireMockBaseURL := os.Getenv("WIREMOCK_URL")
+	if WireMockBaseURL == "" {
+		WireMockBaseURL = "http://localhost:8080"
+	}
 	client := client.NewWithOptions(
-		option.WithBaseURL(
-			WireMockBaseURL,
-		),
+		option.WithBaseURL(WireMockBaseURL),
+		option.WithToken("test-token"),
 	)
 	request := &management.SetGuardianFactorPhoneTemplatesRequestContent{
 		EnrollmentMessage:   "enrollment_message",
@@ -216,8 +261,11 @@ func TestGuardianFactorsPhoneSetTemplatesWithWireMock(
 	_, invocationErr := client.Guardian.Factors.Phone.SetTemplates(
 		context.TODO(),
 		request,
+		option.WithHTTPHeader(
+			http.Header{"X-Test-Id": []string{"TestGuardianFactorsPhoneSetTemplatesWithWireMock"}},
+		),
 	)
 
 	require.NoError(t, invocationErr, "Client method call should succeed")
-	VerifyRequestCount(t, "PUT", "/guardian/factors/phone/templates", nil, 1)
+	VerifyRequestCount(t, "TestGuardianFactorsPhoneSetTemplatesWithWireMock", "PUT", "/guardian/factors/phone/templates", nil, 1)
 }

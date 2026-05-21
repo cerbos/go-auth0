@@ -1,12 +1,15 @@
+// Package client provides the internal HTTP client used by the Auth0 SDK.
 package client
 
 import (
+	"bytes"
 	"context"
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"log"
 	"math"
 	"math/rand"
@@ -353,7 +356,7 @@ func dumpRequest(r *http.Request) {
 	// Restore original headers
 	r.Header = originalHeaders
 
-	log.Printf("\n%s\n", b)
+	log.Printf("\n%s\n", b) //nolint:gosec // Debug logging of HTTP requests, not user-controlled log injection.
 }
 
 func dumpResponse(r *http.Response) {
@@ -372,7 +375,7 @@ func dumpResponse(r *http.Response) {
 	// Restore original headers
 	r.Header = originalHeaders
 
-	log.Printf("\n%s\n\n", b)
+	log.Printf("\n%s\n\n", b) //nolint:gosec // Debug logging of HTTP responses, not user-controlled log injection.
 }
 
 // redactSensitiveHeaders redacts sensitive header values to prevent token leakage in logs.
@@ -406,6 +409,23 @@ func DebugTransport(base http.RoundTripper, debug bool) http.RoundTripper {
 	}
 
 	return RoundTripFunc(func(req *http.Request) (*http.Response, error) {
+		// Save body before RoundTrip consumes it.
+		var bodyBytes []byte
+
+		if req.Body != nil {
+			var err error
+
+			bodyBytes, err = io.ReadAll(req.Body)
+
+			_ = req.Body.Close()
+
+			if err != nil {
+				return nil, fmt.Errorf("debug transport: failed to read request body: %w", err)
+			}
+
+			req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
+		}
+
 		// Note: We cannot dump the request here because inner transports
 		// (UserAgent, Auth0Client, etc.) haven't modified it yet.
 		// DumpRequestOut creates a wire representation, but transports
@@ -414,6 +434,10 @@ func DebugTransport(base http.RoundTripper, debug bool) http.RoundTripper {
 		// Call the base transport which will trigger all inner transports
 		res, err := base.RoundTrip(req)
 
+		// Restore body for dumping.
+		if bodyBytes != nil {
+			req.Body = io.NopCloser(bytes.NewReader(bodyBytes))
+		}
 		// Now dump the request after transports have modified it
 		// We do this before checking error so we can see what was attempted
 		dumpRequest(req)
@@ -490,7 +514,8 @@ func WrapWithTokenSource(base *http.Client, tokenSource oauth2.TokenSource, opti
 // Wrap the base client with just the internal transports.
 func Wrap(base *http.Client, options ...Option) *http.Client {
 	if base == nil {
-		base = http.DefaultClient
+		cloned := *http.DefaultClient
+		base = &cloned
 	}
 
 	for _, option := range options {

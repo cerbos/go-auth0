@@ -84,6 +84,9 @@ func (c *CertificateSubjectDnCredential) GetPem() string {
 }
 
 func (c *CertificateSubjectDnCredential) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -150,6 +153,9 @@ func (c *CertificateSubjectDnCredential) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CertificateSubjectDnCredential) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -178,6 +184,679 @@ func NewCertificateSubjectDnCredentialTypeEnumFromString(s string) (CertificateS
 
 func (c CertificateSubjectDnCredentialTypeEnum) Ptr() *CertificateSubjectDnCredentialTypeEnum {
 	return &c
+}
+
+// Client authentication methods derived from the JWKS document
+var (
+	cimdMappedClientAuthenticationMethodsFieldPrivateKeyJwt = big.NewInt(1 << 0)
+)
+
+type CimdMappedClientAuthenticationMethods struct {
+	PrivateKeyJwt *CimdMappedClientAuthenticationMethodsPrivateKeyJwt `json:"private_key_jwt,omitempty" url:"private_key_jwt,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	ExtraProperties map[string]interface{} `json:"-" url:"-"`
+
+	rawJSON json.RawMessage
+}
+
+func (c *CimdMappedClientAuthenticationMethods) GetPrivateKeyJwt() CimdMappedClientAuthenticationMethodsPrivateKeyJwt {
+	if c == nil || c.PrivateKeyJwt == nil {
+		return CimdMappedClientAuthenticationMethodsPrivateKeyJwt{}
+	}
+	return *c.PrivateKeyJwt
+}
+
+func (c *CimdMappedClientAuthenticationMethods) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.ExtraProperties
+}
+
+func (c *CimdMappedClientAuthenticationMethods) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetPrivateKeyJwt sets the PrivateKeyJwt field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientAuthenticationMethods) SetPrivateKeyJwt(privateKeyJwt *CimdMappedClientAuthenticationMethodsPrivateKeyJwt) {
+	c.PrivateKeyJwt = privateKeyJwt
+	c.require(cimdMappedClientAuthenticationMethodsFieldPrivateKeyJwt)
+}
+
+func (c *CimdMappedClientAuthenticationMethods) UnmarshalJSON(data []byte) error {
+	type embed CimdMappedClientAuthenticationMethods
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*c = CimdMappedClientAuthenticationMethods(unmarshaler.embed)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.ExtraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CimdMappedClientAuthenticationMethods) MarshalJSON() ([]byte, error) {
+	type embed CimdMappedClientAuthenticationMethods
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return internal.MarshalJSONWithExtraProperties(explicitMarshaler, c.ExtraProperties)
+}
+
+func (c *CimdMappedClientAuthenticationMethods) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Private Key JWT authentication configuration
+var (
+	cimdMappedClientAuthenticationMethodsPrivateKeyJwtFieldCredentials = big.NewInt(1 << 0)
+)
+
+type CimdMappedClientAuthenticationMethodsPrivateKeyJwt struct {
+	// Credentials derived from the JWKS document
+	Credentials []*CimdMappedPrivateKeyJwtCredential `json:"credentials" url:"credentials"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	ExtraProperties map[string]interface{} `json:"-" url:"-"`
+
+	rawJSON json.RawMessage
+}
+
+func (c *CimdMappedClientAuthenticationMethodsPrivateKeyJwt) GetCredentials() []*CimdMappedPrivateKeyJwtCredential {
+	if c == nil {
+		return nil
+	}
+	return c.Credentials
+}
+
+func (c *CimdMappedClientAuthenticationMethodsPrivateKeyJwt) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.ExtraProperties
+}
+
+func (c *CimdMappedClientAuthenticationMethodsPrivateKeyJwt) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetCredentials sets the Credentials field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientAuthenticationMethodsPrivateKeyJwt) SetCredentials(credentials []*CimdMappedPrivateKeyJwtCredential) {
+	c.Credentials = credentials
+	c.require(cimdMappedClientAuthenticationMethodsPrivateKeyJwtFieldCredentials)
+}
+
+func (c *CimdMappedClientAuthenticationMethodsPrivateKeyJwt) UnmarshalJSON(data []byte) error {
+	type embed CimdMappedClientAuthenticationMethodsPrivateKeyJwt
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*c = CimdMappedClientAuthenticationMethodsPrivateKeyJwt(unmarshaler.embed)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.ExtraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CimdMappedClientAuthenticationMethodsPrivateKeyJwt) MarshalJSON() ([]byte, error) {
+	type embed CimdMappedClientAuthenticationMethodsPrivateKeyJwt
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return internal.MarshalJSONWithExtraProperties(explicitMarshaler, c.ExtraProperties)
+}
+
+func (c *CimdMappedClientAuthenticationMethodsPrivateKeyJwt) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Auth0 client fields mapped from the Client ID Metadata Document
+var (
+	cimdMappedClientFieldsFieldExternalClientID            = big.NewInt(1 << 0)
+	cimdMappedClientFieldsFieldName                        = big.NewInt(1 << 1)
+	cimdMappedClientFieldsFieldAppType                     = big.NewInt(1 << 2)
+	cimdMappedClientFieldsFieldCallbacks                   = big.NewInt(1 << 3)
+	cimdMappedClientFieldsFieldLogoURI                     = big.NewInt(1 << 4)
+	cimdMappedClientFieldsFieldDescription                 = big.NewInt(1 << 5)
+	cimdMappedClientFieldsFieldGrantTypes                  = big.NewInt(1 << 6)
+	cimdMappedClientFieldsFieldTokenEndpointAuthMethod     = big.NewInt(1 << 7)
+	cimdMappedClientFieldsFieldJwksURI                     = big.NewInt(1 << 8)
+	cimdMappedClientFieldsFieldClientAuthenticationMethods = big.NewInt(1 << 9)
+)
+
+type CimdMappedClientFields struct {
+	// The URL of the Client ID Metadata Document
+	ExternalClientID *string `json:"external_client_id,omitempty" url:"external_client_id,omitempty"`
+	// Client name
+	Name *string `json:"name,omitempty" url:"name,omitempty"`
+	// Application type (e.g., web, native)
+	AppType *string `json:"app_type,omitempty" url:"app_type,omitempty"`
+	// Callback URLs
+	Callbacks []string `json:"callbacks,omitempty" url:"callbacks,omitempty"`
+	// Logo URI
+	LogoURI *string `json:"logo_uri,omitempty" url:"logo_uri,omitempty"`
+	// Human-readable brief description of this client presentable to the end-user
+	Description *string `json:"description,omitempty" url:"description,omitempty"`
+	// List of grant types
+	GrantTypes []string `json:"grant_types,omitempty" url:"grant_types,omitempty"`
+	// Token endpoint authentication method
+	TokenEndpointAuthMethod *string `json:"token_endpoint_auth_method,omitempty" url:"token_endpoint_auth_method,omitempty"`
+	// URL for the JSON Web Key Set containing the public keys for private_key_jwt authentication
+	JwksURI                     *string                                `json:"jwks_uri,omitempty" url:"jwks_uri,omitempty"`
+	ClientAuthenticationMethods *CimdMappedClientAuthenticationMethods `json:"client_authentication_methods,omitempty" url:"client_authentication_methods,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	ExtraProperties map[string]interface{} `json:"-" url:"-"`
+
+	rawJSON json.RawMessage
+}
+
+func (c *CimdMappedClientFields) GetExternalClientID() string {
+	if c == nil || c.ExternalClientID == nil {
+		return ""
+	}
+	return *c.ExternalClientID
+}
+
+func (c *CimdMappedClientFields) GetName() string {
+	if c == nil || c.Name == nil {
+		return ""
+	}
+	return *c.Name
+}
+
+func (c *CimdMappedClientFields) GetAppType() string {
+	if c == nil || c.AppType == nil {
+		return ""
+	}
+	return *c.AppType
+}
+
+func (c *CimdMappedClientFields) GetCallbacks() []string {
+	if c == nil || c.Callbacks == nil {
+		return nil
+	}
+	return c.Callbacks
+}
+
+func (c *CimdMappedClientFields) GetLogoURI() string {
+	if c == nil || c.LogoURI == nil {
+		return ""
+	}
+	return *c.LogoURI
+}
+
+func (c *CimdMappedClientFields) GetDescription() string {
+	if c == nil || c.Description == nil {
+		return ""
+	}
+	return *c.Description
+}
+
+func (c *CimdMappedClientFields) GetGrantTypes() []string {
+	if c == nil || c.GrantTypes == nil {
+		return nil
+	}
+	return c.GrantTypes
+}
+
+func (c *CimdMappedClientFields) GetTokenEndpointAuthMethod() string {
+	if c == nil || c.TokenEndpointAuthMethod == nil {
+		return ""
+	}
+	return *c.TokenEndpointAuthMethod
+}
+
+func (c *CimdMappedClientFields) GetJwksURI() string {
+	if c == nil || c.JwksURI == nil {
+		return ""
+	}
+	return *c.JwksURI
+}
+
+func (c *CimdMappedClientFields) GetClientAuthenticationMethods() CimdMappedClientAuthenticationMethods {
+	if c == nil || c.ClientAuthenticationMethods == nil {
+		return CimdMappedClientAuthenticationMethods{}
+	}
+	return *c.ClientAuthenticationMethods
+}
+
+func (c *CimdMappedClientFields) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.ExtraProperties
+}
+
+func (c *CimdMappedClientFields) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetExternalClientID sets the ExternalClientID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetExternalClientID(externalClientID *string) {
+	c.ExternalClientID = externalClientID
+	c.require(cimdMappedClientFieldsFieldExternalClientID)
+}
+
+// SetName sets the Name field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetName(name *string) {
+	c.Name = name
+	c.require(cimdMappedClientFieldsFieldName)
+}
+
+// SetAppType sets the AppType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetAppType(appType *string) {
+	c.AppType = appType
+	c.require(cimdMappedClientFieldsFieldAppType)
+}
+
+// SetCallbacks sets the Callbacks field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetCallbacks(callbacks []string) {
+	c.Callbacks = callbacks
+	c.require(cimdMappedClientFieldsFieldCallbacks)
+}
+
+// SetLogoURI sets the LogoURI field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetLogoURI(logoURI *string) {
+	c.LogoURI = logoURI
+	c.require(cimdMappedClientFieldsFieldLogoURI)
+}
+
+// SetDescription sets the Description field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetDescription(description *string) {
+	c.Description = description
+	c.require(cimdMappedClientFieldsFieldDescription)
+}
+
+// SetGrantTypes sets the GrantTypes field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetGrantTypes(grantTypes []string) {
+	c.GrantTypes = grantTypes
+	c.require(cimdMappedClientFieldsFieldGrantTypes)
+}
+
+// SetTokenEndpointAuthMethod sets the TokenEndpointAuthMethod field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetTokenEndpointAuthMethod(tokenEndpointAuthMethod *string) {
+	c.TokenEndpointAuthMethod = tokenEndpointAuthMethod
+	c.require(cimdMappedClientFieldsFieldTokenEndpointAuthMethod)
+}
+
+// SetJwksURI sets the JwksURI field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetJwksURI(jwksURI *string) {
+	c.JwksURI = jwksURI
+	c.require(cimdMappedClientFieldsFieldJwksURI)
+}
+
+// SetClientAuthenticationMethods sets the ClientAuthenticationMethods field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedClientFields) SetClientAuthenticationMethods(clientAuthenticationMethods *CimdMappedClientAuthenticationMethods) {
+	c.ClientAuthenticationMethods = clientAuthenticationMethods
+	c.require(cimdMappedClientFieldsFieldClientAuthenticationMethods)
+}
+
+func (c *CimdMappedClientFields) UnmarshalJSON(data []byte) error {
+	type embed CimdMappedClientFields
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*c = CimdMappedClientFields(unmarshaler.embed)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.ExtraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CimdMappedClientFields) MarshalJSON() ([]byte, error) {
+	type embed CimdMappedClientFields
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return internal.MarshalJSONWithExtraProperties(explicitMarshaler, c.ExtraProperties)
+}
+
+func (c *CimdMappedClientFields) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+var (
+	cimdMappedPrivateKeyJwtCredentialFieldCredentialType = big.NewInt(1 << 0)
+	cimdMappedPrivateKeyJwtCredentialFieldKid            = big.NewInt(1 << 1)
+	cimdMappedPrivateKeyJwtCredentialFieldAlg            = big.NewInt(1 << 2)
+)
+
+type CimdMappedPrivateKeyJwtCredential struct {
+	// Type of credential (e.g., public_key)
+	CredentialType string `json:"credential_type" url:"credential_type"`
+	// Key identifier from JWKS or calculated thumbprint
+	Kid string `json:"kid" url:"kid"`
+	// Algorithm (e.g., RS256, RS384, PS256)
+	Alg string `json:"alg" url:"alg"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	ExtraProperties map[string]interface{} `json:"-" url:"-"`
+
+	rawJSON json.RawMessage
+}
+
+func (c *CimdMappedPrivateKeyJwtCredential) GetCredentialType() string {
+	if c == nil {
+		return ""
+	}
+	return c.CredentialType
+}
+
+func (c *CimdMappedPrivateKeyJwtCredential) GetKid() string {
+	if c == nil {
+		return ""
+	}
+	return c.Kid
+}
+
+func (c *CimdMappedPrivateKeyJwtCredential) GetAlg() string {
+	if c == nil {
+		return ""
+	}
+	return c.Alg
+}
+
+func (c *CimdMappedPrivateKeyJwtCredential) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.ExtraProperties
+}
+
+func (c *CimdMappedPrivateKeyJwtCredential) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetCredentialType sets the CredentialType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedPrivateKeyJwtCredential) SetCredentialType(credentialType string) {
+	c.CredentialType = credentialType
+	c.require(cimdMappedPrivateKeyJwtCredentialFieldCredentialType)
+}
+
+// SetKid sets the Kid field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedPrivateKeyJwtCredential) SetKid(kid string) {
+	c.Kid = kid
+	c.require(cimdMappedPrivateKeyJwtCredentialFieldKid)
+}
+
+// SetAlg sets the Alg field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdMappedPrivateKeyJwtCredential) SetAlg(alg string) {
+	c.Alg = alg
+	c.require(cimdMappedPrivateKeyJwtCredentialFieldAlg)
+}
+
+func (c *CimdMappedPrivateKeyJwtCredential) UnmarshalJSON(data []byte) error {
+	type embed CimdMappedPrivateKeyJwtCredential
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*c = CimdMappedPrivateKeyJwtCredential(unmarshaler.embed)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.ExtraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CimdMappedPrivateKeyJwtCredential) MarshalJSON() ([]byte, error) {
+	type embed CimdMappedPrivateKeyJwtCredential
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return internal.MarshalJSONWithExtraProperties(explicitMarshaler, c.ExtraProperties)
+}
+
+func (c *CimdMappedPrivateKeyJwtCredential) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Validation result for the Client ID Metadata Document
+var (
+	cimdValidationResultFieldValid      = big.NewInt(1 << 0)
+	cimdValidationResultFieldViolations = big.NewInt(1 << 1)
+	cimdValidationResultFieldWarnings   = big.NewInt(1 << 2)
+)
+
+type CimdValidationResult struct {
+	// Whether the metadata document passed validation
+	Valid bool `json:"valid" url:"valid"`
+	// Array of validation violation messages (if any)
+	Violations []string `json:"violations" url:"violations"`
+	// Array of warning messages (if any)
+	Warnings []string `json:"warnings" url:"warnings"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	ExtraProperties map[string]interface{} `json:"-" url:"-"`
+
+	rawJSON json.RawMessage
+}
+
+func (c *CimdValidationResult) GetValid() bool {
+	if c == nil {
+		return false
+	}
+	return c.Valid
+}
+
+func (c *CimdValidationResult) GetViolations() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Violations
+}
+
+func (c *CimdValidationResult) GetWarnings() []string {
+	if c == nil {
+		return nil
+	}
+	return c.Warnings
+}
+
+func (c *CimdValidationResult) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.ExtraProperties
+}
+
+func (c *CimdValidationResult) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetValid sets the Valid field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdValidationResult) SetValid(valid bool) {
+	c.Valid = valid
+	c.require(cimdValidationResultFieldValid)
+}
+
+// SetViolations sets the Violations field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdValidationResult) SetViolations(violations []string) {
+	c.Violations = violations
+	c.require(cimdValidationResultFieldViolations)
+}
+
+// SetWarnings sets the Warnings field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CimdValidationResult) SetWarnings(warnings []string) {
+	c.Warnings = warnings
+	c.require(cimdValidationResultFieldWarnings)
+}
+
+func (c *CimdValidationResult) UnmarshalJSON(data []byte) error {
+	type embed CimdValidationResult
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*c = CimdValidationResult(unmarshaler.embed)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.ExtraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *CimdValidationResult) MarshalJSON() ([]byte, error) {
+	type embed CimdValidationResult
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return internal.MarshalJSONWithExtraProperties(explicitMarshaler, c.ExtraProperties)
+}
+
+func (c *CimdValidationResult) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
 }
 
 var (
@@ -232,8 +911,15 @@ var (
 	clientFieldParRequestExpiry                               = big.NewInt(1 << 48)
 	clientFieldTokenQuota                                     = big.NewInt(1 << 49)
 	clientFieldExpressConfiguration                           = big.NewInt(1 << 50)
-	clientFieldResourceServerIdentifier                       = big.NewInt(1 << 51)
-	clientFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 52)
+	clientFieldMyOrganizationConfiguration                    = big.NewInt(1 << 51)
+	clientFieldThirdPartySecurityMode                         = big.NewInt(1 << 52)
+	clientFieldRedirectionPolicy                              = big.NewInt(1 << 53)
+	clientFieldResourceServerIdentifier                       = big.NewInt(1 << 54)
+	clientFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 55)
+	clientFieldExternalMetadataType                           = big.NewInt(1 << 56)
+	clientFieldExternalMetadataCreatedBy                      = big.NewInt(1 << 57)
+	clientFieldExternalClientID                               = big.NewInt(1 << 58)
+	clientFieldJwksURI                                        = big.NewInt(1 << 59)
 )
 
 type Client struct {
@@ -318,12 +1004,21 @@ type Client struct {
 	SkipNonVerifiableCallbackURIConfirmationPrompt *bool                             `json:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty" url:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty"`
 	TokenExchange                                  *ClientTokenExchangeConfiguration `json:"token_exchange,omitempty" url:"token_exchange,omitempty"`
 	// Specifies how long, in seconds, a Pushed Authorization Request URI remains valid
-	ParRequestExpiry     *int                  `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
-	TokenQuota           *TokenQuota           `json:"token_quota,omitempty" url:"token_quota,omitempty"`
-	ExpressConfiguration *ExpressConfiguration `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	ParRequestExpiry            *int                                       `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
+	TokenQuota                  *TokenQuota                                `json:"token_quota,omitempty" url:"token_quota,omitempty"`
+	ExpressConfiguration        *ExpressConfiguration                      `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	MyOrganizationConfiguration *ClientMyOrganizationResponseConfiguration `json:"my_organization_configuration,omitempty" url:"my_organization_configuration,omitempty"`
+	ThirdPartySecurityMode      *ClientThirdPartySecurityModeEnum          `json:"third_party_security_mode,omitempty" url:"third_party_security_mode,omitempty"`
+	RedirectionPolicy           *ClientRedirectionPolicyEnum               `json:"redirection_policy,omitempty" url:"redirection_policy,omitempty"`
 	// The identifier of the resource server that this client is linked to.
 	ResourceServerIdentifier          *string                                                       `json:"resource_server_identifier,omitempty" url:"resource_server_identifier,omitempty"`
 	AsyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration `json:"async_approval_notification_channels,omitempty" url:"async_approval_notification_channels,omitempty"`
+	ExternalMetadataType              *ClientExternalMetadataTypeEnum                               `json:"external_metadata_type,omitempty" url:"external_metadata_type,omitempty"`
+	ExternalMetadataCreatedBy         *ClientExternalMetadataCreatedByEnum                          `json:"external_metadata_created_by,omitempty" url:"external_metadata_created_by,omitempty"`
+	// An alternate client identifier to be used during authorization flows. Only supports CIMD-based client identifiers.
+	ExternalClientID *string `json:"external_client_id,omitempty" url:"external_client_id,omitempty"`
+	// URL for the JSON Web Key Set (JWKS) containing the public keys used for private_key_jwt authentication. Only present for CIMD clients using private_key_jwt authentication.
+	JwksURI *string `json:"jwks_uri,omitempty" url:"jwks_uri,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -690,6 +1385,27 @@ func (c *Client) GetExpressConfiguration() ExpressConfiguration {
 	return *c.ExpressConfiguration
 }
 
+func (c *Client) GetMyOrganizationConfiguration() ClientMyOrganizationResponseConfiguration {
+	if c == nil || c.MyOrganizationConfiguration == nil {
+		return ClientMyOrganizationResponseConfiguration{}
+	}
+	return *c.MyOrganizationConfiguration
+}
+
+func (c *Client) GetThirdPartySecurityMode() ClientThirdPartySecurityModeEnum {
+	if c == nil || c.ThirdPartySecurityMode == nil {
+		return ""
+	}
+	return *c.ThirdPartySecurityMode
+}
+
+func (c *Client) GetRedirectionPolicy() ClientRedirectionPolicyEnum {
+	if c == nil || c.RedirectionPolicy == nil {
+		return ""
+	}
+	return *c.RedirectionPolicy
+}
+
 func (c *Client) GetResourceServerIdentifier() string {
 	if c == nil || c.ResourceServerIdentifier == nil {
 		return ""
@@ -704,7 +1420,38 @@ func (c *Client) GetAsyncApprovalNotificationChannels() ClientAsyncApprovalNotif
 	return *c.AsyncApprovalNotificationChannels
 }
 
+func (c *Client) GetExternalMetadataType() ClientExternalMetadataTypeEnum {
+	if c == nil || c.ExternalMetadataType == nil {
+		return ""
+	}
+	return *c.ExternalMetadataType
+}
+
+func (c *Client) GetExternalMetadataCreatedBy() ClientExternalMetadataCreatedByEnum {
+	if c == nil || c.ExternalMetadataCreatedBy == nil {
+		return ""
+	}
+	return *c.ExternalMetadataCreatedBy
+}
+
+func (c *Client) GetExternalClientID() string {
+	if c == nil || c.ExternalClientID == nil {
+		return ""
+	}
+	return *c.ExternalClientID
+}
+
+func (c *Client) GetJwksURI() string {
+	if c == nil || c.JwksURI == nil {
+		return ""
+	}
+	return *c.JwksURI
+}
+
 func (c *Client) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -1072,6 +1819,27 @@ func (c *Client) SetExpressConfiguration(expressConfiguration *ExpressConfigurat
 	c.require(clientFieldExpressConfiguration)
 }
 
+// SetMyOrganizationConfiguration sets the MyOrganizationConfiguration field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *Client) SetMyOrganizationConfiguration(myOrganizationConfiguration *ClientMyOrganizationResponseConfiguration) {
+	c.MyOrganizationConfiguration = myOrganizationConfiguration
+	c.require(clientFieldMyOrganizationConfiguration)
+}
+
+// SetThirdPartySecurityMode sets the ThirdPartySecurityMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *Client) SetThirdPartySecurityMode(thirdPartySecurityMode *ClientThirdPartySecurityModeEnum) {
+	c.ThirdPartySecurityMode = thirdPartySecurityMode
+	c.require(clientFieldThirdPartySecurityMode)
+}
+
+// SetRedirectionPolicy sets the RedirectionPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *Client) SetRedirectionPolicy(redirectionPolicy *ClientRedirectionPolicyEnum) {
+	c.RedirectionPolicy = redirectionPolicy
+	c.require(clientFieldRedirectionPolicy)
+}
+
 // SetResourceServerIdentifier sets the ResourceServerIdentifier field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *Client) SetResourceServerIdentifier(resourceServerIdentifier *string) {
@@ -1084,6 +1852,34 @@ func (c *Client) SetResourceServerIdentifier(resourceServerIdentifier *string) {
 func (c *Client) SetAsyncApprovalNotificationChannels(asyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration) {
 	c.AsyncApprovalNotificationChannels = asyncApprovalNotificationChannels
 	c.require(clientFieldAsyncApprovalNotificationChannels)
+}
+
+// SetExternalMetadataType sets the ExternalMetadataType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *Client) SetExternalMetadataType(externalMetadataType *ClientExternalMetadataTypeEnum) {
+	c.ExternalMetadataType = externalMetadataType
+	c.require(clientFieldExternalMetadataType)
+}
+
+// SetExternalMetadataCreatedBy sets the ExternalMetadataCreatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *Client) SetExternalMetadataCreatedBy(externalMetadataCreatedBy *ClientExternalMetadataCreatedByEnum) {
+	c.ExternalMetadataCreatedBy = externalMetadataCreatedBy
+	c.require(clientFieldExternalMetadataCreatedBy)
+}
+
+// SetExternalClientID sets the ExternalClientID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *Client) SetExternalClientID(externalClientID *string) {
+	c.ExternalClientID = externalClientID
+	c.require(clientFieldExternalClientID)
+}
+
+// SetJwksURI sets the JwksURI field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *Client) SetJwksURI(jwksURI *string) {
+	c.JwksURI = jwksURI
+	c.require(clientFieldJwksURI)
 }
 
 func (c *Client) UnmarshalJSON(data []byte) error {
@@ -1118,6 +1914,9 @@ func (c *Client) MarshalJSON() ([]byte, error) {
 }
 
 func (c *Client) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1174,6 +1973,9 @@ func (c *ClientAddonAws) GetLifetimeInSeconds() int {
 }
 
 func (c *ClientAddonAws) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -1237,6 +2039,9 @@ func (c *ClientAddonAws) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonAws) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1393,6 +2198,9 @@ func (c *ClientAddonAzureBlob) GetContainerList() bool {
 }
 
 func (c *ClientAddonAzureBlob) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -1526,6 +2334,9 @@ func (c *ClientAddonAzureBlob) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonAzureBlob) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1602,6 +2413,9 @@ func (c *ClientAddonAzureSb) GetExpiration() int {
 }
 
 func (c *ClientAddonAzureSb) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -1679,6 +2493,9 @@ func (c *ClientAddonAzureSb) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonAzureSb) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1691,16 +2508,16 @@ func (c *ClientAddonAzureSb) String() string {
 }
 
 // Box SSO indicator (no configuration settings needed for Box SSO).
-type ClientAddonBox = map[string]interface{}
+type ClientAddonBox = map[string]any
 
 // CloudBees SSO indicator (no configuration settings needed for CloudBees SSO).
-type ClientAddonCloudBees = map[string]interface{}
+type ClientAddonCloudBees = map[string]any
 
 // Concur SSO indicator (no configuration settings needed for Concur SSO).
-type ClientAddonConcur = map[string]interface{}
+type ClientAddonConcur = map[string]any
 
 // Dropbox SSO indicator (no configuration settings needed for Dropbox SSO).
-type ClientAddonDropbox = map[string]interface{}
+type ClientAddonDropbox = map[string]any
 
 // Adobe EchoSign SSO configuration.
 var (
@@ -1727,6 +2544,9 @@ func (c *ClientAddonEchoSign) GetDomain() string {
 }
 
 func (c *ClientAddonEchoSign) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -1776,6 +2596,9 @@ func (c *ClientAddonEchoSign) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonEchoSign) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1812,6 +2635,9 @@ func (c *ClientAddonEgnyte) GetDomain() string {
 }
 
 func (c *ClientAddonEgnyte) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -1861,6 +2687,9 @@ func (c *ClientAddonEgnyte) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonEgnyte) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -1937,6 +2766,9 @@ func (c *ClientAddonFirebase) GetLifetimeInSeconds() int {
 }
 
 func (c *ClientAddonFirebase) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2014,6 +2846,9 @@ func (c *ClientAddonFirebase) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonFirebase) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2090,6 +2925,9 @@ func (c *ClientAddonLayer) GetExpiration() int {
 }
 
 func (c *ClientAddonLayer) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2167,6 +3005,9 @@ func (c *ClientAddonLayer) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonLayer) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2203,6 +3044,9 @@ func (c *ClientAddonMscrm) GetURL() string {
 }
 
 func (c *ClientAddonMscrm) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2252,6 +3096,9 @@ func (c *ClientAddonMscrm) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonMscrm) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2288,6 +3135,9 @@ func (c *ClientAddonNewRelic) GetAccount() string {
 }
 
 func (c *ClientAddonNewRelic) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2337,6 +3187,9 @@ func (c *ClientAddonNewRelic) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonNewRelic) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2359,6 +3212,9 @@ type ClientAddonOag struct {
 }
 
 func (c *ClientAddonOag) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -2397,6 +3253,9 @@ func (c *ClientAddonOag) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonOag) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2443,6 +3302,9 @@ func (c *ClientAddonOffice365) GetConnection() string {
 }
 
 func (c *ClientAddonOffice365) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2499,6 +3361,9 @@ func (c *ClientAddonOffice365) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonOffice365) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2535,6 +3400,9 @@ func (c *ClientAddonRms) GetURL() string {
 }
 
 func (c *ClientAddonRms) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2584,6 +3452,9 @@ func (c *ClientAddonRms) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonRms) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2620,6 +3491,9 @@ func (c *ClientAddonSalesforce) GetEntityID() string {
 }
 
 func (c *ClientAddonSalesforce) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2669,6 +3543,9 @@ func (c *ClientAddonSalesforce) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSalesforce) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2735,6 +3612,9 @@ func (c *ClientAddonSalesforceAPI) GetCommunityURLSection() string {
 }
 
 func (c *ClientAddonSalesforceAPI) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2805,6 +3685,9 @@ func (c *ClientAddonSalesforceAPI) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSalesforceAPI) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -2871,6 +3754,9 @@ func (c *ClientAddonSalesforceSandboxAPI) GetCommunityURLSection() string {
 }
 
 func (c *ClientAddonSalesforceSandboxAPI) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -2941,6 +3827,9 @@ func (c *ClientAddonSalesforceSandboxAPI) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSalesforceSandboxAPI) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -3111,6 +4000,9 @@ func (c *ClientAddonSAML) GetAuthnContextClassRef() string {
 }
 
 func (c *ClientAddonSAML) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -3265,6 +4157,9 @@ func (c *ClientAddonSAML) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSAML) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -3276,7 +4171,7 @@ func (c *ClientAddonSAML) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
-type ClientAddonSAMLMapping = map[string]interface{}
+type ClientAddonSAMLMapping = map[string]any
 
 // SAP API addon configuration.
 var (
@@ -3353,6 +4248,9 @@ func (c *ClientAddonSapapi) GetNameIdentifierFormat() string {
 }
 
 func (c *ClientAddonSapapi) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -3437,6 +4335,9 @@ func (c *ClientAddonSapapi) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSapapi) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -3483,6 +4384,9 @@ func (c *ClientAddonSentry) GetBaseURL() string {
 }
 
 func (c *ClientAddonSentry) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -3539,6 +4443,9 @@ func (c *ClientAddonSentry) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSentry) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -3584,6 +4491,9 @@ func (c *ClientAddonSharePoint) GetExternalURL() ClientAddonSharePointExternalUR
 }
 
 func (c *ClientAddonSharePoint) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -3640,6 +4550,9 @@ func (c *ClientAddonSharePoint) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSharePoint) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -3739,6 +4652,9 @@ func (c *ClientAddonSlack) GetTeam() string {
 }
 
 func (c *ClientAddonSlack) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -3788,6 +4704,9 @@ func (c *ClientAddonSlack) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSlack) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -3824,6 +4743,9 @@ func (c *ClientAddonSpringCm) GetAcsurl() string {
 }
 
 func (c *ClientAddonSpringCm) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -3873,6 +4795,9 @@ func (c *ClientAddonSpringCm) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSpringCm) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -3918,6 +4843,9 @@ func (c *ClientAddonSSOIntegration) GetVersion() string {
 }
 
 func (c *ClientAddonSSOIntegration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -3974,6 +4902,9 @@ func (c *ClientAddonSSOIntegration) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonSSOIntegration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -4010,6 +4941,9 @@ func (c *ClientAddonWams) GetMasterkey() string {
 }
 
 func (c *ClientAddonWams) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -4059,6 +4993,9 @@ func (c *ClientAddonWams) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonWams) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -4071,7 +5008,7 @@ func (c *ClientAddonWams) String() string {
 }
 
 // WS-Fed (WIF) addon indicator. Actual configuration is stored in `callback` and `client_aliases` properties on the client.
-type ClientAddonWsFed = map[string]interface{}
+type ClientAddonWsFed = map[string]any
 
 // Zendesk SSO configuration.
 var (
@@ -4098,6 +5035,9 @@ func (c *ClientAddonZendesk) GetAccountName() string {
 }
 
 func (c *ClientAddonZendesk) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -4147,6 +5087,9 @@ func (c *ClientAddonZendesk) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonZendesk) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -4183,6 +5126,9 @@ func (c *ClientAddonZoom) GetAccount() string {
 }
 
 func (c *ClientAddonZoom) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -4232,6 +5178,9 @@ func (c *ClientAddonZoom) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddonZoom) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -4527,6 +5476,9 @@ func (c *ClientAddons) GetOag() ClientAddonOag {
 }
 
 func (c *ClientAddons) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -4775,6 +5727,9 @@ func (c *ClientAddons) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAddons) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -4925,6 +5880,9 @@ func (c *ClientAuthenticationMethod) GetSelfSignedTLSClientAuth() ClientAuthenti
 }
 
 func (c *ClientAuthenticationMethod) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -4984,6 +5942,9 @@ func (c *ClientAuthenticationMethod) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientAuthenticationMethod) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5018,6 +5979,9 @@ func (c *ClientAuthenticationMethodPrivateKeyJwt) GetCredentials() ClientAuthent
 }
 
 func (c *ClientAuthenticationMethodPrivateKeyJwt) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -5063,6 +6027,9 @@ func (c *ClientAuthenticationMethodPrivateKeyJwt) MarshalJSON() ([]byte, error) 
 }
 
 func (c *ClientAuthenticationMethodPrivateKeyJwt) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5100,6 +6067,9 @@ func (c *ClientAuthenticationMethodSelfSignedTLSClientAuth) GetCredentials() Cli
 }
 
 func (c *ClientAuthenticationMethodSelfSignedTLSClientAuth) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -5145,6 +6115,9 @@ func (c *ClientAuthenticationMethodSelfSignedTLSClientAuth) MarshalJSON() ([]byt
 }
 
 func (c *ClientAuthenticationMethodSelfSignedTLSClientAuth) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5182,6 +6155,9 @@ func (c *ClientAuthenticationMethodTLSClientAuth) GetCredentials() ClientAuthent
 }
 
 func (c *ClientAuthenticationMethodTLSClientAuth) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -5227,6 +6203,9 @@ func (c *ClientAuthenticationMethodTLSClientAuth) MarshalJSON() ([]byte, error) 
 }
 
 func (c *ClientAuthenticationMethodTLSClientAuth) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5314,6 +6293,9 @@ func (c *ClientCreateAuthenticationMethod) GetSelfSignedTLSClientAuth() CreateCl
 }
 
 func (c *ClientCreateAuthenticationMethod) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -5373,6 +6355,9 @@ func (c *ClientCreateAuthenticationMethod) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientCreateAuthenticationMethod) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5407,6 +6392,9 @@ func (c *ClientCreateAuthenticationMethodPrivateKeyJwt) GetCredentials() ClientC
 }
 
 func (c *ClientCreateAuthenticationMethodPrivateKeyJwt) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -5452,6 +6440,9 @@ func (c *ClientCreateAuthenticationMethodPrivateKeyJwt) MarshalJSON() ([]byte, e
 }
 
 func (c *ClientCreateAuthenticationMethodPrivateKeyJwt) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5489,6 +6480,9 @@ func (c *ClientCreateAuthenticationMethodTLSClientAuth) GetCredentials() ClientC
 }
 
 func (c *ClientCreateAuthenticationMethodTLSClientAuth) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -5534,6 +6528,9 @@ func (c *ClientCreateAuthenticationMethodTLSClientAuth) MarshalJSON() ([]byte, e
 }
 
 func (c *ClientCreateAuthenticationMethodTLSClientAuth) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5582,6 +6579,9 @@ func (c *ClientDefaultOrganization) GetFlows() []ClientDefaultOrganizationFlowsE
 }
 
 func (c *ClientDefaultOrganization) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -5634,6 +6634,9 @@ func (c *ClientDefaultOrganization) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientDefaultOrganization) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5709,6 +6712,9 @@ func (c *ClientEncryptionKey) GetSubject() string {
 }
 
 func (c *ClientEncryptionKey) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -5772,6 +6778,9 @@ func (c *ClientEncryptionKey) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientEncryptionKey) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5781,6 +6790,49 @@ func (c *ClientEncryptionKey) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", c)
+}
+
+// Indicates who created the external metadata client. The value <code>admin</code> indicates the client was registered via the Management API. The value <code>client</code> indicates the client was registered dynamically. This field is only present when external_metadata_type is set.
+type ClientExternalMetadataCreatedByEnum string
+
+const (
+	ClientExternalMetadataCreatedByEnumAdmin  ClientExternalMetadataCreatedByEnum = "admin"
+	ClientExternalMetadataCreatedByEnumClient ClientExternalMetadataCreatedByEnum = "client"
+)
+
+func NewClientExternalMetadataCreatedByEnumFromString(s string) (ClientExternalMetadataCreatedByEnum, error) {
+	switch s {
+	case "admin":
+		return ClientExternalMetadataCreatedByEnumAdmin, nil
+	case "client":
+		return ClientExternalMetadataCreatedByEnumClient, nil
+	}
+	var t ClientExternalMetadataCreatedByEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ClientExternalMetadataCreatedByEnum) Ptr() *ClientExternalMetadataCreatedByEnum {
+	return &c
+}
+
+// Indicates the type of external metadata used to register the client. This field is omitted for regular clients. The value <code>cimd</code> identifies clients registered via a Client ID Metadata Document.
+type ClientExternalMetadataTypeEnum string
+
+const (
+	ClientExternalMetadataTypeEnumCimd ClientExternalMetadataTypeEnum = "cimd"
+)
+
+func NewClientExternalMetadataTypeEnumFromString(s string) (ClientExternalMetadataTypeEnum, error) {
+	switch s {
+	case "cimd":
+		return ClientExternalMetadataTypeEnumCimd, nil
+	}
+	var t ClientExternalMetadataTypeEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ClientExternalMetadataTypeEnum) Ptr() *ClientExternalMetadataTypeEnum {
+	return &c
 }
 
 // Configuration related to JWTs for the client.
@@ -5836,6 +6888,9 @@ func (c *ClientJwtConfiguration) GetAlg() SigningAlgorithmEnum {
 }
 
 func (c *ClientJwtConfiguration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -5906,6 +6961,9 @@ func (c *ClientJwtConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientJwtConfiguration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -5918,10 +6976,10 @@ func (c *ClientJwtConfiguration) String() string {
 }
 
 // Configuration related to id token claims for the client.
-type ClientJwtConfigurationScopes = map[string]interface{}
+type ClientJwtConfigurationScopes = map[string]any
 
 // Metadata associated with the client, in the form of an object with string values (max 255 chars).  Maximum of 10 metadata properties allowed.  Field names (max 255 chars) are alphanumeric and may only include the following special characters:  :,-+=_*?"/\()<>@	[Tab] [Space]
-type ClientMetadata = map[string]interface{}
+type ClientMetadata = map[string]any
 
 // Additional configuration for native mobile apps.
 var (
@@ -5956,6 +7014,9 @@ func (c *ClientMobile) GetIos() ClientMobileiOs {
 }
 
 func (c *ClientMobile) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -6012,6 +7073,9 @@ func (c *ClientMobile) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientMobile) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -6058,6 +7122,9 @@ func (c *ClientMobileAndroid) GetSha256CertFingerprints() []string {
 }
 
 func (c *ClientMobileAndroid) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -6114,6 +7181,9 @@ func (c *ClientMobileAndroid) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientMobileAndroid) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -6160,6 +7230,9 @@ func (c *ClientMobileiOs) GetAppBundleIdentifier() string {
 }
 
 func (c *ClientMobileiOs) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -6216,6 +7289,478 @@ func (c *ClientMobileiOs) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientMobileiOs) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// The allowed connection strategy values for the My Organization Configuration.
+type ClientMyOrganizationConfigurationAllowedStrategiesEnum string
+
+const (
+	ClientMyOrganizationConfigurationAllowedStrategiesEnumPingfederate ClientMyOrganizationConfigurationAllowedStrategiesEnum = "pingfederate"
+	ClientMyOrganizationConfigurationAllowedStrategiesEnumAdfs         ClientMyOrganizationConfigurationAllowedStrategiesEnum = "adfs"
+	ClientMyOrganizationConfigurationAllowedStrategiesEnumWaad         ClientMyOrganizationConfigurationAllowedStrategiesEnum = "waad"
+	ClientMyOrganizationConfigurationAllowedStrategiesEnumGoogleApps   ClientMyOrganizationConfigurationAllowedStrategiesEnum = "google-apps"
+	ClientMyOrganizationConfigurationAllowedStrategiesEnumOkta         ClientMyOrganizationConfigurationAllowedStrategiesEnum = "okta"
+	ClientMyOrganizationConfigurationAllowedStrategiesEnumOidc         ClientMyOrganizationConfigurationAllowedStrategiesEnum = "oidc"
+	ClientMyOrganizationConfigurationAllowedStrategiesEnumSamlp        ClientMyOrganizationConfigurationAllowedStrategiesEnum = "samlp"
+)
+
+func NewClientMyOrganizationConfigurationAllowedStrategiesEnumFromString(s string) (ClientMyOrganizationConfigurationAllowedStrategiesEnum, error) {
+	switch s {
+	case "pingfederate":
+		return ClientMyOrganizationConfigurationAllowedStrategiesEnumPingfederate, nil
+	case "adfs":
+		return ClientMyOrganizationConfigurationAllowedStrategiesEnumAdfs, nil
+	case "waad":
+		return ClientMyOrganizationConfigurationAllowedStrategiesEnumWaad, nil
+	case "google-apps":
+		return ClientMyOrganizationConfigurationAllowedStrategiesEnumGoogleApps, nil
+	case "okta":
+		return ClientMyOrganizationConfigurationAllowedStrategiesEnumOkta, nil
+	case "oidc":
+		return ClientMyOrganizationConfigurationAllowedStrategiesEnumOidc, nil
+	case "samlp":
+		return ClientMyOrganizationConfigurationAllowedStrategiesEnumSamlp, nil
+	}
+	var t ClientMyOrganizationConfigurationAllowedStrategiesEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ClientMyOrganizationConfigurationAllowedStrategiesEnum) Ptr() *ClientMyOrganizationConfigurationAllowedStrategiesEnum {
+	return &c
+}
+
+// The deletion behavior for this client.
+type ClientMyOrganizationDeletionBehaviorEnum string
+
+const (
+	ClientMyOrganizationDeletionBehaviorEnumAllow        ClientMyOrganizationDeletionBehaviorEnum = "allow"
+	ClientMyOrganizationDeletionBehaviorEnumAllowIfEmpty ClientMyOrganizationDeletionBehaviorEnum = "allow_if_empty"
+)
+
+func NewClientMyOrganizationDeletionBehaviorEnumFromString(s string) (ClientMyOrganizationDeletionBehaviorEnum, error) {
+	switch s {
+	case "allow":
+		return ClientMyOrganizationDeletionBehaviorEnumAllow, nil
+	case "allow_if_empty":
+		return ClientMyOrganizationDeletionBehaviorEnumAllowIfEmpty, nil
+	}
+	var t ClientMyOrganizationDeletionBehaviorEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ClientMyOrganizationDeletionBehaviorEnum) Ptr() *ClientMyOrganizationDeletionBehaviorEnum {
+	return &c
+}
+
+// Configuration related to the My Organization Configuration for the client.
+var (
+	clientMyOrganizationPatchConfigurationFieldConnectionProfileID        = big.NewInt(1 << 0)
+	clientMyOrganizationPatchConfigurationFieldUserAttributeProfileID     = big.NewInt(1 << 1)
+	clientMyOrganizationPatchConfigurationFieldAllowedStrategies          = big.NewInt(1 << 2)
+	clientMyOrganizationPatchConfigurationFieldConnectionDeletionBehavior = big.NewInt(1 << 3)
+)
+
+type ClientMyOrganizationPatchConfiguration struct {
+	// The connection profile ID that this client should validate against.
+	ConnectionProfileID *string `json:"connection_profile_id,omitempty" url:"connection_profile_id,omitempty"`
+	// The user attribute profile ID that this client should validate against.
+	UserAttributeProfileID *string `json:"user_attribute_profile_id,omitempty" url:"user_attribute_profile_id,omitempty"`
+	// The allowed connection strategies for the My Organization Configuration.
+	AllowedStrategies          []ClientMyOrganizationConfigurationAllowedStrategiesEnum `json:"allowed_strategies" url:"allowed_strategies"`
+	ConnectionDeletionBehavior ClientMyOrganizationDeletionBehaviorEnum                 `json:"connection_deletion_behavior" url:"connection_deletion_behavior"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) GetConnectionProfileID() string {
+	if c == nil || c.ConnectionProfileID == nil {
+		return ""
+	}
+	return *c.ConnectionProfileID
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) GetUserAttributeProfileID() string {
+	if c == nil || c.UserAttributeProfileID == nil {
+		return ""
+	}
+	return *c.UserAttributeProfileID
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) GetAllowedStrategies() []ClientMyOrganizationConfigurationAllowedStrategiesEnum {
+	if c == nil {
+		return nil
+	}
+	return c.AllowedStrategies
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) GetConnectionDeletionBehavior() ClientMyOrganizationDeletionBehaviorEnum {
+	if c == nil {
+		return ""
+	}
+	return c.ConnectionDeletionBehavior
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetConnectionProfileID sets the ConnectionProfileID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationPatchConfiguration) SetConnectionProfileID(connectionProfileID *string) {
+	c.ConnectionProfileID = connectionProfileID
+	c.require(clientMyOrganizationPatchConfigurationFieldConnectionProfileID)
+}
+
+// SetUserAttributeProfileID sets the UserAttributeProfileID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationPatchConfiguration) SetUserAttributeProfileID(userAttributeProfileID *string) {
+	c.UserAttributeProfileID = userAttributeProfileID
+	c.require(clientMyOrganizationPatchConfigurationFieldUserAttributeProfileID)
+}
+
+// SetAllowedStrategies sets the AllowedStrategies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationPatchConfiguration) SetAllowedStrategies(allowedStrategies []ClientMyOrganizationConfigurationAllowedStrategiesEnum) {
+	c.AllowedStrategies = allowedStrategies
+	c.require(clientMyOrganizationPatchConfigurationFieldAllowedStrategies)
+}
+
+// SetConnectionDeletionBehavior sets the ConnectionDeletionBehavior field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationPatchConfiguration) SetConnectionDeletionBehavior(connectionDeletionBehavior ClientMyOrganizationDeletionBehaviorEnum) {
+	c.ConnectionDeletionBehavior = connectionDeletionBehavior
+	c.require(clientMyOrganizationPatchConfigurationFieldConnectionDeletionBehavior)
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) UnmarshalJSON(data []byte) error {
+	type unmarshaler ClientMyOrganizationPatchConfiguration
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ClientMyOrganizationPatchConfiguration(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) MarshalJSON() ([]byte, error) {
+	type embed ClientMyOrganizationPatchConfiguration
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ClientMyOrganizationPatchConfiguration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Configuration related to the My Organization Configuration for the client.
+var (
+	clientMyOrganizationPostConfigurationFieldConnectionProfileID        = big.NewInt(1 << 0)
+	clientMyOrganizationPostConfigurationFieldUserAttributeProfileID     = big.NewInt(1 << 1)
+	clientMyOrganizationPostConfigurationFieldAllowedStrategies          = big.NewInt(1 << 2)
+	clientMyOrganizationPostConfigurationFieldConnectionDeletionBehavior = big.NewInt(1 << 3)
+)
+
+type ClientMyOrganizationPostConfiguration struct {
+	// The connection profile ID that this client should validate against.
+	ConnectionProfileID *string `json:"connection_profile_id,omitempty" url:"connection_profile_id,omitempty"`
+	// The user attribute profile ID that this client should validate against.
+	UserAttributeProfileID *string `json:"user_attribute_profile_id,omitempty" url:"user_attribute_profile_id,omitempty"`
+	// The allowed connection strategies for the My Organization Configuration.
+	AllowedStrategies          []ClientMyOrganizationConfigurationAllowedStrategiesEnum `json:"allowed_strategies" url:"allowed_strategies"`
+	ConnectionDeletionBehavior ClientMyOrganizationDeletionBehaviorEnum                 `json:"connection_deletion_behavior" url:"connection_deletion_behavior"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ClientMyOrganizationPostConfiguration) GetConnectionProfileID() string {
+	if c == nil || c.ConnectionProfileID == nil {
+		return ""
+	}
+	return *c.ConnectionProfileID
+}
+
+func (c *ClientMyOrganizationPostConfiguration) GetUserAttributeProfileID() string {
+	if c == nil || c.UserAttributeProfileID == nil {
+		return ""
+	}
+	return *c.UserAttributeProfileID
+}
+
+func (c *ClientMyOrganizationPostConfiguration) GetAllowedStrategies() []ClientMyOrganizationConfigurationAllowedStrategiesEnum {
+	if c == nil {
+		return nil
+	}
+	return c.AllowedStrategies
+}
+
+func (c *ClientMyOrganizationPostConfiguration) GetConnectionDeletionBehavior() ClientMyOrganizationDeletionBehaviorEnum {
+	if c == nil {
+		return ""
+	}
+	return c.ConnectionDeletionBehavior
+}
+
+func (c *ClientMyOrganizationPostConfiguration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ClientMyOrganizationPostConfiguration) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetConnectionProfileID sets the ConnectionProfileID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationPostConfiguration) SetConnectionProfileID(connectionProfileID *string) {
+	c.ConnectionProfileID = connectionProfileID
+	c.require(clientMyOrganizationPostConfigurationFieldConnectionProfileID)
+}
+
+// SetUserAttributeProfileID sets the UserAttributeProfileID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationPostConfiguration) SetUserAttributeProfileID(userAttributeProfileID *string) {
+	c.UserAttributeProfileID = userAttributeProfileID
+	c.require(clientMyOrganizationPostConfigurationFieldUserAttributeProfileID)
+}
+
+// SetAllowedStrategies sets the AllowedStrategies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationPostConfiguration) SetAllowedStrategies(allowedStrategies []ClientMyOrganizationConfigurationAllowedStrategiesEnum) {
+	c.AllowedStrategies = allowedStrategies
+	c.require(clientMyOrganizationPostConfigurationFieldAllowedStrategies)
+}
+
+// SetConnectionDeletionBehavior sets the ConnectionDeletionBehavior field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationPostConfiguration) SetConnectionDeletionBehavior(connectionDeletionBehavior ClientMyOrganizationDeletionBehaviorEnum) {
+	c.ConnectionDeletionBehavior = connectionDeletionBehavior
+	c.require(clientMyOrganizationPostConfigurationFieldConnectionDeletionBehavior)
+}
+
+func (c *ClientMyOrganizationPostConfiguration) UnmarshalJSON(data []byte) error {
+	type unmarshaler ClientMyOrganizationPostConfiguration
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ClientMyOrganizationPostConfiguration(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ClientMyOrganizationPostConfiguration) MarshalJSON() ([]byte, error) {
+	type embed ClientMyOrganizationPostConfiguration
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ClientMyOrganizationPostConfiguration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Configuration related to the My Organization Configuration for the client.
+var (
+	clientMyOrganizationResponseConfigurationFieldConnectionProfileID        = big.NewInt(1 << 0)
+	clientMyOrganizationResponseConfigurationFieldUserAttributeProfileID     = big.NewInt(1 << 1)
+	clientMyOrganizationResponseConfigurationFieldAllowedStrategies          = big.NewInt(1 << 2)
+	clientMyOrganizationResponseConfigurationFieldConnectionDeletionBehavior = big.NewInt(1 << 3)
+)
+
+type ClientMyOrganizationResponseConfiguration struct {
+	// The connection profile ID that this client should validate against.
+	ConnectionProfileID *string `json:"connection_profile_id,omitempty" url:"connection_profile_id,omitempty"`
+	// The user attribute profile ID that this client should validate against.
+	UserAttributeProfileID *string `json:"user_attribute_profile_id,omitempty" url:"user_attribute_profile_id,omitempty"`
+	// The allowed connection strategies for the My Organization Configuration.
+	AllowedStrategies          []ClientMyOrganizationConfigurationAllowedStrategiesEnum `json:"allowed_strategies" url:"allowed_strategies"`
+	ConnectionDeletionBehavior ClientMyOrganizationDeletionBehaviorEnum                 `json:"connection_deletion_behavior" url:"connection_deletion_behavior"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) GetConnectionProfileID() string {
+	if c == nil || c.ConnectionProfileID == nil {
+		return ""
+	}
+	return *c.ConnectionProfileID
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) GetUserAttributeProfileID() string {
+	if c == nil || c.UserAttributeProfileID == nil {
+		return ""
+	}
+	return *c.UserAttributeProfileID
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) GetAllowedStrategies() []ClientMyOrganizationConfigurationAllowedStrategiesEnum {
+	if c == nil {
+		return nil
+	}
+	return c.AllowedStrategies
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) GetConnectionDeletionBehavior() ClientMyOrganizationDeletionBehaviorEnum {
+	if c == nil {
+		return ""
+	}
+	return c.ConnectionDeletionBehavior
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetConnectionProfileID sets the ConnectionProfileID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationResponseConfiguration) SetConnectionProfileID(connectionProfileID *string) {
+	c.ConnectionProfileID = connectionProfileID
+	c.require(clientMyOrganizationResponseConfigurationFieldConnectionProfileID)
+}
+
+// SetUserAttributeProfileID sets the UserAttributeProfileID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationResponseConfiguration) SetUserAttributeProfileID(userAttributeProfileID *string) {
+	c.UserAttributeProfileID = userAttributeProfileID
+	c.require(clientMyOrganizationResponseConfigurationFieldUserAttributeProfileID)
+}
+
+// SetAllowedStrategies sets the AllowedStrategies field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationResponseConfiguration) SetAllowedStrategies(allowedStrategies []ClientMyOrganizationConfigurationAllowedStrategiesEnum) {
+	c.AllowedStrategies = allowedStrategies
+	c.require(clientMyOrganizationResponseConfigurationFieldAllowedStrategies)
+}
+
+// SetConnectionDeletionBehavior sets the ConnectionDeletionBehavior field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientMyOrganizationResponseConfiguration) SetConnectionDeletionBehavior(connectionDeletionBehavior ClientMyOrganizationDeletionBehaviorEnum) {
+	c.ConnectionDeletionBehavior = connectionDeletionBehavior
+	c.require(clientMyOrganizationResponseConfigurationFieldConnectionDeletionBehavior)
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) UnmarshalJSON(data []byte) error {
+	type unmarshaler ClientMyOrganizationResponseConfiguration
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ClientMyOrganizationResponseConfiguration(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) MarshalJSON() ([]byte, error) {
+	type embed ClientMyOrganizationResponseConfiguration
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ClientMyOrganizationResponseConfiguration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -6260,6 +7805,9 @@ func (c *ClientOidcBackchannelLogoutInitiators) GetSelectedInitiators() []Client
 }
 
 func (c *ClientOidcBackchannelLogoutInitiators) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -6316,6 +7864,9 @@ func (c *ClientOidcBackchannelLogoutInitiators) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientOidcBackchannelLogoutInitiators) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -6419,6 +7970,9 @@ func (c *ClientOidcBackchannelLogoutSessionMetadata) GetInclude() bool {
 }
 
 func (c *ClientOidcBackchannelLogoutSessionMetadata) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -6468,6 +8022,9 @@ func (c *ClientOidcBackchannelLogoutSessionMetadata) MarshalJSON() ([]byte, erro
 }
 
 func (c *ClientOidcBackchannelLogoutSessionMetadata) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -6522,6 +8079,9 @@ func (c *ClientOidcBackchannelLogoutSettings) GetBackchannelLogoutSessionMetadat
 }
 
 func (c *ClientOidcBackchannelLogoutSettings) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -6585,6 +8145,9 @@ func (c *ClientOidcBackchannelLogoutSettings) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientOidcBackchannelLogoutSettings) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -6723,6 +8286,29 @@ func (c ClientOrganizationUsagePatchEnum) Ptr() *ClientOrganizationUsagePatchEnu
 	return &c
 }
 
+// Controls whether Auth0 redirects users to the application's callback URL on authentication errors or in email verification flows. `open_redirect_protection` shows an error page instead of redirecting, and hides the callback domain from email templates. `allow_always` enables standard redirect behavior. Defaults to `open_redirect_protection` for third-party clients. Only applies when `is_first_party` is `false` and `third_party_security_mode` is `strict`. To learn more, read <a href="https://auth0.com/docs/get-started/applications/third-party-applications/security-controls#redirect-protection">Redirect protection</a>.
+type ClientRedirectionPolicyEnum string
+
+const (
+	ClientRedirectionPolicyEnumAllowAlways            ClientRedirectionPolicyEnum = "allow_always"
+	ClientRedirectionPolicyEnumOpenRedirectProtection ClientRedirectionPolicyEnum = "open_redirect_protection"
+)
+
+func NewClientRedirectionPolicyEnumFromString(s string) (ClientRedirectionPolicyEnum, error) {
+	switch s {
+	case "allow_always":
+		return ClientRedirectionPolicyEnumAllowAlways, nil
+	case "open_redirect_protection":
+		return ClientRedirectionPolicyEnumOpenRedirectProtection, nil
+	}
+	var t ClientRedirectionPolicyEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ClientRedirectionPolicyEnum) Ptr() *ClientRedirectionPolicyEnum {
+	return &c
+}
+
 // Refresh token configuration
 var (
 	clientRefreshTokenConfigurationFieldRotationType              = big.NewInt(1 << 0)
@@ -6815,6 +8401,9 @@ func (c *ClientRefreshTokenConfiguration) GetPolicies() []*ClientRefreshTokenPol
 }
 
 func (c *ClientRefreshTokenConfiguration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -6909,6 +8498,9 @@ func (c *ClientRefreshTokenConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientRefreshTokenConfiguration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -6953,6 +8545,9 @@ func (c *ClientRefreshTokenPolicy) GetScope() []string {
 }
 
 func (c *ClientRefreshTokenPolicy) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -7005,6 +8600,9 @@ func (c *ClientRefreshTokenPolicy) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientRefreshTokenPolicy) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -7046,6 +8644,7 @@ var (
 	clientSessionTransferConfigurationFieldEnforceDeviceBinding          = big.NewInt(1 << 3)
 	clientSessionTransferConfigurationFieldAllowRefreshToken             = big.NewInt(1 << 4)
 	clientSessionTransferConfigurationFieldEnforceOnlineRefreshTokens    = big.NewInt(1 << 5)
+	clientSessionTransferConfigurationFieldDelegation                    = big.NewInt(1 << 6)
 )
 
 type ClientSessionTransferConfiguration struct {
@@ -7059,7 +8658,8 @@ type ClientSessionTransferConfiguration struct {
 	// Indicates whether Refresh Tokens are allowed to be issued when authenticating with a Session Transfer Token. Usually configured in the web application. Default value is `false`.
 	AllowRefreshToken *bool `json:"allow_refresh_token,omitempty" url:"allow_refresh_token,omitempty"`
 	// Indicates whether Refresh Tokens created during a Native to Web session are tied to that session's lifetime. This determines if such refresh tokens should be automatically revoked when their corresponding sessions are. Usually configured in the web application. Default value is `true`, applicable only in Native to Web SSO context.
-	EnforceOnlineRefreshTokens *bool `json:"enforce_online_refresh_tokens,omitempty" url:"enforce_online_refresh_tokens,omitempty"`
+	EnforceOnlineRefreshTokens *bool                                         `json:"enforce_online_refresh_tokens,omitempty" url:"enforce_online_refresh_tokens,omitempty"`
+	Delegation                 *ClientSessionTransferDelegationConfiguration `json:"delegation,omitempty" url:"delegation,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -7110,7 +8710,17 @@ func (c *ClientSessionTransferConfiguration) GetEnforceOnlineRefreshTokens() boo
 	return *c.EnforceOnlineRefreshTokens
 }
 
+func (c *ClientSessionTransferConfiguration) GetDelegation() ClientSessionTransferDelegationConfiguration {
+	if c == nil || c.Delegation == nil {
+		return ClientSessionTransferDelegationConfiguration{}
+	}
+	return *c.Delegation
+}
+
 func (c *ClientSessionTransferConfiguration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -7163,6 +8773,13 @@ func (c *ClientSessionTransferConfiguration) SetEnforceOnlineRefreshTokens(enfor
 	c.require(clientSessionTransferConfigurationFieldEnforceOnlineRefreshTokens)
 }
 
+// SetDelegation sets the Delegation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientSessionTransferConfiguration) SetDelegation(delegation *ClientSessionTransferDelegationConfiguration) {
+	c.Delegation = delegation
+	c.require(clientSessionTransferConfigurationFieldDelegation)
+}
+
 func (c *ClientSessionTransferConfiguration) UnmarshalJSON(data []byte) error {
 	type unmarshaler ClientSessionTransferConfiguration
 	var value unmarshaler
@@ -7191,6 +8808,9 @@ func (c *ClientSessionTransferConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientSessionTransferConfiguration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -7200,6 +8820,131 @@ func (c *ClientSessionTransferConfiguration) String() string {
 		return value
 	}
 	return fmt.Sprintf("%#v", c)
+}
+
+// Configuration for delegation (impersonation) access using Session Transfer Tokens
+var (
+	clientSessionTransferDelegationConfigurationFieldAllowDelegatedAccess = big.NewInt(1 << 0)
+	clientSessionTransferDelegationConfigurationFieldEnforceDeviceBinding = big.NewInt(1 << 1)
+)
+
+type ClientSessionTransferDelegationConfiguration struct {
+	// Indicates whether delegation (impersonation) access is allowed using Session Transfer Tokens. Default value is `false`.
+	AllowDelegatedAccess *bool                                             `json:"allow_delegated_access,omitempty" url:"allow_delegated_access,omitempty"`
+	EnforceDeviceBinding *ClientSessionTransferDelegationDeviceBindingEnum `json:"enforce_device_binding,omitempty" url:"enforce_device_binding,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	extraProperties map[string]interface{}
+	rawJSON         json.RawMessage
+}
+
+func (c *ClientSessionTransferDelegationConfiguration) GetAllowDelegatedAccess() bool {
+	if c == nil || c.AllowDelegatedAccess == nil {
+		return false
+	}
+	return *c.AllowDelegatedAccess
+}
+
+func (c *ClientSessionTransferDelegationConfiguration) GetEnforceDeviceBinding() ClientSessionTransferDelegationDeviceBindingEnum {
+	if c == nil || c.EnforceDeviceBinding == nil {
+		return ""
+	}
+	return *c.EnforceDeviceBinding
+}
+
+func (c *ClientSessionTransferDelegationConfiguration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
+	return c.extraProperties
+}
+
+func (c *ClientSessionTransferDelegationConfiguration) require(field *big.Int) {
+	if c.explicitFields == nil {
+		c.explicitFields = big.NewInt(0)
+	}
+	c.explicitFields.Or(c.explicitFields, field)
+}
+
+// SetAllowDelegatedAccess sets the AllowDelegatedAccess field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientSessionTransferDelegationConfiguration) SetAllowDelegatedAccess(allowDelegatedAccess *bool) {
+	c.AllowDelegatedAccess = allowDelegatedAccess
+	c.require(clientSessionTransferDelegationConfigurationFieldAllowDelegatedAccess)
+}
+
+// SetEnforceDeviceBinding sets the EnforceDeviceBinding field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *ClientSessionTransferDelegationConfiguration) SetEnforceDeviceBinding(enforceDeviceBinding *ClientSessionTransferDelegationDeviceBindingEnum) {
+	c.EnforceDeviceBinding = enforceDeviceBinding
+	c.require(clientSessionTransferDelegationConfigurationFieldEnforceDeviceBinding)
+}
+
+func (c *ClientSessionTransferDelegationConfiguration) UnmarshalJSON(data []byte) error {
+	type unmarshaler ClientSessionTransferDelegationConfiguration
+	var value unmarshaler
+	if err := json.Unmarshal(data, &value); err != nil {
+		return err
+	}
+	*c = ClientSessionTransferDelegationConfiguration(value)
+	extraProperties, err := internal.ExtractExtraProperties(data, *c)
+	if err != nil {
+		return err
+	}
+	c.extraProperties = extraProperties
+	c.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (c *ClientSessionTransferDelegationConfiguration) MarshalJSON() ([]byte, error) {
+	type embed ClientSessionTransferDelegationConfiguration
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*c),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, c.explicitFields)
+	return json.Marshal(explicitMarshaler)
+}
+
+func (c *ClientSessionTransferDelegationConfiguration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
+	if len(c.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(c); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", c)
+}
+
+// Indicates the device binding enforcement for delegation (impersonation) access. If set to 'ip', device binding is enforced by IP. If set to 'asn', device binding is enforced by ASN. Default value is `ip`.
+type ClientSessionTransferDelegationDeviceBindingEnum string
+
+const (
+	ClientSessionTransferDelegationDeviceBindingEnumIP  ClientSessionTransferDelegationDeviceBindingEnum = "ip"
+	ClientSessionTransferDelegationDeviceBindingEnumAsn ClientSessionTransferDelegationDeviceBindingEnum = "asn"
+)
+
+func NewClientSessionTransferDelegationDeviceBindingEnumFromString(s string) (ClientSessionTransferDelegationDeviceBindingEnum, error) {
+	switch s {
+	case "ip":
+		return ClientSessionTransferDelegationDeviceBindingEnumIP, nil
+	case "asn":
+		return ClientSessionTransferDelegationDeviceBindingEnumAsn, nil
+	}
+	var t ClientSessionTransferDelegationDeviceBindingEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ClientSessionTransferDelegationDeviceBindingEnum) Ptr() *ClientSessionTransferDelegationDeviceBindingEnum {
+	return &c
 }
 
 // Indicates whether device binding security should be enforced for the app. If set to 'ip', the app will enforce device binding by IP, meaning that consumption of Session Transfer Token must be done from the same IP of the issuer. Likewise, if set to 'asn', device binding is enforced by ASN, meaning consumption of Session Transfer Token must be done from the same ASN as the issuer. If set to 'none', device binding is not enforced. Usually configured in the web application. Default value is `ip`.
@@ -7261,6 +9006,9 @@ func (c *ClientSignedRequestObjectWithCredentialID) GetCredentials() []*Credenti
 }
 
 func (c *ClientSignedRequestObjectWithCredentialID) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -7313,6 +9061,9 @@ func (c *ClientSignedRequestObjectWithCredentialID) MarshalJSON() ([]byte, error
 }
 
 func (c *ClientSignedRequestObjectWithCredentialID) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -7357,6 +9108,9 @@ func (c *ClientSignedRequestObjectWithPublicKey) GetCredentials() []*PublicKeyCr
 }
 
 func (c *ClientSignedRequestObjectWithPublicKey) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -7409,6 +9163,9 @@ func (c *ClientSignedRequestObjectWithPublicKey) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientSignedRequestObjectWithPublicKey) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -7464,6 +9221,9 @@ func (c *ClientSigningKey) GetSubject() string {
 }
 
 func (c *ClientSigningKey) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -7527,6 +9287,9 @@ func (c *ClientSigningKey) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientSigningKey) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -7540,6 +9303,29 @@ func (c *ClientSigningKey) String() string {
 
 // Signing certificates associated with this client.
 type ClientSigningKeys = []*ClientSigningKey
+
+// Security mode for third-party clients. `strict` enforces <a href="https://auth0.com/docs/get-started/applications/third-party-applications/security-controls">enhanced security controls</a>: OAuth 2.1 alignment, explicit API authorization, and a curated set of supported features. `permissive` preserves <a href="https://auth0.com/docs/get-started/applications/third-party-applications/permissive-mode">pre-existing behavior</a> and is only available to tenants with prior third-party client usage. Set on creation and cannot be modified.
+type ClientThirdPartySecurityModeEnum string
+
+const (
+	ClientThirdPartySecurityModeEnumStrict     ClientThirdPartySecurityModeEnum = "strict"
+	ClientThirdPartySecurityModeEnumPermissive ClientThirdPartySecurityModeEnum = "permissive"
+)
+
+func NewClientThirdPartySecurityModeEnumFromString(s string) (ClientThirdPartySecurityModeEnum, error) {
+	switch s {
+	case "strict":
+		return ClientThirdPartySecurityModeEnumStrict, nil
+	case "permissive":
+		return ClientThirdPartySecurityModeEnumPermissive, nil
+	}
+	var t ClientThirdPartySecurityModeEnum
+	return "", fmt.Errorf("%s is not a valid %T", s, t)
+}
+
+func (c ClientThirdPartySecurityModeEnum) Ptr() *ClientThirdPartySecurityModeEnum {
+	return &c
+}
 
 // Defines the requested authentication method for the token endpoint. Can be `none` (public client without a client secret), `client_secret_post` (client uses HTTP POST parameters), or `client_secret_basic` (client uses HTTP Basic).
 type ClientTokenEndpointAuthMethodEnum string
@@ -7617,6 +9403,9 @@ func (c *ClientTokenExchangeConfiguration) GetAllowAnyProfileOfType() []ClientTo
 }
 
 func (c *ClientTokenExchangeConfiguration) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -7662,6 +9451,9 @@ func (c *ClientTokenExchangeConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientTokenExchangeConfiguration) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -7697,6 +9489,9 @@ func (c *ClientTokenExchangeConfigurationOrNull) GetAllowAnyProfileOfType() []Cl
 }
 
 func (c *ClientTokenExchangeConfigurationOrNull) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -7742,6 +9537,9 @@ func (c *ClientTokenExchangeConfigurationOrNull) MarshalJSON() ([]byte, error) {
 }
 
 func (c *ClientTokenExchangeConfigurationOrNull) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -7753,16 +9551,20 @@ func (c *ClientTokenExchangeConfigurationOrNull) String() string {
 	return fmt.Sprintf("%#v", c)
 }
 
+// Token exchange type. `on_behalf_of_token_exchange`: enables On-Behalf-Of token exchange (Generally Available). `custom_authentication`: enables custom token exchange profiles (Early Access, requires entitlement).
 type ClientTokenExchangeTypeEnum string
 
 const (
-	ClientTokenExchangeTypeEnumCustomAuthentication ClientTokenExchangeTypeEnum = "custom_authentication"
+	ClientTokenExchangeTypeEnumCustomAuthentication    ClientTokenExchangeTypeEnum = "custom_authentication"
+	ClientTokenExchangeTypeEnumOnBehalfOfTokenExchange ClientTokenExchangeTypeEnum = "on_behalf_of_token_exchange"
 )
 
 func NewClientTokenExchangeTypeEnumFromString(s string) (ClientTokenExchangeTypeEnum, error) {
 	switch s {
 	case "custom_authentication":
 		return ClientTokenExchangeTypeEnumCustomAuthentication, nil
+	case "on_behalf_of_token_exchange":
+		return ClientTokenExchangeTypeEnumOnBehalfOfTokenExchange, nil
 	}
 	var t ClientTokenExchangeTypeEnum
 	return "", fmt.Errorf("%s is not a valid %T", s, t)
@@ -7795,6 +9597,9 @@ func (c *CreateClientAuthenticationMethodSelfSignedTLSClientAuth) GetCredentials
 }
 
 func (c *CreateClientAuthenticationMethodSelfSignedTLSClientAuth) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -7840,6 +9645,9 @@ func (c *CreateClientAuthenticationMethodSelfSignedTLSClientAuth) MarshalJSON() 
 }
 
 func (c *CreateClientAuthenticationMethodSelfSignedTLSClientAuth) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -7906,8 +9714,15 @@ var (
 	createClientResponseContentFieldParRequestExpiry                               = big.NewInt(1 << 48)
 	createClientResponseContentFieldTokenQuota                                     = big.NewInt(1 << 49)
 	createClientResponseContentFieldExpressConfiguration                           = big.NewInt(1 << 50)
-	createClientResponseContentFieldResourceServerIdentifier                       = big.NewInt(1 << 51)
-	createClientResponseContentFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 52)
+	createClientResponseContentFieldMyOrganizationConfiguration                    = big.NewInt(1 << 51)
+	createClientResponseContentFieldThirdPartySecurityMode                         = big.NewInt(1 << 52)
+	createClientResponseContentFieldRedirectionPolicy                              = big.NewInt(1 << 53)
+	createClientResponseContentFieldResourceServerIdentifier                       = big.NewInt(1 << 54)
+	createClientResponseContentFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 55)
+	createClientResponseContentFieldExternalMetadataType                           = big.NewInt(1 << 56)
+	createClientResponseContentFieldExternalMetadataCreatedBy                      = big.NewInt(1 << 57)
+	createClientResponseContentFieldExternalClientID                               = big.NewInt(1 << 58)
+	createClientResponseContentFieldJwksURI                                        = big.NewInt(1 << 59)
 )
 
 type CreateClientResponseContent struct {
@@ -7992,12 +9807,21 @@ type CreateClientResponseContent struct {
 	SkipNonVerifiableCallbackURIConfirmationPrompt *bool                             `json:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty" url:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty"`
 	TokenExchange                                  *ClientTokenExchangeConfiguration `json:"token_exchange,omitempty" url:"token_exchange,omitempty"`
 	// Specifies how long, in seconds, a Pushed Authorization Request URI remains valid
-	ParRequestExpiry     *int                  `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
-	TokenQuota           *TokenQuota           `json:"token_quota,omitempty" url:"token_quota,omitempty"`
-	ExpressConfiguration *ExpressConfiguration `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	ParRequestExpiry            *int                                       `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
+	TokenQuota                  *TokenQuota                                `json:"token_quota,omitempty" url:"token_quota,omitempty"`
+	ExpressConfiguration        *ExpressConfiguration                      `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	MyOrganizationConfiguration *ClientMyOrganizationResponseConfiguration `json:"my_organization_configuration,omitempty" url:"my_organization_configuration,omitempty"`
+	ThirdPartySecurityMode      *ClientThirdPartySecurityModeEnum          `json:"third_party_security_mode,omitempty" url:"third_party_security_mode,omitempty"`
+	RedirectionPolicy           *ClientRedirectionPolicyEnum               `json:"redirection_policy,omitempty" url:"redirection_policy,omitempty"`
 	// The identifier of the resource server that this client is linked to.
 	ResourceServerIdentifier          *string                                                       `json:"resource_server_identifier,omitempty" url:"resource_server_identifier,omitempty"`
 	AsyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration `json:"async_approval_notification_channels,omitempty" url:"async_approval_notification_channels,omitempty"`
+	ExternalMetadataType              *ClientExternalMetadataTypeEnum                               `json:"external_metadata_type,omitempty" url:"external_metadata_type,omitempty"`
+	ExternalMetadataCreatedBy         *ClientExternalMetadataCreatedByEnum                          `json:"external_metadata_created_by,omitempty" url:"external_metadata_created_by,omitempty"`
+	// An alternate client identifier to be used during authorization flows. Only supports CIMD-based client identifiers.
+	ExternalClientID *string `json:"external_client_id,omitempty" url:"external_client_id,omitempty"`
+	// URL for the JSON Web Key Set (JWKS) containing the public keys used for private_key_jwt authentication. Only present for CIMD clients using private_key_jwt authentication.
+	JwksURI *string `json:"jwks_uri,omitempty" url:"jwks_uri,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -8364,6 +10188,27 @@ func (c *CreateClientResponseContent) GetExpressConfiguration() ExpressConfigura
 	return *c.ExpressConfiguration
 }
 
+func (c *CreateClientResponseContent) GetMyOrganizationConfiguration() ClientMyOrganizationResponseConfiguration {
+	if c == nil || c.MyOrganizationConfiguration == nil {
+		return ClientMyOrganizationResponseConfiguration{}
+	}
+	return *c.MyOrganizationConfiguration
+}
+
+func (c *CreateClientResponseContent) GetThirdPartySecurityMode() ClientThirdPartySecurityModeEnum {
+	if c == nil || c.ThirdPartySecurityMode == nil {
+		return ""
+	}
+	return *c.ThirdPartySecurityMode
+}
+
+func (c *CreateClientResponseContent) GetRedirectionPolicy() ClientRedirectionPolicyEnum {
+	if c == nil || c.RedirectionPolicy == nil {
+		return ""
+	}
+	return *c.RedirectionPolicy
+}
+
 func (c *CreateClientResponseContent) GetResourceServerIdentifier() string {
 	if c == nil || c.ResourceServerIdentifier == nil {
 		return ""
@@ -8378,7 +10223,38 @@ func (c *CreateClientResponseContent) GetAsyncApprovalNotificationChannels() Cli
 	return *c.AsyncApprovalNotificationChannels
 }
 
+func (c *CreateClientResponseContent) GetExternalMetadataType() ClientExternalMetadataTypeEnum {
+	if c == nil || c.ExternalMetadataType == nil {
+		return ""
+	}
+	return *c.ExternalMetadataType
+}
+
+func (c *CreateClientResponseContent) GetExternalMetadataCreatedBy() ClientExternalMetadataCreatedByEnum {
+	if c == nil || c.ExternalMetadataCreatedBy == nil {
+		return ""
+	}
+	return *c.ExternalMetadataCreatedBy
+}
+
+func (c *CreateClientResponseContent) GetExternalClientID() string {
+	if c == nil || c.ExternalClientID == nil {
+		return ""
+	}
+	return *c.ExternalClientID
+}
+
+func (c *CreateClientResponseContent) GetJwksURI() string {
+	if c == nil || c.JwksURI == nil {
+		return ""
+	}
+	return *c.JwksURI
+}
+
 func (c *CreateClientResponseContent) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.ExtraProperties
 }
 
@@ -8746,6 +10622,27 @@ func (c *CreateClientResponseContent) SetExpressConfiguration(expressConfigurati
 	c.require(createClientResponseContentFieldExpressConfiguration)
 }
 
+// SetMyOrganizationConfiguration sets the MyOrganizationConfiguration field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateClientResponseContent) SetMyOrganizationConfiguration(myOrganizationConfiguration *ClientMyOrganizationResponseConfiguration) {
+	c.MyOrganizationConfiguration = myOrganizationConfiguration
+	c.require(createClientResponseContentFieldMyOrganizationConfiguration)
+}
+
+// SetThirdPartySecurityMode sets the ThirdPartySecurityMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateClientResponseContent) SetThirdPartySecurityMode(thirdPartySecurityMode *ClientThirdPartySecurityModeEnum) {
+	c.ThirdPartySecurityMode = thirdPartySecurityMode
+	c.require(createClientResponseContentFieldThirdPartySecurityMode)
+}
+
+// SetRedirectionPolicy sets the RedirectionPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateClientResponseContent) SetRedirectionPolicy(redirectionPolicy *ClientRedirectionPolicyEnum) {
+	c.RedirectionPolicy = redirectionPolicy
+	c.require(createClientResponseContentFieldRedirectionPolicy)
+}
+
 // SetResourceServerIdentifier sets the ResourceServerIdentifier field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (c *CreateClientResponseContent) SetResourceServerIdentifier(resourceServerIdentifier *string) {
@@ -8758,6 +10655,34 @@ func (c *CreateClientResponseContent) SetResourceServerIdentifier(resourceServer
 func (c *CreateClientResponseContent) SetAsyncApprovalNotificationChannels(asyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration) {
 	c.AsyncApprovalNotificationChannels = asyncApprovalNotificationChannels
 	c.require(createClientResponseContentFieldAsyncApprovalNotificationChannels)
+}
+
+// SetExternalMetadataType sets the ExternalMetadataType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateClientResponseContent) SetExternalMetadataType(externalMetadataType *ClientExternalMetadataTypeEnum) {
+	c.ExternalMetadataType = externalMetadataType
+	c.require(createClientResponseContentFieldExternalMetadataType)
+}
+
+// SetExternalMetadataCreatedBy sets the ExternalMetadataCreatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateClientResponseContent) SetExternalMetadataCreatedBy(externalMetadataCreatedBy *ClientExternalMetadataCreatedByEnum) {
+	c.ExternalMetadataCreatedBy = externalMetadataCreatedBy
+	c.require(createClientResponseContentFieldExternalMetadataCreatedBy)
+}
+
+// SetExternalClientID sets the ExternalClientID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateClientResponseContent) SetExternalClientID(externalClientID *string) {
+	c.ExternalClientID = externalClientID
+	c.require(createClientResponseContentFieldExternalClientID)
+}
+
+// SetJwksURI sets the JwksURI field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (c *CreateClientResponseContent) SetJwksURI(jwksURI *string) {
+	c.JwksURI = jwksURI
+	c.require(createClientResponseContentFieldJwksURI)
 }
 
 func (c *CreateClientResponseContent) UnmarshalJSON(data []byte) error {
@@ -8792,6 +10717,9 @@ func (c *CreateClientResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CreateClientResponseContent) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -8826,6 +10754,9 @@ func (c *CredentialID) GetID() string {
 }
 
 func (c *CredentialID) GetExtraProperties() map[string]interface{} {
+	if c == nil {
+		return nil
+	}
 	return c.extraProperties
 }
 
@@ -8871,6 +10802,9 @@ func (c *CredentialID) MarshalJSON() ([]byte, error) {
 }
 
 func (c *CredentialID) String() string {
+	if c == nil {
+		return "<nil>"
+	}
 	if len(c.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(c.rawJSON); err == nil {
 			return value
@@ -8986,6 +10920,9 @@ func (e *ExpressConfiguration) GetOinSubmissionID() string {
 }
 
 func (e *ExpressConfiguration) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -9087,6 +11024,9 @@ func (e *ExpressConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (e *ExpressConfiguration) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -9202,6 +11142,9 @@ func (e *ExpressConfigurationOrNull) GetOinSubmissionID() string {
 }
 
 func (e *ExpressConfigurationOrNull) GetExtraProperties() map[string]interface{} {
+	if e == nil {
+		return nil
+	}
 	return e.extraProperties
 }
 
@@ -9303,6 +11246,9 @@ func (e *ExpressConfigurationOrNull) MarshalJSON() ([]byte, error) {
 }
 
 func (e *ExpressConfigurationOrNull) String() string {
+	if e == nil {
+		return "<nil>"
+	}
 	if len(e.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(e.rawJSON); err == nil {
 			return value
@@ -9366,8 +11312,15 @@ var (
 	getClientResponseContentFieldParRequestExpiry                               = big.NewInt(1 << 48)
 	getClientResponseContentFieldTokenQuota                                     = big.NewInt(1 << 49)
 	getClientResponseContentFieldExpressConfiguration                           = big.NewInt(1 << 50)
-	getClientResponseContentFieldResourceServerIdentifier                       = big.NewInt(1 << 51)
-	getClientResponseContentFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 52)
+	getClientResponseContentFieldMyOrganizationConfiguration                    = big.NewInt(1 << 51)
+	getClientResponseContentFieldThirdPartySecurityMode                         = big.NewInt(1 << 52)
+	getClientResponseContentFieldRedirectionPolicy                              = big.NewInt(1 << 53)
+	getClientResponseContentFieldResourceServerIdentifier                       = big.NewInt(1 << 54)
+	getClientResponseContentFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 55)
+	getClientResponseContentFieldExternalMetadataType                           = big.NewInt(1 << 56)
+	getClientResponseContentFieldExternalMetadataCreatedBy                      = big.NewInt(1 << 57)
+	getClientResponseContentFieldExternalClientID                               = big.NewInt(1 << 58)
+	getClientResponseContentFieldJwksURI                                        = big.NewInt(1 << 59)
 )
 
 type GetClientResponseContent struct {
@@ -9452,12 +11405,21 @@ type GetClientResponseContent struct {
 	SkipNonVerifiableCallbackURIConfirmationPrompt *bool                             `json:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty" url:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty"`
 	TokenExchange                                  *ClientTokenExchangeConfiguration `json:"token_exchange,omitempty" url:"token_exchange,omitempty"`
 	// Specifies how long, in seconds, a Pushed Authorization Request URI remains valid
-	ParRequestExpiry     *int                  `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
-	TokenQuota           *TokenQuota           `json:"token_quota,omitempty" url:"token_quota,omitempty"`
-	ExpressConfiguration *ExpressConfiguration `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	ParRequestExpiry            *int                                       `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
+	TokenQuota                  *TokenQuota                                `json:"token_quota,omitempty" url:"token_quota,omitempty"`
+	ExpressConfiguration        *ExpressConfiguration                      `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	MyOrganizationConfiguration *ClientMyOrganizationResponseConfiguration `json:"my_organization_configuration,omitempty" url:"my_organization_configuration,omitempty"`
+	ThirdPartySecurityMode      *ClientThirdPartySecurityModeEnum          `json:"third_party_security_mode,omitempty" url:"third_party_security_mode,omitempty"`
+	RedirectionPolicy           *ClientRedirectionPolicyEnum               `json:"redirection_policy,omitempty" url:"redirection_policy,omitempty"`
 	// The identifier of the resource server that this client is linked to.
 	ResourceServerIdentifier          *string                                                       `json:"resource_server_identifier,omitempty" url:"resource_server_identifier,omitempty"`
 	AsyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration `json:"async_approval_notification_channels,omitempty" url:"async_approval_notification_channels,omitempty"`
+	ExternalMetadataType              *ClientExternalMetadataTypeEnum                               `json:"external_metadata_type,omitempty" url:"external_metadata_type,omitempty"`
+	ExternalMetadataCreatedBy         *ClientExternalMetadataCreatedByEnum                          `json:"external_metadata_created_by,omitempty" url:"external_metadata_created_by,omitempty"`
+	// An alternate client identifier to be used during authorization flows. Only supports CIMD-based client identifiers.
+	ExternalClientID *string `json:"external_client_id,omitempty" url:"external_client_id,omitempty"`
+	// URL for the JSON Web Key Set (JWKS) containing the public keys used for private_key_jwt authentication. Only present for CIMD clients using private_key_jwt authentication.
+	JwksURI *string `json:"jwks_uri,omitempty" url:"jwks_uri,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -9824,6 +11786,27 @@ func (g *GetClientResponseContent) GetExpressConfiguration() ExpressConfiguratio
 	return *g.ExpressConfiguration
 }
 
+func (g *GetClientResponseContent) GetMyOrganizationConfiguration() ClientMyOrganizationResponseConfiguration {
+	if g == nil || g.MyOrganizationConfiguration == nil {
+		return ClientMyOrganizationResponseConfiguration{}
+	}
+	return *g.MyOrganizationConfiguration
+}
+
+func (g *GetClientResponseContent) GetThirdPartySecurityMode() ClientThirdPartySecurityModeEnum {
+	if g == nil || g.ThirdPartySecurityMode == nil {
+		return ""
+	}
+	return *g.ThirdPartySecurityMode
+}
+
+func (g *GetClientResponseContent) GetRedirectionPolicy() ClientRedirectionPolicyEnum {
+	if g == nil || g.RedirectionPolicy == nil {
+		return ""
+	}
+	return *g.RedirectionPolicy
+}
+
 func (g *GetClientResponseContent) GetResourceServerIdentifier() string {
 	if g == nil || g.ResourceServerIdentifier == nil {
 		return ""
@@ -9838,7 +11821,38 @@ func (g *GetClientResponseContent) GetAsyncApprovalNotificationChannels() Client
 	return *g.AsyncApprovalNotificationChannels
 }
 
+func (g *GetClientResponseContent) GetExternalMetadataType() ClientExternalMetadataTypeEnum {
+	if g == nil || g.ExternalMetadataType == nil {
+		return ""
+	}
+	return *g.ExternalMetadataType
+}
+
+func (g *GetClientResponseContent) GetExternalMetadataCreatedBy() ClientExternalMetadataCreatedByEnum {
+	if g == nil || g.ExternalMetadataCreatedBy == nil {
+		return ""
+	}
+	return *g.ExternalMetadataCreatedBy
+}
+
+func (g *GetClientResponseContent) GetExternalClientID() string {
+	if g == nil || g.ExternalClientID == nil {
+		return ""
+	}
+	return *g.ExternalClientID
+}
+
+func (g *GetClientResponseContent) GetJwksURI() string {
+	if g == nil || g.JwksURI == nil {
+		return ""
+	}
+	return *g.JwksURI
+}
+
 func (g *GetClientResponseContent) GetExtraProperties() map[string]interface{} {
+	if g == nil {
+		return nil
+	}
 	return g.ExtraProperties
 }
 
@@ -10206,6 +12220,27 @@ func (g *GetClientResponseContent) SetExpressConfiguration(expressConfiguration 
 	g.require(getClientResponseContentFieldExpressConfiguration)
 }
 
+// SetMyOrganizationConfiguration sets the MyOrganizationConfiguration field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GetClientResponseContent) SetMyOrganizationConfiguration(myOrganizationConfiguration *ClientMyOrganizationResponseConfiguration) {
+	g.MyOrganizationConfiguration = myOrganizationConfiguration
+	g.require(getClientResponseContentFieldMyOrganizationConfiguration)
+}
+
+// SetThirdPartySecurityMode sets the ThirdPartySecurityMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GetClientResponseContent) SetThirdPartySecurityMode(thirdPartySecurityMode *ClientThirdPartySecurityModeEnum) {
+	g.ThirdPartySecurityMode = thirdPartySecurityMode
+	g.require(getClientResponseContentFieldThirdPartySecurityMode)
+}
+
+// SetRedirectionPolicy sets the RedirectionPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GetClientResponseContent) SetRedirectionPolicy(redirectionPolicy *ClientRedirectionPolicyEnum) {
+	g.RedirectionPolicy = redirectionPolicy
+	g.require(getClientResponseContentFieldRedirectionPolicy)
+}
+
 // SetResourceServerIdentifier sets the ResourceServerIdentifier field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (g *GetClientResponseContent) SetResourceServerIdentifier(resourceServerIdentifier *string) {
@@ -10218,6 +12253,34 @@ func (g *GetClientResponseContent) SetResourceServerIdentifier(resourceServerIde
 func (g *GetClientResponseContent) SetAsyncApprovalNotificationChannels(asyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration) {
 	g.AsyncApprovalNotificationChannels = asyncApprovalNotificationChannels
 	g.require(getClientResponseContentFieldAsyncApprovalNotificationChannels)
+}
+
+// SetExternalMetadataType sets the ExternalMetadataType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GetClientResponseContent) SetExternalMetadataType(externalMetadataType *ClientExternalMetadataTypeEnum) {
+	g.ExternalMetadataType = externalMetadataType
+	g.require(getClientResponseContentFieldExternalMetadataType)
+}
+
+// SetExternalMetadataCreatedBy sets the ExternalMetadataCreatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GetClientResponseContent) SetExternalMetadataCreatedBy(externalMetadataCreatedBy *ClientExternalMetadataCreatedByEnum) {
+	g.ExternalMetadataCreatedBy = externalMetadataCreatedBy
+	g.require(getClientResponseContentFieldExternalMetadataCreatedBy)
+}
+
+// SetExternalClientID sets the ExternalClientID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GetClientResponseContent) SetExternalClientID(externalClientID *string) {
+	g.ExternalClientID = externalClientID
+	g.require(getClientResponseContentFieldExternalClientID)
+}
+
+// SetJwksURI sets the JwksURI field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (g *GetClientResponseContent) SetJwksURI(jwksURI *string) {
+	g.JwksURI = jwksURI
+	g.require(getClientResponseContentFieldJwksURI)
 }
 
 func (g *GetClientResponseContent) UnmarshalJSON(data []byte) error {
@@ -10252,6 +12315,9 @@ func (g *GetClientResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (g *GetClientResponseContent) String() string {
+	if g == nil {
+		return "<nil>"
+	}
 	if len(g.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(g.rawJSON); err == nil {
 			return value
@@ -10287,6 +12353,9 @@ func (l *LinkedClientConfiguration) GetClientID() string {
 }
 
 func (l *LinkedClientConfiguration) GetExtraProperties() map[string]interface{} {
+	if l == nil {
+		return nil
+	}
 	return l.extraProperties
 }
 
@@ -10332,6 +12401,9 @@ func (l *LinkedClientConfiguration) MarshalJSON() ([]byte, error) {
 }
 
 func (l *LinkedClientConfiguration) String() string {
+	if l == nil {
+		return "<nil>"
+	}
 	if len(l.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
 			return value
@@ -10392,6 +12464,9 @@ func (l *ListClientsOffsetPaginatedResponseContent) GetClients() []*Client {
 }
 
 func (l *ListClientsOffsetPaginatedResponseContent) GetExtraProperties() map[string]interface{} {
+	if l == nil {
+		return nil
+	}
 	return l.extraProperties
 }
 
@@ -10458,6 +12533,9 @@ func (l *ListClientsOffsetPaginatedResponseContent) MarshalJSON() ([]byte, error
 }
 
 func (l *ListClientsOffsetPaginatedResponseContent) String() string {
+	if l == nil {
+		return "<nil>"
+	}
 	if len(l.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(l.rawJSON); err == nil {
 			return value
@@ -10510,6 +12588,9 @@ func (n *NativeSocialLogin) GetGoogle() NativeSocialLoginGoogle {
 }
 
 func (n *NativeSocialLogin) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
 	return n.extraProperties
 }
 
@@ -10569,6 +12650,9 @@ func (n *NativeSocialLogin) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NativeSocialLogin) String() string {
+	if n == nil {
+		return "<nil>"
+	}
 	if len(n.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
@@ -10604,6 +12688,9 @@ func (n *NativeSocialLoginApple) GetEnabled() bool {
 }
 
 func (n *NativeSocialLoginApple) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
 	return n.extraProperties
 }
 
@@ -10649,6 +12736,9 @@ func (n *NativeSocialLoginApple) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NativeSocialLoginApple) String() string {
+	if n == nil {
+		return "<nil>"
+	}
 	if len(n.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
@@ -10684,6 +12774,9 @@ func (n *NativeSocialLoginFacebook) GetEnabled() bool {
 }
 
 func (n *NativeSocialLoginFacebook) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
 	return n.extraProperties
 }
 
@@ -10729,6 +12822,9 @@ func (n *NativeSocialLoginFacebook) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NativeSocialLoginFacebook) String() string {
+	if n == nil {
+		return "<nil>"
+	}
 	if len(n.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
@@ -10764,6 +12860,9 @@ func (n *NativeSocialLoginGoogle) GetEnabled() bool {
 }
 
 func (n *NativeSocialLoginGoogle) GetExtraProperties() map[string]interface{} {
+	if n == nil {
+		return nil
+	}
 	return n.extraProperties
 }
 
@@ -10809,6 +12908,9 @@ func (n *NativeSocialLoginGoogle) MarshalJSON() ([]byte, error) {
 }
 
 func (n *NativeSocialLoginGoogle) String() string {
+	if n == nil {
+		return "<nil>"
+	}
 	if len(n.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(n.rawJSON); err == nil {
 			return value
@@ -10821,12 +12923,152 @@ func (n *NativeSocialLoginGoogle) String() string {
 }
 
 var (
+	previewCimdMetadataResponseContentFieldClientID     = big.NewInt(1 << 0)
+	previewCimdMetadataResponseContentFieldErrors       = big.NewInt(1 << 1)
+	previewCimdMetadataResponseContentFieldValidation   = big.NewInt(1 << 2)
+	previewCimdMetadataResponseContentFieldMappedFields = big.NewInt(1 << 3)
+)
+
+type PreviewCimdMetadataResponseContent struct {
+	// The client_id of an existing client registered with this external_client_id, if one exists.
+	ClientID *string `json:"client_id,omitempty" url:"client_id,omitempty"`
+	// Array of retrieval errors (populated when the metadata document could not be fetched). When present, validation is omitted.
+	Errors       []string                `json:"errors,omitempty" url:"errors,omitempty"`
+	Validation   *CimdValidationResult   `json:"validation,omitempty" url:"validation,omitempty"`
+	MappedFields *CimdMappedClientFields `json:"mapped_fields,omitempty" url:"mapped_fields,omitempty"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	ExtraProperties map[string]interface{} `json:"-" url:"-"`
+
+	rawJSON json.RawMessage
+}
+
+func (p *PreviewCimdMetadataResponseContent) GetClientID() string {
+	if p == nil || p.ClientID == nil {
+		return ""
+	}
+	return *p.ClientID
+}
+
+func (p *PreviewCimdMetadataResponseContent) GetErrors() []string {
+	if p == nil || p.Errors == nil {
+		return nil
+	}
+	return p.Errors
+}
+
+func (p *PreviewCimdMetadataResponseContent) GetValidation() CimdValidationResult {
+	if p == nil || p.Validation == nil {
+		return CimdValidationResult{}
+	}
+	return *p.Validation
+}
+
+func (p *PreviewCimdMetadataResponseContent) GetMappedFields() CimdMappedClientFields {
+	if p == nil || p.MappedFields == nil {
+		return CimdMappedClientFields{}
+	}
+	return *p.MappedFields
+}
+
+func (p *PreviewCimdMetadataResponseContent) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
+	return p.ExtraProperties
+}
+
+func (p *PreviewCimdMetadataResponseContent) require(field *big.Int) {
+	if p.explicitFields == nil {
+		p.explicitFields = big.NewInt(0)
+	}
+	p.explicitFields.Or(p.explicitFields, field)
+}
+
+// SetClientID sets the ClientID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PreviewCimdMetadataResponseContent) SetClientID(clientID *string) {
+	p.ClientID = clientID
+	p.require(previewCimdMetadataResponseContentFieldClientID)
+}
+
+// SetErrors sets the Errors field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PreviewCimdMetadataResponseContent) SetErrors(errors []string) {
+	p.Errors = errors
+	p.require(previewCimdMetadataResponseContentFieldErrors)
+}
+
+// SetValidation sets the Validation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PreviewCimdMetadataResponseContent) SetValidation(validation *CimdValidationResult) {
+	p.Validation = validation
+	p.require(previewCimdMetadataResponseContentFieldValidation)
+}
+
+// SetMappedFields sets the MappedFields field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PreviewCimdMetadataResponseContent) SetMappedFields(mappedFields *CimdMappedClientFields) {
+	p.MappedFields = mappedFields
+	p.require(previewCimdMetadataResponseContentFieldMappedFields)
+}
+
+func (p *PreviewCimdMetadataResponseContent) UnmarshalJSON(data []byte) error {
+	type embed PreviewCimdMetadataResponseContent
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*p = PreviewCimdMetadataResponseContent(unmarshaler.embed)
+	extraProperties, err := internal.ExtractExtraProperties(data, *p)
+	if err != nil {
+		return err
+	}
+	p.ExtraProperties = extraProperties
+	p.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (p *PreviewCimdMetadataResponseContent) MarshalJSON() ([]byte, error) {
+	type embed PreviewCimdMetadataResponseContent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*p),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, p.explicitFields)
+	return internal.MarshalJSONWithExtraProperties(explicitMarshaler, p.ExtraProperties)
+}
+
+func (p *PreviewCimdMetadataResponseContent) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	if len(p.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(p); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", p)
+}
+
+var (
 	publicKeyCredentialFieldCredentialType      = big.NewInt(1 << 0)
 	publicKeyCredentialFieldName                = big.NewInt(1 << 1)
 	publicKeyCredentialFieldPem                 = big.NewInt(1 << 2)
 	publicKeyCredentialFieldAlg                 = big.NewInt(1 << 3)
 	publicKeyCredentialFieldParseExpiryFromCert = big.NewInt(1 << 4)
 	publicKeyCredentialFieldExpiresAt           = big.NewInt(1 << 5)
+	publicKeyCredentialFieldKid                 = big.NewInt(1 << 6)
 )
 
 type PublicKeyCredential struct {
@@ -10840,6 +13082,8 @@ type PublicKeyCredential struct {
 	ParseExpiryFromCert *bool `json:"parse_expiry_from_cert,omitempty" url:"parse_expiry_from_cert,omitempty"`
 	// The ISO 8601 formatted date representing the expiration of the credential. If not specified (not recommended), the credential never expires. Applies to `public_key` credential type.
 	ExpiresAt *time.Time `json:"expires_at,omitempty" url:"expires_at,omitempty"`
+	// Optional kid (Key ID), used to uniquely identify the credential. If not specified, a kid value will be auto-generated. The kid header parameter in JWTs sent by your client should match this value. Valid format is [0-9a-zA-Z-_]{10,64}
+	Kid *string `json:"kid,omitempty" url:"kid,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -10890,7 +13134,17 @@ func (p *PublicKeyCredential) GetExpiresAt() time.Time {
 	return *p.ExpiresAt
 }
 
+func (p *PublicKeyCredential) GetKid() string {
+	if p == nil || p.Kid == nil {
+		return ""
+	}
+	return *p.Kid
+}
+
 func (p *PublicKeyCredential) GetExtraProperties() map[string]interface{} {
+	if p == nil {
+		return nil
+	}
 	return p.extraProperties
 }
 
@@ -10943,6 +13197,13 @@ func (p *PublicKeyCredential) SetExpiresAt(expiresAt *time.Time) {
 	p.require(publicKeyCredentialFieldExpiresAt)
 }
 
+// SetKid sets the Kid field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (p *PublicKeyCredential) SetKid(kid *string) {
+	p.Kid = kid
+	p.require(publicKeyCredentialFieldKid)
+}
+
 func (p *PublicKeyCredential) UnmarshalJSON(data []byte) error {
 	type embed PublicKeyCredential
 	var unmarshaler = struct {
@@ -10979,6 +13240,9 @@ func (p *PublicKeyCredential) MarshalJSON() ([]byte, error) {
 }
 
 func (p *PublicKeyCredential) String() string {
+	if p == nil {
+		return "<nil>"
+	}
 	if len(p.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(p.rawJSON); err == nil {
 			return value
@@ -11056,6 +13320,129 @@ func (r RefreshTokenRotationTypeEnum) Ptr() *RefreshTokenRotationTypeEnum {
 	return &r
 }
 
+// Response after successfully registering or updating a CIMD client
+var (
+	registerCimdClientResponseContentFieldClientID     = big.NewInt(1 << 0)
+	registerCimdClientResponseContentFieldMappedFields = big.NewInt(1 << 1)
+	registerCimdClientResponseContentFieldValidation   = big.NewInt(1 << 2)
+)
+
+type RegisterCimdClientResponseContent struct {
+	// The Auth0 client_id of the created or updated client
+	ClientID     string                  `json:"client_id" url:"client_id"`
+	MappedFields *CimdMappedClientFields `json:"mapped_fields" url:"mapped_fields"`
+	Validation   *CimdValidationResult   `json:"validation" url:"validation"`
+
+	// Private bitmask of fields set to an explicit value and therefore not to be omitted
+	explicitFields *big.Int `json:"-" url:"-"`
+
+	ExtraProperties map[string]interface{} `json:"-" url:"-"`
+
+	rawJSON json.RawMessage
+}
+
+func (r *RegisterCimdClientResponseContent) GetClientID() string {
+	if r == nil {
+		return ""
+	}
+	return r.ClientID
+}
+
+func (r *RegisterCimdClientResponseContent) GetMappedFields() *CimdMappedClientFields {
+	if r == nil {
+		return nil
+	}
+	return r.MappedFields
+}
+
+func (r *RegisterCimdClientResponseContent) GetValidation() *CimdValidationResult {
+	if r == nil {
+		return nil
+	}
+	return r.Validation
+}
+
+func (r *RegisterCimdClientResponseContent) GetExtraProperties() map[string]interface{} {
+	if r == nil {
+		return nil
+	}
+	return r.ExtraProperties
+}
+
+func (r *RegisterCimdClientResponseContent) require(field *big.Int) {
+	if r.explicitFields == nil {
+		r.explicitFields = big.NewInt(0)
+	}
+	r.explicitFields.Or(r.explicitFields, field)
+}
+
+// SetClientID sets the ClientID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RegisterCimdClientResponseContent) SetClientID(clientID string) {
+	r.ClientID = clientID
+	r.require(registerCimdClientResponseContentFieldClientID)
+}
+
+// SetMappedFields sets the MappedFields field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RegisterCimdClientResponseContent) SetMappedFields(mappedFields *CimdMappedClientFields) {
+	r.MappedFields = mappedFields
+	r.require(registerCimdClientResponseContentFieldMappedFields)
+}
+
+// SetValidation sets the Validation field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RegisterCimdClientResponseContent) SetValidation(validation *CimdValidationResult) {
+	r.Validation = validation
+	r.require(registerCimdClientResponseContentFieldValidation)
+}
+
+func (r *RegisterCimdClientResponseContent) UnmarshalJSON(data []byte) error {
+	type embed RegisterCimdClientResponseContent
+	var unmarshaler = struct {
+		embed
+	}{
+		embed: embed(*r),
+	}
+	if err := json.Unmarshal(data, &unmarshaler); err != nil {
+		return err
+	}
+	*r = RegisterCimdClientResponseContent(unmarshaler.embed)
+	extraProperties, err := internal.ExtractExtraProperties(data, *r)
+	if err != nil {
+		return err
+	}
+	r.ExtraProperties = extraProperties
+	r.rawJSON = json.RawMessage(data)
+	return nil
+}
+
+func (r *RegisterCimdClientResponseContent) MarshalJSON() ([]byte, error) {
+	type embed RegisterCimdClientResponseContent
+	var marshaler = struct {
+		embed
+	}{
+		embed: embed(*r),
+	}
+	explicitMarshaler := internal.HandleExplicitFields(marshaler, r.explicitFields)
+	return internal.MarshalJSONWithExtraProperties(explicitMarshaler, r.ExtraProperties)
+}
+
+func (r *RegisterCimdClientResponseContent) String() string {
+	if r == nil {
+		return "<nil>"
+	}
+	if len(r.rawJSON) > 0 {
+		if value, err := internal.StringifyJSON(r.rawJSON); err == nil {
+			return value
+		}
+	}
+	if value, err := internal.StringifyJSON(r); err == nil {
+		return value
+	}
+	return fmt.Sprintf("%#v", r)
+}
+
 var (
 	rotateClientSecretResponseContentFieldClientID                                       = big.NewInt(1 << 0)
 	rotateClientSecretResponseContentFieldTenant                                         = big.NewInt(1 << 1)
@@ -11108,8 +13495,15 @@ var (
 	rotateClientSecretResponseContentFieldParRequestExpiry                               = big.NewInt(1 << 48)
 	rotateClientSecretResponseContentFieldTokenQuota                                     = big.NewInt(1 << 49)
 	rotateClientSecretResponseContentFieldExpressConfiguration                           = big.NewInt(1 << 50)
-	rotateClientSecretResponseContentFieldResourceServerIdentifier                       = big.NewInt(1 << 51)
-	rotateClientSecretResponseContentFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 52)
+	rotateClientSecretResponseContentFieldMyOrganizationConfiguration                    = big.NewInt(1 << 51)
+	rotateClientSecretResponseContentFieldThirdPartySecurityMode                         = big.NewInt(1 << 52)
+	rotateClientSecretResponseContentFieldRedirectionPolicy                              = big.NewInt(1 << 53)
+	rotateClientSecretResponseContentFieldResourceServerIdentifier                       = big.NewInt(1 << 54)
+	rotateClientSecretResponseContentFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 55)
+	rotateClientSecretResponseContentFieldExternalMetadataType                           = big.NewInt(1 << 56)
+	rotateClientSecretResponseContentFieldExternalMetadataCreatedBy                      = big.NewInt(1 << 57)
+	rotateClientSecretResponseContentFieldExternalClientID                               = big.NewInt(1 << 58)
+	rotateClientSecretResponseContentFieldJwksURI                                        = big.NewInt(1 << 59)
 )
 
 type RotateClientSecretResponseContent struct {
@@ -11194,12 +13588,21 @@ type RotateClientSecretResponseContent struct {
 	SkipNonVerifiableCallbackURIConfirmationPrompt *bool                             `json:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty" url:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty"`
 	TokenExchange                                  *ClientTokenExchangeConfiguration `json:"token_exchange,omitempty" url:"token_exchange,omitempty"`
 	// Specifies how long, in seconds, a Pushed Authorization Request URI remains valid
-	ParRequestExpiry     *int                  `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
-	TokenQuota           *TokenQuota           `json:"token_quota,omitempty" url:"token_quota,omitempty"`
-	ExpressConfiguration *ExpressConfiguration `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	ParRequestExpiry            *int                                       `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
+	TokenQuota                  *TokenQuota                                `json:"token_quota,omitempty" url:"token_quota,omitempty"`
+	ExpressConfiguration        *ExpressConfiguration                      `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	MyOrganizationConfiguration *ClientMyOrganizationResponseConfiguration `json:"my_organization_configuration,omitempty" url:"my_organization_configuration,omitempty"`
+	ThirdPartySecurityMode      *ClientThirdPartySecurityModeEnum          `json:"third_party_security_mode,omitempty" url:"third_party_security_mode,omitempty"`
+	RedirectionPolicy           *ClientRedirectionPolicyEnum               `json:"redirection_policy,omitempty" url:"redirection_policy,omitempty"`
 	// The identifier of the resource server that this client is linked to.
 	ResourceServerIdentifier          *string                                                       `json:"resource_server_identifier,omitempty" url:"resource_server_identifier,omitempty"`
 	AsyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration `json:"async_approval_notification_channels,omitempty" url:"async_approval_notification_channels,omitempty"`
+	ExternalMetadataType              *ClientExternalMetadataTypeEnum                               `json:"external_metadata_type,omitempty" url:"external_metadata_type,omitempty"`
+	ExternalMetadataCreatedBy         *ClientExternalMetadataCreatedByEnum                          `json:"external_metadata_created_by,omitempty" url:"external_metadata_created_by,omitempty"`
+	// An alternate client identifier to be used during authorization flows. Only supports CIMD-based client identifiers.
+	ExternalClientID *string `json:"external_client_id,omitempty" url:"external_client_id,omitempty"`
+	// URL for the JSON Web Key Set (JWKS) containing the public keys used for private_key_jwt authentication. Only present for CIMD clients using private_key_jwt authentication.
+	JwksURI *string `json:"jwks_uri,omitempty" url:"jwks_uri,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -11566,6 +13969,27 @@ func (r *RotateClientSecretResponseContent) GetExpressConfiguration() ExpressCon
 	return *r.ExpressConfiguration
 }
 
+func (r *RotateClientSecretResponseContent) GetMyOrganizationConfiguration() ClientMyOrganizationResponseConfiguration {
+	if r == nil || r.MyOrganizationConfiguration == nil {
+		return ClientMyOrganizationResponseConfiguration{}
+	}
+	return *r.MyOrganizationConfiguration
+}
+
+func (r *RotateClientSecretResponseContent) GetThirdPartySecurityMode() ClientThirdPartySecurityModeEnum {
+	if r == nil || r.ThirdPartySecurityMode == nil {
+		return ""
+	}
+	return *r.ThirdPartySecurityMode
+}
+
+func (r *RotateClientSecretResponseContent) GetRedirectionPolicy() ClientRedirectionPolicyEnum {
+	if r == nil || r.RedirectionPolicy == nil {
+		return ""
+	}
+	return *r.RedirectionPolicy
+}
+
 func (r *RotateClientSecretResponseContent) GetResourceServerIdentifier() string {
 	if r == nil || r.ResourceServerIdentifier == nil {
 		return ""
@@ -11580,7 +14004,38 @@ func (r *RotateClientSecretResponseContent) GetAsyncApprovalNotificationChannels
 	return *r.AsyncApprovalNotificationChannels
 }
 
+func (r *RotateClientSecretResponseContent) GetExternalMetadataType() ClientExternalMetadataTypeEnum {
+	if r == nil || r.ExternalMetadataType == nil {
+		return ""
+	}
+	return *r.ExternalMetadataType
+}
+
+func (r *RotateClientSecretResponseContent) GetExternalMetadataCreatedBy() ClientExternalMetadataCreatedByEnum {
+	if r == nil || r.ExternalMetadataCreatedBy == nil {
+		return ""
+	}
+	return *r.ExternalMetadataCreatedBy
+}
+
+func (r *RotateClientSecretResponseContent) GetExternalClientID() string {
+	if r == nil || r.ExternalClientID == nil {
+		return ""
+	}
+	return *r.ExternalClientID
+}
+
+func (r *RotateClientSecretResponseContent) GetJwksURI() string {
+	if r == nil || r.JwksURI == nil {
+		return ""
+	}
+	return *r.JwksURI
+}
+
 func (r *RotateClientSecretResponseContent) GetExtraProperties() map[string]interface{} {
+	if r == nil {
+		return nil
+	}
 	return r.ExtraProperties
 }
 
@@ -11948,6 +14403,27 @@ func (r *RotateClientSecretResponseContent) SetExpressConfiguration(expressConfi
 	r.require(rotateClientSecretResponseContentFieldExpressConfiguration)
 }
 
+// SetMyOrganizationConfiguration sets the MyOrganizationConfiguration field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RotateClientSecretResponseContent) SetMyOrganizationConfiguration(myOrganizationConfiguration *ClientMyOrganizationResponseConfiguration) {
+	r.MyOrganizationConfiguration = myOrganizationConfiguration
+	r.require(rotateClientSecretResponseContentFieldMyOrganizationConfiguration)
+}
+
+// SetThirdPartySecurityMode sets the ThirdPartySecurityMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RotateClientSecretResponseContent) SetThirdPartySecurityMode(thirdPartySecurityMode *ClientThirdPartySecurityModeEnum) {
+	r.ThirdPartySecurityMode = thirdPartySecurityMode
+	r.require(rotateClientSecretResponseContentFieldThirdPartySecurityMode)
+}
+
+// SetRedirectionPolicy sets the RedirectionPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RotateClientSecretResponseContent) SetRedirectionPolicy(redirectionPolicy *ClientRedirectionPolicyEnum) {
+	r.RedirectionPolicy = redirectionPolicy
+	r.require(rotateClientSecretResponseContentFieldRedirectionPolicy)
+}
+
 // SetResourceServerIdentifier sets the ResourceServerIdentifier field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (r *RotateClientSecretResponseContent) SetResourceServerIdentifier(resourceServerIdentifier *string) {
@@ -11960,6 +14436,34 @@ func (r *RotateClientSecretResponseContent) SetResourceServerIdentifier(resource
 func (r *RotateClientSecretResponseContent) SetAsyncApprovalNotificationChannels(asyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration) {
 	r.AsyncApprovalNotificationChannels = asyncApprovalNotificationChannels
 	r.require(rotateClientSecretResponseContentFieldAsyncApprovalNotificationChannels)
+}
+
+// SetExternalMetadataType sets the ExternalMetadataType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RotateClientSecretResponseContent) SetExternalMetadataType(externalMetadataType *ClientExternalMetadataTypeEnum) {
+	r.ExternalMetadataType = externalMetadataType
+	r.require(rotateClientSecretResponseContentFieldExternalMetadataType)
+}
+
+// SetExternalMetadataCreatedBy sets the ExternalMetadataCreatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RotateClientSecretResponseContent) SetExternalMetadataCreatedBy(externalMetadataCreatedBy *ClientExternalMetadataCreatedByEnum) {
+	r.ExternalMetadataCreatedBy = externalMetadataCreatedBy
+	r.require(rotateClientSecretResponseContentFieldExternalMetadataCreatedBy)
+}
+
+// SetExternalClientID sets the ExternalClientID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RotateClientSecretResponseContent) SetExternalClientID(externalClientID *string) {
+	r.ExternalClientID = externalClientID
+	r.require(rotateClientSecretResponseContentFieldExternalClientID)
+}
+
+// SetJwksURI sets the JwksURI field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (r *RotateClientSecretResponseContent) SetJwksURI(jwksURI *string) {
+	r.JwksURI = jwksURI
+	r.require(rotateClientSecretResponseContentFieldJwksURI)
 }
 
 func (r *RotateClientSecretResponseContent) UnmarshalJSON(data []byte) error {
@@ -11994,6 +14498,9 @@ func (r *RotateClientSecretResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (r *RotateClientSecretResponseContent) String() string {
+	if r == nil {
+		return "<nil>"
+	}
 	if len(r.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(r.rawJSON); err == nil {
 			return value
@@ -12057,8 +14564,15 @@ var (
 	updateClientResponseContentFieldParRequestExpiry                               = big.NewInt(1 << 48)
 	updateClientResponseContentFieldTokenQuota                                     = big.NewInt(1 << 49)
 	updateClientResponseContentFieldExpressConfiguration                           = big.NewInt(1 << 50)
-	updateClientResponseContentFieldResourceServerIdentifier                       = big.NewInt(1 << 51)
-	updateClientResponseContentFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 52)
+	updateClientResponseContentFieldMyOrganizationConfiguration                    = big.NewInt(1 << 51)
+	updateClientResponseContentFieldThirdPartySecurityMode                         = big.NewInt(1 << 52)
+	updateClientResponseContentFieldRedirectionPolicy                              = big.NewInt(1 << 53)
+	updateClientResponseContentFieldResourceServerIdentifier                       = big.NewInt(1 << 54)
+	updateClientResponseContentFieldAsyncApprovalNotificationChannels              = big.NewInt(1 << 55)
+	updateClientResponseContentFieldExternalMetadataType                           = big.NewInt(1 << 56)
+	updateClientResponseContentFieldExternalMetadataCreatedBy                      = big.NewInt(1 << 57)
+	updateClientResponseContentFieldExternalClientID                               = big.NewInt(1 << 58)
+	updateClientResponseContentFieldJwksURI                                        = big.NewInt(1 << 59)
 )
 
 type UpdateClientResponseContent struct {
@@ -12143,12 +14657,21 @@ type UpdateClientResponseContent struct {
 	SkipNonVerifiableCallbackURIConfirmationPrompt *bool                             `json:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty" url:"skip_non_verifiable_callback_uri_confirmation_prompt,omitempty"`
 	TokenExchange                                  *ClientTokenExchangeConfiguration `json:"token_exchange,omitempty" url:"token_exchange,omitempty"`
 	// Specifies how long, in seconds, a Pushed Authorization Request URI remains valid
-	ParRequestExpiry     *int                  `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
-	TokenQuota           *TokenQuota           `json:"token_quota,omitempty" url:"token_quota,omitempty"`
-	ExpressConfiguration *ExpressConfiguration `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	ParRequestExpiry            *int                                       `json:"par_request_expiry,omitempty" url:"par_request_expiry,omitempty"`
+	TokenQuota                  *TokenQuota                                `json:"token_quota,omitempty" url:"token_quota,omitempty"`
+	ExpressConfiguration        *ExpressConfiguration                      `json:"express_configuration,omitempty" url:"express_configuration,omitempty"`
+	MyOrganizationConfiguration *ClientMyOrganizationResponseConfiguration `json:"my_organization_configuration,omitempty" url:"my_organization_configuration,omitempty"`
+	ThirdPartySecurityMode      *ClientThirdPartySecurityModeEnum          `json:"third_party_security_mode,omitempty" url:"third_party_security_mode,omitempty"`
+	RedirectionPolicy           *ClientRedirectionPolicyEnum               `json:"redirection_policy,omitempty" url:"redirection_policy,omitempty"`
 	// The identifier of the resource server that this client is linked to.
 	ResourceServerIdentifier          *string                                                       `json:"resource_server_identifier,omitempty" url:"resource_server_identifier,omitempty"`
 	AsyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration `json:"async_approval_notification_channels,omitempty" url:"async_approval_notification_channels,omitempty"`
+	ExternalMetadataType              *ClientExternalMetadataTypeEnum                               `json:"external_metadata_type,omitempty" url:"external_metadata_type,omitempty"`
+	ExternalMetadataCreatedBy         *ClientExternalMetadataCreatedByEnum                          `json:"external_metadata_created_by,omitempty" url:"external_metadata_created_by,omitempty"`
+	// An alternate client identifier to be used during authorization flows. Only supports CIMD-based client identifiers.
+	ExternalClientID *string `json:"external_client_id,omitempty" url:"external_client_id,omitempty"`
+	// URL for the JSON Web Key Set (JWKS) containing the public keys used for private_key_jwt authentication. Only present for CIMD clients using private_key_jwt authentication.
+	JwksURI *string `json:"jwks_uri,omitempty" url:"jwks_uri,omitempty"`
 
 	// Private bitmask of fields set to an explicit value and therefore not to be omitted
 	explicitFields *big.Int `json:"-" url:"-"`
@@ -12515,6 +15038,27 @@ func (u *UpdateClientResponseContent) GetExpressConfiguration() ExpressConfigura
 	return *u.ExpressConfiguration
 }
 
+func (u *UpdateClientResponseContent) GetMyOrganizationConfiguration() ClientMyOrganizationResponseConfiguration {
+	if u == nil || u.MyOrganizationConfiguration == nil {
+		return ClientMyOrganizationResponseConfiguration{}
+	}
+	return *u.MyOrganizationConfiguration
+}
+
+func (u *UpdateClientResponseContent) GetThirdPartySecurityMode() ClientThirdPartySecurityModeEnum {
+	if u == nil || u.ThirdPartySecurityMode == nil {
+		return ""
+	}
+	return *u.ThirdPartySecurityMode
+}
+
+func (u *UpdateClientResponseContent) GetRedirectionPolicy() ClientRedirectionPolicyEnum {
+	if u == nil || u.RedirectionPolicy == nil {
+		return ""
+	}
+	return *u.RedirectionPolicy
+}
+
 func (u *UpdateClientResponseContent) GetResourceServerIdentifier() string {
 	if u == nil || u.ResourceServerIdentifier == nil {
 		return ""
@@ -12529,7 +15073,38 @@ func (u *UpdateClientResponseContent) GetAsyncApprovalNotificationChannels() Cli
 	return *u.AsyncApprovalNotificationChannels
 }
 
+func (u *UpdateClientResponseContent) GetExternalMetadataType() ClientExternalMetadataTypeEnum {
+	if u == nil || u.ExternalMetadataType == nil {
+		return ""
+	}
+	return *u.ExternalMetadataType
+}
+
+func (u *UpdateClientResponseContent) GetExternalMetadataCreatedBy() ClientExternalMetadataCreatedByEnum {
+	if u == nil || u.ExternalMetadataCreatedBy == nil {
+		return ""
+	}
+	return *u.ExternalMetadataCreatedBy
+}
+
+func (u *UpdateClientResponseContent) GetExternalClientID() string {
+	if u == nil || u.ExternalClientID == nil {
+		return ""
+	}
+	return *u.ExternalClientID
+}
+
+func (u *UpdateClientResponseContent) GetJwksURI() string {
+	if u == nil || u.JwksURI == nil {
+		return ""
+	}
+	return *u.JwksURI
+}
+
 func (u *UpdateClientResponseContent) GetExtraProperties() map[string]interface{} {
+	if u == nil {
+		return nil
+	}
 	return u.ExtraProperties
 }
 
@@ -12897,6 +15472,27 @@ func (u *UpdateClientResponseContent) SetExpressConfiguration(expressConfigurati
 	u.require(updateClientResponseContentFieldExpressConfiguration)
 }
 
+// SetMyOrganizationConfiguration sets the MyOrganizationConfiguration field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateClientResponseContent) SetMyOrganizationConfiguration(myOrganizationConfiguration *ClientMyOrganizationResponseConfiguration) {
+	u.MyOrganizationConfiguration = myOrganizationConfiguration
+	u.require(updateClientResponseContentFieldMyOrganizationConfiguration)
+}
+
+// SetThirdPartySecurityMode sets the ThirdPartySecurityMode field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateClientResponseContent) SetThirdPartySecurityMode(thirdPartySecurityMode *ClientThirdPartySecurityModeEnum) {
+	u.ThirdPartySecurityMode = thirdPartySecurityMode
+	u.require(updateClientResponseContentFieldThirdPartySecurityMode)
+}
+
+// SetRedirectionPolicy sets the RedirectionPolicy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateClientResponseContent) SetRedirectionPolicy(redirectionPolicy *ClientRedirectionPolicyEnum) {
+	u.RedirectionPolicy = redirectionPolicy
+	u.require(updateClientResponseContentFieldRedirectionPolicy)
+}
+
 // SetResourceServerIdentifier sets the ResourceServerIdentifier field and marks it as non-optional;
 // this prevents an empty or null value for this field from being omitted during serialization.
 func (u *UpdateClientResponseContent) SetResourceServerIdentifier(resourceServerIdentifier *string) {
@@ -12909,6 +15505,34 @@ func (u *UpdateClientResponseContent) SetResourceServerIdentifier(resourceServer
 func (u *UpdateClientResponseContent) SetAsyncApprovalNotificationChannels(asyncApprovalNotificationChannels *ClientAsyncApprovalNotificationsChannelsAPIPostConfiguration) {
 	u.AsyncApprovalNotificationChannels = asyncApprovalNotificationChannels
 	u.require(updateClientResponseContentFieldAsyncApprovalNotificationChannels)
+}
+
+// SetExternalMetadataType sets the ExternalMetadataType field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateClientResponseContent) SetExternalMetadataType(externalMetadataType *ClientExternalMetadataTypeEnum) {
+	u.ExternalMetadataType = externalMetadataType
+	u.require(updateClientResponseContentFieldExternalMetadataType)
+}
+
+// SetExternalMetadataCreatedBy sets the ExternalMetadataCreatedBy field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateClientResponseContent) SetExternalMetadataCreatedBy(externalMetadataCreatedBy *ClientExternalMetadataCreatedByEnum) {
+	u.ExternalMetadataCreatedBy = externalMetadataCreatedBy
+	u.require(updateClientResponseContentFieldExternalMetadataCreatedBy)
+}
+
+// SetExternalClientID sets the ExternalClientID field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateClientResponseContent) SetExternalClientID(externalClientID *string) {
+	u.ExternalClientID = externalClientID
+	u.require(updateClientResponseContentFieldExternalClientID)
+}
+
+// SetJwksURI sets the JwksURI field and marks it as non-optional;
+// this prevents an empty or null value for this field from being omitted during serialization.
+func (u *UpdateClientResponseContent) SetJwksURI(jwksURI *string) {
+	u.JwksURI = jwksURI
+	u.require(updateClientResponseContentFieldJwksURI)
 }
 
 func (u *UpdateClientResponseContent) UnmarshalJSON(data []byte) error {
@@ -12943,6 +15567,9 @@ func (u *UpdateClientResponseContent) MarshalJSON() ([]byte, error) {
 }
 
 func (u *UpdateClientResponseContent) String() string {
+	if u == nil {
+		return "<nil>"
+	}
 	if len(u.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(u.rawJSON); err == nil {
 			return value
@@ -12996,6 +15623,9 @@ func (x *X509CertificateCredential) GetPem() string {
 }
 
 func (x *X509CertificateCredential) GetExtraProperties() map[string]interface{} {
+	if x == nil {
+		return nil
+	}
 	return x.extraProperties
 }
 
@@ -13055,6 +15685,9 @@ func (x *X509CertificateCredential) MarshalJSON() ([]byte, error) {
 }
 
 func (x *X509CertificateCredential) String() string {
+	if x == nil {
+		return "<nil>"
+	}
 	if len(x.rawJSON) > 0 {
 		if value, err := internal.StringifyJSON(x.rawJSON); err == nil {
 			return value
